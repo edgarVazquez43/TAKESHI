@@ -1,0 +1,16 @@
+*.aux
+*.bbl
+*.pyc
+*.blg
+*.fdb_latexmk
+*.toc
+*.log
+*.out
+*.cpp~
+*.txt~
+*.py~
+*#
+*.includecache
+*.cpp.o
+build/
+devel/
