@@ -1,2 +1,2 @@
-# Toyota_dspl
-This repository is for service robot Toyota HSR.
+# TAKESHI CODES
+This repository is for pumas team service robot TAKESHI.
