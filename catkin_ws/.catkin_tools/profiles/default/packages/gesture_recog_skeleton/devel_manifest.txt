@@ -1,0 +1,5 @@
+vision/gesture_recog_skeleton
+/home/edgar/HSR_PUMAS/catkin_ws/devel/.private/gesture_recog_skeleton/share/gesture_recog_skeleton/cmake/gesture_recog_skeletonConfig-version.cmake /home/edgar/HSR_PUMAS/catkin_ws/devel/share/gesture_recog_skeleton/cmake/gesture_recog_skeletonConfig-version.cmake
+/home/edgar/HSR_PUMAS/catkin_ws/devel/.private/gesture_recog_skeleton/share/gesture_recog_skeleton/cmake/gesture_recog_skeletonConfig.cmake /home/edgar/HSR_PUMAS/catkin_ws/devel/share/gesture_recog_skeleton/cmake/gesture_recog_skeletonConfig.cmake
+/home/edgar/HSR_PUMAS/catkin_ws/devel/.private/gesture_recog_skeleton/lib/pkgconfig/gesture_recog_skeleton.pc /home/edgar/HSR_PUMAS/catkin_ws/devel/lib/pkgconfig/gesture_recog_skeleton.pc
+/home/edgar/HSR_PUMAS/catkin_ws/devel/.private/gesture_recog_skeleton/lib/gesture_recog_skeleton/gesture_recog_node /home/edgar/HSR_PUMAS/catkin_ws/devel/lib/gesture_recog_skeleton/gesture_recog_node

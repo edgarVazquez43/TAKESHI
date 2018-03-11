@@ -1,0 +1,5 @@
+hardware/arm
+/home/edgar/HSR_PUMAS/catkin_ws/devel/.private/arm/share/arm/cmake/armConfig.cmake /home/edgar/HSR_PUMAS/catkin_ws/devel/share/arm/cmake/armConfig.cmake
+/home/edgar/HSR_PUMAS/catkin_ws/devel/.private/arm/share/arm/cmake/armConfig-version.cmake /home/edgar/HSR_PUMAS/catkin_ws/devel/share/arm/cmake/armConfig-version.cmake
+/home/edgar/HSR_PUMAS/catkin_ws/devel/.private/arm/lib/pkgconfig/arm.pc /home/edgar/HSR_PUMAS/catkin_ws/devel/lib/pkgconfig/arm.pc
+/home/edgar/HSR_PUMAS/catkin_ws/devel/.private/arm/lib/arm/arm_node /home/edgar/HSR_PUMAS/catkin_ws/devel/lib/arm/arm_node

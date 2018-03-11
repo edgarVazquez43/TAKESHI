@@ -1,0 +1,4 @@
+planning/knowledge
+/home/edgar/HSR_PUMAS/catkin_ws/devel/.private/knowledge/share/knowledge/cmake/knowledgeConfig.cmake /home/edgar/HSR_PUMAS/catkin_ws/devel/share/knowledge/cmake/knowledgeConfig.cmake
+/home/edgar/HSR_PUMAS/catkin_ws/devel/.private/knowledge/share/knowledge/cmake/knowledgeConfig-version.cmake /home/edgar/HSR_PUMAS/catkin_ws/devel/share/knowledge/cmake/knowledgeConfig-version.cmake
+/home/edgar/HSR_PUMAS/catkin_ws/devel/.private/knowledge/lib/pkgconfig/knowledge.pc /home/edgar/HSR_PUMAS/catkin_ws/devel/lib/pkgconfig/knowledge.pc

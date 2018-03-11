@@ -1,0 +1,4 @@
+hardware/head_center_camera
+/home/edgar/HSR_PUMAS/catkin_ws/devel/.private/head_center_camera/share/head_center_camera/cmake/head_center_cameraConfig-version.cmake /home/edgar/HSR_PUMAS/catkin_ws/devel/share/head_center_camera/cmake/head_center_cameraConfig-version.cmake
+/home/edgar/HSR_PUMAS/catkin_ws/devel/.private/head_center_camera/share/head_center_camera/cmake/head_center_cameraConfig.cmake /home/edgar/HSR_PUMAS/catkin_ws/devel/share/head_center_camera/cmake/head_center_cameraConfig.cmake
+/home/edgar/HSR_PUMAS/catkin_ws/devel/.private/head_center_camera/lib/pkgconfig/head_center_camera.pc /home/edgar/HSR_PUMAS/catkin_ws/devel/lib/pkgconfig/head_center_camera.pc

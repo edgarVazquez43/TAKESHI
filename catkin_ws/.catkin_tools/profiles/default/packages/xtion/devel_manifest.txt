@@ -1,0 +1,4 @@
+hardware/xtion
+/home/edgar/HSR_PUMAS/catkin_ws/devel/.private/xtion/share/xtion/cmake/xtionConfig.cmake /home/edgar/HSR_PUMAS/catkin_ws/devel/share/xtion/cmake/xtionConfig.cmake
+/home/edgar/HSR_PUMAS/catkin_ws/devel/.private/xtion/share/xtion/cmake/xtionConfig-version.cmake /home/edgar/HSR_PUMAS/catkin_ws/devel/share/xtion/cmake/xtionConfig-version.cmake
+/home/edgar/HSR_PUMAS/catkin_ws/devel/.private/xtion/lib/pkgconfig/xtion.pc /home/edgar/HSR_PUMAS/catkin_ws/devel/lib/pkgconfig/xtion.pc

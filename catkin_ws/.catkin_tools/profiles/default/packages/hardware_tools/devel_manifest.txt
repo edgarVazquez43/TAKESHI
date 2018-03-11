@@ -1,0 +1,7 @@
+tools/hardware_tools
+/home/edgar/HSR_PUMAS/catkin_ws/devel/.private/hardware_tools/share/hardware_tools/cmake/hardware_toolsConfig-version.cmake /home/edgar/HSR_PUMAS/catkin_ws/devel/share/hardware_tools/cmake/hardware_toolsConfig-version.cmake
+/home/edgar/HSR_PUMAS/catkin_ws/devel/.private/hardware_tools/share/hardware_tools/cmake/hardware_toolsConfig.cmake /home/edgar/HSR_PUMAS/catkin_ws/devel/share/hardware_tools/cmake/hardware_toolsConfig.cmake
+/home/edgar/HSR_PUMAS/catkin_ws/devel/.private/hardware_tools/lib/libDynamixelManager.so /home/edgar/HSR_PUMAS/catkin_ws/devel/lib/libDynamixelManager.so
+/home/edgar/HSR_PUMAS/catkin_ws/devel/.private/hardware_tools/lib/libJrkManager.so /home/edgar/HSR_PUMAS/catkin_ws/devel/lib/libJrkManager.so
+/home/edgar/HSR_PUMAS/catkin_ws/devel/.private/hardware_tools/lib/python2.7/dist-packages/hardware_tools/__init__.py /home/edgar/HSR_PUMAS/catkin_ws/devel/lib/python2.7/dist-packages/hardware_tools/__init__.py
+/home/edgar/HSR_PUMAS/catkin_ws/devel/.private/hardware_tools/lib/pkgconfig/hardware_tools.pc /home/edgar/HSR_PUMAS/catkin_ws/devel/lib/pkgconfig/hardware_tools.pc

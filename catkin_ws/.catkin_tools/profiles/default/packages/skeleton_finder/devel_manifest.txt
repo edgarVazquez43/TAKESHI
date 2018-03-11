@@ -1,0 +1,5 @@
+vision/skeleton_finder
+/home/edgar/HSR_PUMAS/catkin_ws/devel/.private/skeleton_finder/share/skeleton_finder/cmake/skeleton_finderConfig.cmake /home/edgar/HSR_PUMAS/catkin_ws/devel/share/skeleton_finder/cmake/skeleton_finderConfig.cmake
+/home/edgar/HSR_PUMAS/catkin_ws/devel/.private/skeleton_finder/share/skeleton_finder/cmake/skeleton_finderConfig-version.cmake /home/edgar/HSR_PUMAS/catkin_ws/devel/share/skeleton_finder/cmake/skeleton_finderConfig-version.cmake
+/home/edgar/HSR_PUMAS/catkin_ws/devel/.private/skeleton_finder/lib/pkgconfig/skeleton_finder.pc /home/edgar/HSR_PUMAS/catkin_ws/devel/lib/pkgconfig/skeleton_finder.pc
+/home/edgar/HSR_PUMAS/catkin_ws/devel/.private/skeleton_finder/lib/skeleton_finder/skeleton_finder_node /home/edgar/HSR_PUMAS/catkin_ws/devel/lib/skeleton_finder/skeleton_finder_node

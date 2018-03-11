@@ -1,0 +1,4 @@
+hardware/stereo_cameras
+/home/edgar/HSR_PUMAS/catkin_ws/devel/.private/stereo_cameras/share/stereo_cameras/cmake/stereo_camerasConfig.cmake /home/edgar/HSR_PUMAS/catkin_ws/devel/share/stereo_cameras/cmake/stereo_camerasConfig.cmake
+/home/edgar/HSR_PUMAS/catkin_ws/devel/.private/stereo_cameras/share/stereo_cameras/cmake/stereo_camerasConfig-version.cmake /home/edgar/HSR_PUMAS/catkin_ws/devel/share/stereo_cameras/cmake/stereo_camerasConfig-version.cmake
+/home/edgar/HSR_PUMAS/catkin_ws/devel/.private/stereo_cameras/lib/pkgconfig/stereo_cameras.pc /home/edgar/HSR_PUMAS/catkin_ws/devel/lib/pkgconfig/stereo_cameras.pc

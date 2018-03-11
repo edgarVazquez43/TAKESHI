@@ -1,0 +1,4 @@
+hardware/hand_eye_camera
+/home/edgar/HSR_PUMAS/catkin_ws/devel/.private/hand_eye_camera/share/hand_eye_camera/cmake/hand_eye_cameraConfig.cmake /home/edgar/HSR_PUMAS/catkin_ws/devel/share/hand_eye_camera/cmake/hand_eye_cameraConfig.cmake
+/home/edgar/HSR_PUMAS/catkin_ws/devel/.private/hand_eye_camera/share/hand_eye_camera/cmake/hand_eye_cameraConfig-version.cmake /home/edgar/HSR_PUMAS/catkin_ws/devel/share/hand_eye_camera/cmake/hand_eye_cameraConfig-version.cmake
+/home/edgar/HSR_PUMAS/catkin_ws/devel/.private/hand_eye_camera/lib/pkgconfig/hand_eye_camera.pc /home/edgar/HSR_PUMAS/catkin_ws/devel/lib/pkgconfig/hand_eye_camera.pc

@@ -1,0 +1,19 @@
+hri/hri_msgs
+/home/edgar/HSR_PUMAS/catkin_ws/devel/.private/hri_msgs/include/hri_msgs/RecognizedSpeech.h /home/edgar/HSR_PUMAS/catkin_ws/devel/include/hri_msgs/RecognizedSpeech.h
+/home/edgar/HSR_PUMAS/catkin_ws/devel/.private/hri_msgs/share/roseus/ros/hri_msgs/manifest.l /home/edgar/HSR_PUMAS/catkin_ws/devel/share/roseus/ros/hri_msgs/manifest.l
+/home/edgar/HSR_PUMAS/catkin_ws/devel/.private/hri_msgs/share/roseus/ros/hri_msgs/msg/RecognizedSpeech.l /home/edgar/HSR_PUMAS/catkin_ws/devel/share/roseus/ros/hri_msgs/msg/RecognizedSpeech.l
+/home/edgar/HSR_PUMAS/catkin_ws/devel/.private/hri_msgs/share/hri_msgs/cmake/hri_msgs-msg-paths.cmake /home/edgar/HSR_PUMAS/catkin_ws/devel/share/hri_msgs/cmake/hri_msgs-msg-paths.cmake
+/home/edgar/HSR_PUMAS/catkin_ws/devel/.private/hri_msgs/share/hri_msgs/cmake/hri_msgsConfig.cmake /home/edgar/HSR_PUMAS/catkin_ws/devel/share/hri_msgs/cmake/hri_msgsConfig.cmake
+/home/edgar/HSR_PUMAS/catkin_ws/devel/.private/hri_msgs/share/hri_msgs/cmake/hri_msgsConfig-version.cmake /home/edgar/HSR_PUMAS/catkin_ws/devel/share/hri_msgs/cmake/hri_msgsConfig-version.cmake
+/home/edgar/HSR_PUMAS/catkin_ws/devel/.private/hri_msgs/share/hri_msgs/cmake/hri_msgs-msg-extras.cmake /home/edgar/HSR_PUMAS/catkin_ws/devel/share/hri_msgs/cmake/hri_msgs-msg-extras.cmake
+/home/edgar/HSR_PUMAS/catkin_ws/devel/.private/hri_msgs/share/gennodejs/ros/hri_msgs/_index.js /home/edgar/HSR_PUMAS/catkin_ws/devel/share/gennodejs/ros/hri_msgs/_index.js
+/home/edgar/HSR_PUMAS/catkin_ws/devel/.private/hri_msgs/share/gennodejs/ros/hri_msgs/msg/_index.js /home/edgar/HSR_PUMAS/catkin_ws/devel/share/gennodejs/ros/hri_msgs/msg/_index.js
+/home/edgar/HSR_PUMAS/catkin_ws/devel/.private/hri_msgs/share/gennodejs/ros/hri_msgs/msg/RecognizedSpeech.js /home/edgar/HSR_PUMAS/catkin_ws/devel/share/gennodejs/ros/hri_msgs/msg/RecognizedSpeech.js
+/home/edgar/HSR_PUMAS/catkin_ws/devel/.private/hri_msgs/share/common-lisp/ros/hri_msgs/msg/_package.lisp /home/edgar/HSR_PUMAS/catkin_ws/devel/share/common-lisp/ros/hri_msgs/msg/_package.lisp
+/home/edgar/HSR_PUMAS/catkin_ws/devel/.private/hri_msgs/share/common-lisp/ros/hri_msgs/msg/_package_RecognizedSpeech.lisp /home/edgar/HSR_PUMAS/catkin_ws/devel/share/common-lisp/ros/hri_msgs/msg/_package_RecognizedSpeech.lisp
+/home/edgar/HSR_PUMAS/catkin_ws/devel/.private/hri_msgs/share/common-lisp/ros/hri_msgs/msg/RecognizedSpeech.lisp /home/edgar/HSR_PUMAS/catkin_ws/devel/share/common-lisp/ros/hri_msgs/msg/RecognizedSpeech.lisp
+/home/edgar/HSR_PUMAS/catkin_ws/devel/.private/hri_msgs/share/common-lisp/ros/hri_msgs/msg/hri_msgs-msg.asd /home/edgar/HSR_PUMAS/catkin_ws/devel/share/common-lisp/ros/hri_msgs/msg/hri_msgs-msg.asd
+/home/edgar/HSR_PUMAS/catkin_ws/devel/.private/hri_msgs/lib/python2.7/dist-packages/hri_msgs/__init__.py /home/edgar/HSR_PUMAS/catkin_ws/devel/lib/python2.7/dist-packages/hri_msgs/__init__.py
+/home/edgar/HSR_PUMAS/catkin_ws/devel/.private/hri_msgs/lib/python2.7/dist-packages/hri_msgs/msg/__init__.py /home/edgar/HSR_PUMAS/catkin_ws/devel/lib/python2.7/dist-packages/hri_msgs/msg/__init__.py
+/home/edgar/HSR_PUMAS/catkin_ws/devel/.private/hri_msgs/lib/python2.7/dist-packages/hri_msgs/msg/_RecognizedSpeech.py /home/edgar/HSR_PUMAS/catkin_ws/devel/lib/python2.7/dist-packages/hri_msgs/msg/_RecognizedSpeech.py
+/home/edgar/HSR_PUMAS/catkin_ws/devel/.private/hri_msgs/lib/pkgconfig/hri_msgs.pc /home/edgar/HSR_PUMAS/catkin_ws/devel/lib/pkgconfig/hri_msgs.pc

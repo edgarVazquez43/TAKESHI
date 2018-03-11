@@ -1,0 +1,21 @@
+audio/audio_msgs
+/home/edgar/HSR_PUMAS/catkin_ws/devel/.private/audio_msgs/include/audio_msgs/srvAngleResponse.h /home/edgar/HSR_PUMAS/catkin_ws/devel/include/audio_msgs/srvAngleResponse.h
+/home/edgar/HSR_PUMAS/catkin_ws/devel/.private/audio_msgs/include/audio_msgs/srvAngle.h /home/edgar/HSR_PUMAS/catkin_ws/devel/include/audio_msgs/srvAngle.h
+/home/edgar/HSR_PUMAS/catkin_ws/devel/.private/audio_msgs/include/audio_msgs/srvAngleRequest.h /home/edgar/HSR_PUMAS/catkin_ws/devel/include/audio_msgs/srvAngleRequest.h
+/home/edgar/HSR_PUMAS/catkin_ws/devel/.private/audio_msgs/share/roseus/ros/audio_msgs/manifest.l /home/edgar/HSR_PUMAS/catkin_ws/devel/share/roseus/ros/audio_msgs/manifest.l
+/home/edgar/HSR_PUMAS/catkin_ws/devel/.private/audio_msgs/share/roseus/ros/audio_msgs/srv/srvAngle.l /home/edgar/HSR_PUMAS/catkin_ws/devel/share/roseus/ros/audio_msgs/srv/srvAngle.l
+/home/edgar/HSR_PUMAS/catkin_ws/devel/.private/audio_msgs/share/audio_msgs/cmake/audio_msgsConfig.cmake /home/edgar/HSR_PUMAS/catkin_ws/devel/share/audio_msgs/cmake/audio_msgsConfig.cmake
+/home/edgar/HSR_PUMAS/catkin_ws/devel/.private/audio_msgs/share/audio_msgs/cmake/audio_msgs-msg-paths.cmake /home/edgar/HSR_PUMAS/catkin_ws/devel/share/audio_msgs/cmake/audio_msgs-msg-paths.cmake
+/home/edgar/HSR_PUMAS/catkin_ws/devel/.private/audio_msgs/share/audio_msgs/cmake/audio_msgs-msg-extras.cmake /home/edgar/HSR_PUMAS/catkin_ws/devel/share/audio_msgs/cmake/audio_msgs-msg-extras.cmake
+/home/edgar/HSR_PUMAS/catkin_ws/devel/.private/audio_msgs/share/audio_msgs/cmake/audio_msgsConfig-version.cmake /home/edgar/HSR_PUMAS/catkin_ws/devel/share/audio_msgs/cmake/audio_msgsConfig-version.cmake
+/home/edgar/HSR_PUMAS/catkin_ws/devel/.private/audio_msgs/share/gennodejs/ros/audio_msgs/_index.js /home/edgar/HSR_PUMAS/catkin_ws/devel/share/gennodejs/ros/audio_msgs/_index.js
+/home/edgar/HSR_PUMAS/catkin_ws/devel/.private/audio_msgs/share/gennodejs/ros/audio_msgs/srv/_index.js /home/edgar/HSR_PUMAS/catkin_ws/devel/share/gennodejs/ros/audio_msgs/srv/_index.js
+/home/edgar/HSR_PUMAS/catkin_ws/devel/.private/audio_msgs/share/gennodejs/ros/audio_msgs/srv/srvAngle.js /home/edgar/HSR_PUMAS/catkin_ws/devel/share/gennodejs/ros/audio_msgs/srv/srvAngle.js
+/home/edgar/HSR_PUMAS/catkin_ws/devel/.private/audio_msgs/share/common-lisp/ros/audio_msgs/srv/audio_msgs-srv.asd /home/edgar/HSR_PUMAS/catkin_ws/devel/share/common-lisp/ros/audio_msgs/srv/audio_msgs-srv.asd
+/home/edgar/HSR_PUMAS/catkin_ws/devel/.private/audio_msgs/share/common-lisp/ros/audio_msgs/srv/_package.lisp /home/edgar/HSR_PUMAS/catkin_ws/devel/share/common-lisp/ros/audio_msgs/srv/_package.lisp
+/home/edgar/HSR_PUMAS/catkin_ws/devel/.private/audio_msgs/share/common-lisp/ros/audio_msgs/srv/srvAngle.lisp /home/edgar/HSR_PUMAS/catkin_ws/devel/share/common-lisp/ros/audio_msgs/srv/srvAngle.lisp
+/home/edgar/HSR_PUMAS/catkin_ws/devel/.private/audio_msgs/share/common-lisp/ros/audio_msgs/srv/_package_srvAngle.lisp /home/edgar/HSR_PUMAS/catkin_ws/devel/share/common-lisp/ros/audio_msgs/srv/_package_srvAngle.lisp
+/home/edgar/HSR_PUMAS/catkin_ws/devel/.private/audio_msgs/lib/python2.7/dist-packages/audio_msgs/__init__.py /home/edgar/HSR_PUMAS/catkin_ws/devel/lib/python2.7/dist-packages/audio_msgs/__init__.py
+/home/edgar/HSR_PUMAS/catkin_ws/devel/.private/audio_msgs/lib/python2.7/dist-packages/audio_msgs/srv/__init__.py /home/edgar/HSR_PUMAS/catkin_ws/devel/lib/python2.7/dist-packages/audio_msgs/srv/__init__.py
+/home/edgar/HSR_PUMAS/catkin_ws/devel/.private/audio_msgs/lib/python2.7/dist-packages/audio_msgs/srv/_srvAngle.py /home/edgar/HSR_PUMAS/catkin_ws/devel/lib/python2.7/dist-packages/audio_msgs/srv/_srvAngle.py
+/home/edgar/HSR_PUMAS/catkin_ws/devel/.private/audio_msgs/lib/pkgconfig/audio_msgs.pc /home/edgar/HSR_PUMAS/catkin_ws/devel/lib/pkgconfig/audio_msgs.pc
