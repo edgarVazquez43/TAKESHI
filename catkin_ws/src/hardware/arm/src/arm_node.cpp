@@ -4,6 +4,7 @@
 #include <control_msgs/JointTrajectoryControllerState.h>
 #include <trajectory_msgs/JointTrajectory.h>
 #include <std_msgs/Float32MultiArray.h>
+#include <std_msgs/Float32.h>
 #include <ros/ros.h>
 
 
@@ -25,11 +26,11 @@ void armGoalPoseCallback(const std_msgs::Float32MultiArray::ConstPtr& msg)
   msg_arm_recived = true;
 }
 
-void gripperPoseCallback(const std_msgs::Float32MultiArray::ConstPtr& msg)
+void gripperPoseCallback(const std_msgs::Float32::ConstPtr& msg)
 {
   // Expected value between [0.0 - 1.0] where 0.0 is close gripper and 1.0 is totally open gripper
   gripper_goal_pose.resize(1);
-  gripper_goal_pose[0] = -0.105 + (msg->data[0])*( 1.23 + 0.105);  // Joint limits from official page
+  gripper_goal_pose[0] = -0.105 + (msg->data)*( 1.23 + 0.105);  // Joint limits from official page
   
   msg_gripper_recived = true;
 }

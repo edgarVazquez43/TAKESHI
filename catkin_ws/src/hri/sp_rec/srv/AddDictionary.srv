@@ -1,0 +1,27 @@
+# language model (set kWord for isolated words mode or kGrammar for descriptive grammar mode)
+uint8 language_model
+uint8 kWord = 0
+uint8 kGrammar = 1
+
+# locale (set kJapanese or kEnglish)
+uint8 locale
+uint8 kJapanese = 0
+uint8 kEnglish = 1
+
+# dictionary name
+string name
+
+# terms in the dictionary (set only in case language_model is kWord)
+Term[] terms
+
+# directory path that contains the dictionary files (set only in case language_model is kGrammar)
+# the dictionary file name must be <dictionary-name>.dfa and <dictionary-name>.dict
+string dir_path
+
+---
+
+# True: success, False: failure
+bool result
+
+# error message
+string message

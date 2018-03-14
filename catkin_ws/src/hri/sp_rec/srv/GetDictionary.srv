@@ -1,0 +1,13 @@
+# dictionary name
+string name
+
+---
+
+# True: success, False: failure
+bool result
+
+# dictionary name
+string name
+
+# True: active, False: inactive
+bool active

@@ -4,11 +4,6 @@ bool JustinaHardware::is_node_set = false;
 //Publishers and subscribers for operating the head
 ros::Subscriber JustinaHardware::subHeadCurrentPose;
 ros::Publisher JustinaHardware::pubHeadGoalPose;
-//Publisers and subcribers for operating the takeshi arm
-ros::Subscriber JustinaHardware::subArmCurrentPose;
-ros::Subscriber JustinaHardware::subArmCurrentGripper;
-ros::Publisher  JustinaHardware::pubArmGoalPose;
-ros::Publisher  JustinaHardware::pubArmGoalGripper;
 //Publishers and subscribers for operating left arm
 ros::Subscriber JustinaHardware::subLeftArmCurrentGripper;
 ros::Subscriber JustinaHardware::subLeftArmCurrentPose;
@@ -38,9 +33,6 @@ ros::Subscriber JustinaHardware::subHeadBattery;
 //Variables for head position
 float JustinaHardware::headPan = 0;
 float JustinaHardware::headTilt = 0;
-//Variables for TAKESHI arm
-float JustinaHardware::armCurrentGripper;
-std::vector<float> JustinaHardware::armCurrentPose;
 //Variables for arms
 float JustinaHardware::leftArmCurrentGripper;
 float JustinaHardware::rightArmCurrentGripper;
@@ -74,43 +66,38 @@ bool JustinaHardware::setNodeHandle(ros::NodeHandle* nh)
 
     std::cout << "JustinaHardware.->Setting ros node..." << std::endl;
     //Publishers and subscribers for operating the head
-    subHeadCurrentPose       = nh->subscribe("/hardware/head/current_pose", 1, &JustinaHardware::callbackHeadCurrentPose);
-    pubHeadGoalPose          = nh->advertise<std_msgs::Float32MultiArray>("/hardware/head/goal_pose", 1);
-    //Publisers and subcribers for operating the takeshi arm
-    subArmCurrentPose        = nh->subscribe("/hardware/arm/current_pose", 1, &JustinaHardware::callbackArmCurrentPose);
-    subArmCurrentGripper     = nh->subscribe("/hardware/arm/current_gripper", 1, &JustinaHardware::callbackArmCurrentGripper);;
-    pubArmGoalPose           = nh->advertise<std_msgs::Float32MultiArray>("/hardware/arm/goal_pose", 1);
-    pubArmGoalGripper        = nh->advertise<std_msgs::Float32MultiArray>("/hardware/arm/goal_gripper", 1);;
+    subHeadCurrentPose = nh->subscribe("/hardware/head/current_pose", 1, &JustinaHardware::callbackHeadCurrentPose);
+    pubHeadGoalPose = nh->advertise<std_msgs::Float32MultiArray>("/hardware/head/goal_pose", 1);
     //Publishers and subscribers for operating left arm
     subLeftArmCurrentGripper = nh->subscribe("/hardware/left_arm/current_gripper", 1, &JustinaHardware::callbackLeftArmCurrentGripper);
-    subLeftArmCurrentPose    = nh->subscribe("/hardware/left_arm/current_pose", 1, &JustinaHardware::callbackLeftArmCurrentPose);
-    pubLeftArmGoalGripper    = nh->advertise<std_msgs::Float32>("/hardware/left_arm/goal_gripper", 1);
-    pubLeftArmGoalPose       = nh->advertise<std_msgs::Float32MultiArray>("/hardware/left_arm/goal_pose", 1);
+    subLeftArmCurrentPose = nh->subscribe("/hardware/left_arm/current_pose", 1, &JustinaHardware::callbackLeftArmCurrentPose);
+    pubLeftArmGoalGripper = nh->advertise<std_msgs::Float32>("/hardware/left_arm/goal_gripper", 1);
+    pubLeftArmGoalPose = nh->advertise<std_msgs::Float32MultiArray>("/hardware/left_arm/goal_pose", 1);
     pubLeftArmGoalTorqueGrip = nh->advertise<std_msgs::Float32>("/hardware/left_arm/torque_gripper", 1);
-    pubLeftArmGoalTorque     = nh->advertise<std_msgs::Float32MultiArray>("/hardware/left_arm/goal_torque", 1);
+    pubLeftArmGoalTorque = nh->advertise<std_msgs::Float32MultiArray>("/hardware/left_arm/goal_torque", 1);
     //Publishers and subscribers for operating right arm
     subRightArmCurrentGripper = nh->subscribe("/hardware/right_arm/current_gripper", 1, &JustinaHardware::callbackRightArmCurrentGripper);
-    subRightArmCurrentPose    = nh->subscribe("/hardware/right_arm/current_pose", 1, &JustinaHardware::callbackRightArmCurrentPose);
-    pubRightArmGoalGripper    = nh->advertise<std_msgs::Float32>("/hardware/right_arm/goal_gripper", 1);
-    pubRightArmGoalPose       = nh->advertise<std_msgs::Float32MultiArray>("/hardware/right_arm/goal_pose", 1);
+    subRightArmCurrentPose = nh->subscribe("/hardware/right_arm/current_pose", 1, &JustinaHardware::callbackRightArmCurrentPose);
+    pubRightArmGoalGripper = nh->advertise<std_msgs::Float32>("/hardware/right_arm/goal_gripper", 1);
+    pubRightArmGoalPose = nh->advertise<std_msgs::Float32MultiArray>("/hardware/right_arm/goal_pose", 1);
     pubRightArmGoalTorqueGrip = nh->advertise<std_msgs::Float32>("/hardware/right_arm/torque_gripper", 1);
-    pubRightArmGoalTorque     = nh->advertise<std_msgs::Float32MultiArray>("/hardware/right_arm/goal_torque", 1);
+    pubRightArmGoalTorque = nh->advertise<std_msgs::Float32MultiArray>("/hardware/right_arm/goal_torque", 1);
     //Subscribers for operating torso
-    subTorsoCurrentPose       = nh->subscribe<std_msgs::Float32MultiArray>("/hardware/torso/current_pose", 1, &JustinaHardware::callbackTorsoCurrentPose);
+    subTorsoCurrentPose = nh->subscribe<std_msgs::Float32MultiArray>("/hardware/torso/current_pose", 1, &JustinaHardware::callbackTorsoCurrentPose);
     //Publishers and subscribers for operating mobile base
-    pubBaseSpeeds             = nh->advertise<std_msgs::Float32MultiArray>("/hardware/mobile_base/speeds", 1);
-    pubBaseCmdVel             = nh->advertise<geometry_msgs::Twist>("/hardware/mobile_base/cmd_vel", 1);
+    pubBaseSpeeds = nh->advertise<std_msgs::Float32MultiArray>("/hardware/mobile_base/speeds", 1);
+    pubBaseCmdVel = nh->advertise<geometry_msgs::Twist>("/hardware/mobile_base/cmd_vel", 1);
     //Publishers and subscribers for checking robot state
-    pubRobotStop              = nh->advertise<std_msgs::Empty>("/hardware/robot_state/stop", 1);
-    subBaseBattery            = nh->subscribe("/hardware/robot_state/base_battery", 1, &JustinaHardware::callbackBaseBattery);
-    subLeftArmBattery         = nh->subscribe("/hardware/robot_state/left_arm_battery", 1, &JustinaHardware::callbackLeftArmBattery);
-    subRightArmBattery        = nh->subscribe("/hardware/robot_state/right_arm_battery", 1, &JustinaHardware::callbackRightArmBattery);
+    pubRobotStop = nh->advertise<std_msgs::Empty>("/hardware/robot_state/stop", 1);
+    subBaseBattery = nh->subscribe("/hardware/robot_state/base_battery", 1, &JustinaHardware::callbackBaseBattery);
+    subLeftArmBattery = nh->subscribe("/hardware/robot_state/left_arm_battery", 1, &JustinaHardware::callbackLeftArmBattery);
+    subRightArmBattery = nh->subscribe("/hardware/robot_state/right_arm_battery", 1, &JustinaHardware::callbackRightArmBattery);
     subHeadBattery = nh->subscribe("/hardware/robot_state/head_battery", 1, &JustinaHardware::callbackHeadBattery);
     //Topics and services for operating point_cloud_manager
-    cltRgbdKinect            = nh->serviceClient<point_cloud_manager::GetRgbd>("/hardware/point_cloud_man/get_rgbd_wrt_kinect");
-    cltRgbdRobot             = nh->serviceClient<point_cloud_manager::GetRgbd>("/hardware/point_cloud_man/get_rgbd_wrt_robot");
-    pubSaveCloud             = nh->advertise<std_msgs::String>("/hardware/point_cloud_man/save_cloud", 1);
-    pubStopSavingCloud       = nh->advertise<std_msgs::Empty>("/hardware/point_cloud_man/stop_saving_cloud", 1);
+    cltRgbdKinect = nh->serviceClient<point_cloud_manager::GetRgbd>("/hardware/point_cloud_man/get_rgbd_wrt_kinect");
+    cltRgbdRobot = nh->serviceClient<point_cloud_manager::GetRgbd>("/hardware/point_cloud_man/get_rgbd_wrt_robot");
+    pubSaveCloud = nh->advertise<std_msgs::String>("/hardware/point_cloud_man/save_cloud", 1);
+    pubStopSavingCloud = nh->advertise<std_msgs::Empty>("/hardware/point_cloud_man/stop_saving_cloud", 1);
 
     for(int i=0; i< 7; i++)
     {
@@ -147,42 +134,6 @@ void JustinaHardware::setHeadGoalPose(float pan, float tilt)
     msg.data.push_back(tilt);
     JustinaHardware::pubHeadGoalPose.publish(msg);
 }
-
-//Methods for operating TAKESHI arm
-float JustinaHardware::getArmCurrentGripper()
-{
-  return JustinaHardware::armCurrentGripper;
-}
-
-void JustinaHardware::setArmGoalGripper(float goalGripper)
-{
-  std_msgs::Float32 msg;
-  msg.data = goalGripper;
-  JustinaHardware::pubArmGoalGripper.publish(msg);
-}
-
-void JustinaHardware::getArmCurrentPose(std::vector<float>& currentPose)
-{
-  currentPose = JustinaHardware::armCurrentPose;
-}
-
-void JustinaHardware::setArmGoalPose(std::vector<float>& goalAngles)
-{
-  std_msgs::Float32MultiArray msg;
-  msg.data = goalAngles;
-  JustinaHardware::pubArmGoalPose.publish(msg);
-}
-
-void JustinaHardware::setArmGoalPose(float theta0, float theta1, float theta2, float theta3)
-{
-  std_msgs::Float32MultiArray msg;
-  msg.data.push_back(theta0);
-  msg.data.push_back(theta1);
-  msg.data.push_back(theta2);
-  msg.data.push_back(theta3);
-  JustinaHardware::pubArmGoalPose.publish(msg);
-}
-
 
 //Methods for operating the left arm
 float JustinaHardware::getLeftArmCurrentGripper()
@@ -431,23 +382,6 @@ void JustinaHardware::callbackHeadCurrentPose(const std_msgs::Float32MultiArray:
 {
     JustinaHardware::headPan = msg->data[0];
     JustinaHardware::headTilt = msg->data[1];
-}
-
-//Callbacks for TAKESHI arm operation
-void JustinaHardware::callbackArmCurrentGripper(const std_msgs::Float32::ConstPtr& msg)
-{
-    JustinaHardware::armCurrentGripper = msg->data;
-}
-
-void JustinaHardware::callbackArmCurrentPose(const std_msgs::Float32MultiArray::ConstPtr& msg)
-{
-    if(msg->data.size() != 4)
-    {
-        std::cout << "JustinaHardware.->Error in callback for left arm current pose: msg must have 4 values" << std::endl;
-        return;
-    }
-    for(int i=0; i<4; i++)
-        JustinaHardware::armCurrentPose[i] = msg->data[i];
 }
 
 //callbacks for left arm operation
