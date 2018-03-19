@@ -1,0 +1,8 @@
+prefix=/home/hsr_pumas/HSR_PUMAS/catkin_ws/install
+
+Name: path_calculator
+Description: Description of path_calculator
+Version: 0.0.0
+Cflags: 
+Libs: -L/home/hsr_pumas/HSR_PUMAS/catkin_ws/install/lib 
+Requires: 

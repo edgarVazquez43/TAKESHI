@@ -1,0 +1,15 @@
+# True: list dictionaries after retrieving data from Julius
+# False: list dictionaries from memory
+bool with_refresh
+
+---
+
+# True: success, False: failure
+bool result
+
+# active dictionary list
+string[] active_names
+
+# inactive dictionary list
+string[] inactive_names
+

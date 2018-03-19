@@ -1,0 +1,10 @@
+# dictionary names
+string[] names
+
+---
+
+# True: success, False: failure
+bool result
+
+# error message
+string message

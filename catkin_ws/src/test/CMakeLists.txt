@@ -11,6 +11,8 @@ find_package(catkin REQUIRED COMPONENTS
   justina_tools
   roscpp
   rospy
+  sp_rec
+  hri_msgs
 )
 
 ## System dependencies are found with CMake's conventions
@@ -105,7 +107,7 @@ find_package(catkin REQUIRED COMPONENTS
 catkin_package(
 #  INCLUDE_DIRS include
 #  LIBRARIES test
-#  CATKIN_DEPENDS justina_tools roscpp rospy
+   CATKIN_DEPENDS justina_tools roscpp rospy sp_rec_tools hri_msgs
 #  DEPENDS system_lib
 )
 
@@ -239,6 +241,20 @@ add_dependencies(dk_moveit_test
   ${${PROJECT_NAME}_EXPORTED_TARGETS}
   ${catkin_EXPORTED_TARGETS})  
 
+
+##### robozootest  #####                        
+add_executable(robozoo                                      
+  src/robozoo_test.cpp                                                
+  )
+
+target_link_libraries(robozoo sp_rec_tools                               
+  ${catkin_LIBRARIES}                                              
+  )
+
+add_dependencies(robozoo
+  ${${PROJECT_NAME}_EXPORTED_TARGETS}
+  ${catkin_EXPORTED_TARGETS})    
+
 ##### JustinaHardware (MoveIt) TEST  #####                        
 add_executable(JustinaHardware_test                                      
   src/JustinaHardware_test.cpp                                                
@@ -251,3 +267,32 @@ target_link_libraries(JustinaHardware_test
 add_dependencies(JustinaHardware_test
   ${${PROJECT_NAME}_EXPORTED_TARGETS}
   ${catkin_EXPORTED_TARGETS})  
+
+
+
+##### JustinaObjectReco TEST  #####                        
+add_executable(find_objects_test                                      
+  src/find_objects_test.cpp                                                
+  )
+
+target_link_libraries(find_objects_test                               
+  ${catkin_LIBRARIES}                                              
+  )
+
+add_dependencies(find_objects_test
+  ${${PROJECT_NAME}_EXPORTED_TARGETS}
+  ${catkin_EXPORTED_TARGETS})
+
+##### JustinaObjectReco TEST  #####                        
+add_executable(state_machine_1                                      
+  src/machine_state.cpp                                                
+  )
+
+target_link_libraries(state_machine_1                               
+  ${catkin_LIBRARIES}                                              
+  )
+
+add_dependencies(state_machine_1
+  ${${PROJECT_NAME}_EXPORTED_TARGETS}
+  ${catkin_EXPORTED_TARGETS})  
+

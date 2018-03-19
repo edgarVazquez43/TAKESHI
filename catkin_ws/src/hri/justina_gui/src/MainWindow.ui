@@ -2,6 +2,9 @@
 <ui version="4.0">
  <class>MainWindow</class>
  <widget class="QMainWindow" name="MainWindow">
+  <property name="enabled">
+   <bool>true</bool>
+  </property>
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -9,6 +12,9 @@
     <width>640</width>
     <height>529</height>
    </rect>
+  </property>
+  <property name="mouseTracking">
+   <bool>false</bool>
   </property>
   <property name="windowTitle">
    <string>JUSTINA GUI - By Marcosoft</string>
@@ -198,52 +204,26 @@ QRadioButton::indicator{
        </rect>
       </property>
       <property name="title">
-       <string>Arms and Manipulation</string>
+       <string>Arm and Manipulation</string>
       </property>
       <widget class="QLabel" name="laLblStatus">
        <property name="geometry">
         <rect>
          <x>10</x>
          <y>20</y>
-         <width>141</width>
+         <width>181</width>
          <height>17</height>
         </rect>
        </property>
        <property name="text">
-        <string>LA: Moving to pose ...</string>
-       </property>
-      </widget>
-      <widget class="QLabel" name="raLblStatus">
-       <property name="geometry">
-        <rect>
-         <x>165</x>
-         <y>20</y>
-         <width>141</width>
-         <height>17</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>RA: Moving to goal ...</string>
-       </property>
-      </widget>
-      <widget class="QLabel" name="raLblOpenGripper">
-       <property name="geometry">
-        <rect>
-         <x>165</x>
-         <y>160</y>
-         <width>41</width>
-         <height>17</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>Open:</string>
+        <string>Arm: Moving to pose</string>
        </property>
       </widget>
       <widget class="QLabel" name="laLblOpenGripper">
        <property name="geometry">
         <rect>
-         <x>10</x>
-         <y>160</y>
+         <x>170</x>
+         <y>90</y>
          <width>41</width>
          <height>17</height>
         </rect>
@@ -296,43 +276,11 @@ QRadioButton::indicator{
         <string notr="true">btnGrpLeftArm</string>
        </attribute>
       </widget>
-      <widget class="QRadioButton" name="raRbCartesian">
-       <property name="geometry">
-        <rect>
-         <x>210</x>
-         <y>40</y>
-         <width>51</width>
-         <height>22</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>xyzA</string>
-       </property>
-       <attribute name="buttonGroup">
-        <string notr="true">btnGrpRightArm</string>
-       </attribute>
-      </widget>
-      <widget class="QRadioButton" name="raRbArticular">
-       <property name="geometry">
-        <rect>
-         <x>170</x>
-         <y>40</y>
-         <width>41</width>
-         <height>22</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>art</string>
-       </property>
-       <attribute name="buttonGroup">
-        <string notr="true">btnGrpRightArm</string>
-       </attribute>
-      </widget>
       <widget class="QDoubleSpinBox" name="laTxtOpenGripper">
        <property name="geometry">
         <rect>
-         <x>54</x>
-         <y>160</y>
+         <x>214</x>
+         <y>90</y>
          <width>101</width>
          <height>25</height>
         </rect>
@@ -344,29 +292,7 @@ QRadioButton::indicator{
         <number>7</number>
        </property>
        <property name="maximum">
-        <double>1.570800000000000</double>
-       </property>
-       <property name="singleStep">
-        <double>0.100000000000000</double>
-       </property>
-      </widget>
-      <widget class="QDoubleSpinBox" name="raTxtOpenGripper">
-       <property name="geometry">
-        <rect>
-         <x>209</x>
-         <y>160</y>
-         <width>101</width>
-         <height>25</height>
-        </rect>
-       </property>
-       <property name="keyboardTracking">
-        <bool>false</bool>
-       </property>
-       <property name="decimals">
-        <number>7</number>
-       </property>
-       <property name="maximum">
-        <double>1.570800000000000</double>
+        <double>1.000000000000000</double>
        </property>
        <property name="singleStep">
         <double>0.100000000000000</double>
@@ -394,47 +320,11 @@ QRadioButton::indicator{
         <string notr="true">btnGrpLeftArm</string>
        </attribute>
       </widget>
-      <widget class="QRadioButton" name="raRbCartesianRobot">
-       <property name="geometry">
-        <rect>
-         <x>260</x>
-         <y>40</y>
-         <width>51</width>
-         <height>22</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>xyzR</string>
-       </property>
-       <attribute name="buttonGroup">
-        <string notr="true">btnGrpRightArm</string>
-       </attribute>
-      </widget>
       <widget class="QLineEdit" name="laTxtXYZ">
        <property name="geometry">
         <rect>
-         <x>10</x>
-         <y>80</y>
-         <width>141</width>
-         <height>25</height>
-        </rect>
-       </property>
-      </widget>
-      <widget class="QLineEdit" name="laTxtRPY">
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>105</y>
-         <width>141</width>
-         <height>25</height>
-        </rect>
-       </property>
-      </widget>
-      <widget class="QLineEdit" name="laTxtElbow">
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>130</y>
+         <x>20</x>
+         <y>90</y>
          <width>141</width>
          <height>25</height>
         </rect>
@@ -453,89 +343,11 @@ QRadioButton::indicator{
         <string>Angles:</string>
        </property>
       </widget>
-      <widget class="QLineEdit" name="raTxtElbow">
-       <property name="geometry">
-        <rect>
-         <x>170</x>
-         <y>130</y>
-         <width>141</width>
-         <height>25</height>
-        </rect>
-       </property>
-      </widget>
-      <widget class="QLineEdit" name="raTxtXYZ">
-       <property name="geometry">
-        <rect>
-         <x>170</x>
-         <y>80</y>
-         <width>141</width>
-         <height>25</height>
-        </rect>
-       </property>
-      </widget>
-      <widget class="QLabel" name="raLblGoalValues">
-       <property name="geometry">
-        <rect>
-         <x>170</x>
-         <y>65</y>
-         <width>121</width>
-         <height>17</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>Angles:</string>
-       </property>
-      </widget>
-      <widget class="QLineEdit" name="raTxtRPY">
-       <property name="geometry">
-        <rect>
-         <x>170</x>
-         <y>105</y>
-         <width>141</width>
-         <height>25</height>
-        </rect>
-       </property>
-      </widget>
-      <widget class="QLabel" name="raLblCloseGripper">
-       <property name="geometry">
-        <rect>
-         <x>165</x>
-         <y>184</y>
-         <width>41</width>
-         <height>17</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>Close:</string>
-       </property>
-      </widget>
       <widget class="QDoubleSpinBox" name="laTxtCloseGripper">
        <property name="geometry">
         <rect>
-         <x>54</x>
-         <y>184</y>
-         <width>101</width>
-         <height>25</height>
-        </rect>
-       </property>
-       <property name="keyboardTracking">
-        <bool>false</bool>
-       </property>
-       <property name="decimals">
-        <number>7</number>
-       </property>
-       <property name="maximum">
-        <double>1.570800000000000</double>
-       </property>
-       <property name="singleStep">
-        <double>0.100000000000000</double>
-       </property>
-      </widget>
-      <widget class="QDoubleSpinBox" name="raTxtCloseGripper">
-       <property name="geometry">
-        <rect>
-         <x>209</x>
-         <y>184</y>
+         <x>214</x>
+         <y>130</y>
          <width>101</width>
          <height>25</height>
         </rect>
@@ -556,14 +368,34 @@ QRadioButton::indicator{
       <widget class="QLabel" name="laLblCloseGripper">
        <property name="geometry">
         <rect>
-         <x>10</x>
-         <y>184</y>
+         <x>170</x>
+         <y>130</y>
          <width>41</width>
          <height>17</height>
         </rect>
        </property>
        <property name="text">
         <string>Close:</string>
+       </property>
+      </widget>
+      <widget class="QLineEdit" name="laTxtRPY">
+       <property name="geometry">
+        <rect>
+         <x>20</x>
+         <y>130</y>
+         <width>141</width>
+         <height>25</height>
+        </rect>
+       </property>
+      </widget>
+      <widget class="QLineEdit" name="laTxtElbow">
+       <property name="geometry">
+        <rect>
+         <x>20</x>
+         <y>170</y>
+         <width>141</width>
+         <height>25</height>
+        </rect>
        </property>
       </widget>
      </widget>
@@ -985,38 +817,12 @@ QRadioButton::indicator{
         <rect>
          <x>10</x>
          <y>80</y>
-         <width>91</width>
+         <width>261</width>
          <height>17</height>
         </rect>
        </property>
        <property name="text">
-        <string>Spine: 0.314</string>
-       </property>
-      </widget>
-      <widget class="QLabel" name="trsLlbWaist">
-       <property name="geometry">
-        <rect>
-         <x>100</x>
-         <y>80</y>
-         <width>101</width>
-         <height>17</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>Waist: 0.1592</string>
-       </property>
-      </widget>
-      <widget class="QLabel" name="label_2">
-       <property name="geometry">
-        <rect>
-         <x>200</x>
-         <y>80</y>
-         <width>111</width>
-         <height>17</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>Shoulds: 0.6535</string>
+        <string>Spine: 0.0</string>
        </property>
       </widget>
       <widget class="QDoubleSpinBox" name="trsTxtSpine">
@@ -1032,10 +838,10 @@ QRadioButton::indicator{
         <number>4</number>
        </property>
        <property name="minimum">
-        <double>-0.500000000000000</double>
+        <double>0.000000000000000</double>
        </property>
        <property name="maximum">
-        <double>0.500000000000000</double>
+        <double>0.700000000000000</double>
        </property>
        <property name="singleStep">
         <double>0.050000000000000</double>
@@ -1054,56 +860,12 @@ QRadioButton::indicator{
         <string>Loc:</string>
        </property>
       </widget>
-      <widget class="QDoubleSpinBox" name="trsTxtWaist">
-       <property name="geometry">
-        <rect>
-         <x>110</x>
-         <y>50</y>
-         <width>101</width>
-         <height>25</height>
-        </rect>
-       </property>
-       <property name="decimals">
-        <number>4</number>
-       </property>
-       <property name="minimum">
-        <double>-1.570800000000000</double>
-       </property>
-       <property name="maximum">
-        <double>1.570800000000000</double>
-       </property>
-       <property name="singleStep">
-        <double>0.100000000000000</double>
-       </property>
-      </widget>
-      <widget class="QDoubleSpinBox" name="trsTxtShoulders">
-       <property name="geometry">
-        <rect>
-         <x>210</x>
-         <y>50</y>
-         <width>101</width>
-         <height>25</height>
-        </rect>
-       </property>
-       <property name="decimals">
-        <number>4</number>
-       </property>
-       <property name="minimum">
-        <double>-0.500000000000000</double>
-       </property>
-       <property name="maximum">
-        <double>0.500000000000000</double>
-       </property>
-       <property name="singleStep">
-        <double>0.100000000000000</double>
-       </property>
-      </widget>
       <widget class="QLineEdit" name="trsTxtLoc">
        <property name="geometry">
         <rect>
          <x>40</x>
          <y>20</y>
-         <width>51</width>
+         <width>81</width>
          <height>25</height>
         </rect>
        </property>
@@ -1111,9 +873,9 @@ QRadioButton::indicator{
       <widget class="QLabel" name="trsLblStatus">
        <property name="geometry">
         <rect>
-         <x>90</x>
-         <y>25</y>
-         <width>131</width>
+         <x>130</x>
+         <y>60</y>
+         <width>161</width>
          <height>17</height>
         </rect>
        </property>
@@ -1124,7 +886,7 @@ QRadioButton::indicator{
       <widget class="QPushButton" name="pushButtonUpTorso">
        <property name="geometry">
         <rect>
-         <x>230</x>
+         <x>140</x>
          <y>20</y>
          <width>31</width>
          <height>22</height>
@@ -1137,7 +899,7 @@ QRadioButton::indicator{
       <widget class="QPushButton" name="pushButtonDownTorso">
        <property name="geometry">
         <rect>
-         <x>270</x>
+         <x>180</x>
          <y>20</y>
          <width>41</width>
          <height>22</height>
@@ -1636,9 +1398,9 @@ Size: 0.00 0.00 0.00</string>
      <widget class="QDoubleSpinBox" name="laTxtAngles3">
       <property name="geometry">
        <rect>
-        <x>70</x>
+        <x>90</x>
         <y>100</y>
-        <width>105</width>
+        <width>101</width>
         <height>25</height>
        </rect>
       </property>
@@ -1656,57 +1418,6 @@ Size: 0.00 0.00 0.00</string>
       </property>
       <property name="singleStep">
        <double>0.100000000000000</double>
-      </property>
-     </widget>
-     <widget class="QLabel" name="raLblAngles3">
-      <property name="geometry">
-       <rect>
-        <x>185</x>
-        <y>100</y>
-        <width>41</width>
-        <height>17</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Th 3:</string>
-      </property>
-     </widget>
-     <widget class="QDoubleSpinBox" name="laTxtAngles6">
-      <property name="geometry">
-       <rect>
-        <x>70</x>
-        <y>175</y>
-        <width>105</width>
-        <height>25</height>
-       </rect>
-      </property>
-      <property name="keyboardTracking">
-       <bool>false</bool>
-      </property>
-      <property name="decimals">
-       <number>7</number>
-      </property>
-      <property name="minimum">
-       <double>-3.141600000000000</double>
-      </property>
-      <property name="maximum">
-       <double>3.141600000000000</double>
-      </property>
-      <property name="singleStep">
-       <double>0.100000000000000</double>
-      </property>
-     </widget>
-     <widget class="QLabel" name="raLblAngles0">
-      <property name="geometry">
-       <rect>
-        <x>185</x>
-        <y>25</y>
-        <width>41</width>
-        <height>17</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Th 0:</string>
       </property>
      </widget>
      <widget class="QLabel" name="laLblAngles3">
@@ -1735,32 +1446,6 @@ Size: 0.00 0.00 0.00</string>
        <string>Th 1:</string>
       </property>
      </widget>
-     <widget class="QLabel" name="laLblAngles5">
-      <property name="geometry">
-       <rect>
-        <x>30</x>
-        <y>150</y>
-        <width>41</width>
-        <height>17</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Th 5:</string>
-      </property>
-     </widget>
-     <widget class="QLabel" name="laLblAngles6">
-      <property name="geometry">
-       <rect>
-        <x>30</x>
-        <y>175</y>
-        <width>41</width>
-        <height>17</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Th 6:</string>
-      </property>
-     </widget>
      <widget class="QLabel" name="laLblAngles0">
       <property name="geometry">
        <rect>
@@ -1772,120 +1457,6 @@ Size: 0.00 0.00 0.00</string>
       </property>
       <property name="text">
        <string>Th 0:</string>
-      </property>
-     </widget>
-     <widget class="QLabel" name="raLblAngles2">
-      <property name="geometry">
-       <rect>
-        <x>185</x>
-        <y>75</y>
-        <width>41</width>
-        <height>17</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Th 2:</string>
-      </property>
-     </widget>
-     <widget class="QDoubleSpinBox" name="laTxtAngles5">
-      <property name="geometry">
-       <rect>
-        <x>70</x>
-        <y>150</y>
-        <width>105</width>
-        <height>25</height>
-       </rect>
-      </property>
-      <property name="keyboardTracking">
-       <bool>false</bool>
-      </property>
-      <property name="decimals">
-       <number>7</number>
-      </property>
-      <property name="minimum">
-       <double>-3.141600000000000</double>
-      </property>
-      <property name="maximum">
-       <double>3.141600000000000</double>
-      </property>
-      <property name="singleStep">
-       <double>0.100000000000000</double>
-      </property>
-     </widget>
-     <widget class="QDoubleSpinBox" name="raTxtAngles3">
-      <property name="geometry">
-       <rect>
-        <x>225</x>
-        <y>100</y>
-        <width>105</width>
-        <height>25</height>
-       </rect>
-      </property>
-      <property name="keyboardTracking">
-       <bool>false</bool>
-      </property>
-      <property name="decimals">
-       <number>7</number>
-      </property>
-      <property name="minimum">
-       <double>-3.141600000000000</double>
-      </property>
-      <property name="maximum">
-       <double>3.141600000000000</double>
-      </property>
-      <property name="singleStep">
-       <double>0.100000000000000</double>
-      </property>
-     </widget>
-     <widget class="QLabel" name="laLblAngles4">
-      <property name="geometry">
-       <rect>
-        <x>30</x>
-        <y>125</y>
-        <width>41</width>
-        <height>17</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Th 4:</string>
-      </property>
-     </widget>
-     <widget class="QLabel" name="raLblAngles4">
-      <property name="geometry">
-       <rect>
-        <x>185</x>
-        <y>125</y>
-        <width>41</width>
-        <height>17</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Th 4:</string>
-      </property>
-     </widget>
-     <widget class="QDoubleSpinBox" name="raTxtAngles0">
-      <property name="geometry">
-       <rect>
-        <x>225</x>
-        <y>25</y>
-        <width>105</width>
-        <height>25</height>
-       </rect>
-      </property>
-      <property name="keyboardTracking">
-       <bool>false</bool>
-      </property>
-      <property name="decimals">
-       <number>7</number>
-      </property>
-      <property name="minimum">
-       <double>-3.141600000000000</double>
-      </property>
-      <property name="maximum">
-       <double>3.141600000000000</double>
-      </property>
-      <property name="singleStep">
-       <double>0.100000000000000</double>
       </property>
      </widget>
      <widget class="QLabel" name="laLblAngles2">
@@ -1901,113 +1472,12 @@ Size: 0.00 0.00 0.00</string>
        <string>Th 2:</string>
       </property>
      </widget>
-     <widget class="QLabel" name="raLblAngles5">
-      <property name="geometry">
-       <rect>
-        <x>185</x>
-        <y>150</y>
-        <width>41</width>
-        <height>17</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Th 5:</string>
-      </property>
-     </widget>
-     <widget class="QDoubleSpinBox" name="laTxtAngles2">
-      <property name="geometry">
-       <rect>
-        <x>70</x>
-        <y>75</y>
-        <width>105</width>
-        <height>25</height>
-       </rect>
-      </property>
-      <property name="keyboardTracking">
-       <bool>false</bool>
-      </property>
-      <property name="decimals">
-       <number>7</number>
-      </property>
-      <property name="minimum">
-       <double>-3.141600000000000</double>
-      </property>
-      <property name="maximum">
-       <double>3.141600000000000</double>
-      </property>
-      <property name="singleStep">
-       <double>0.100000000000000</double>
-      </property>
-     </widget>
-     <widget class="QLabel" name="raLblAngles1">
-      <property name="geometry">
-       <rect>
-        <x>185</x>
-        <y>50</y>
-        <width>41</width>
-        <height>17</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Th 1:</string>
-      </property>
-     </widget>
-     <widget class="QDoubleSpinBox" name="raTxtAngles4">
-      <property name="geometry">
-       <rect>
-        <x>225</x>
-        <y>125</y>
-        <width>105</width>
-        <height>25</height>
-       </rect>
-      </property>
-      <property name="keyboardTracking">
-       <bool>false</bool>
-      </property>
-      <property name="decimals">
-       <number>7</number>
-      </property>
-      <property name="minimum">
-       <double>-3.141600000000000</double>
-      </property>
-      <property name="maximum">
-       <double>3.141600000000000</double>
-      </property>
-      <property name="singleStep">
-       <double>0.100000000000000</double>
-      </property>
-     </widget>
-     <widget class="QDoubleSpinBox" name="raTxtAngles6">
-      <property name="geometry">
-       <rect>
-        <x>225</x>
-        <y>175</y>
-        <width>105</width>
-        <height>25</height>
-       </rect>
-      </property>
-      <property name="keyboardTracking">
-       <bool>false</bool>
-      </property>
-      <property name="decimals">
-       <number>7</number>
-      </property>
-      <property name="minimum">
-       <double>-3.141600000000000</double>
-      </property>
-      <property name="maximum">
-       <double>3.141600000000000</double>
-      </property>
-      <property name="singleStep">
-       <double>0.100000000000000</double>
-      </property>
-     </widget>
      <widget class="QDoubleSpinBox" name="laTxtAngles1">
       <property name="geometry">
        <rect>
-        <x>70</x>
-        <y>50</y>
-        <width>105</width>
+        <x>90</x>
+        <y>40</y>
+        <width>101</width>
         <height>25</height>
        </rect>
       </property>
@@ -2030,39 +1500,17 @@ Size: 0.00 0.00 0.00</string>
        <double>0.000000000000000</double>
       </property>
      </widget>
-     <widget class="QDoubleSpinBox" name="raTxtAngles1">
-      <property name="geometry">
-       <rect>
-        <x>225</x>
-        <y>50</y>
-        <width>105</width>
-        <height>25</height>
-       </rect>
-      </property>
-      <property name="keyboardTracking">
-       <bool>false</bool>
-      </property>
-      <property name="decimals">
-       <number>7</number>
-      </property>
-      <property name="minimum">
-       <double>-3.141600000000000</double>
-      </property>
-      <property name="maximum">
-       <double>3.141600000000000</double>
-      </property>
-      <property name="singleStep">
-       <double>0.100000000000000</double>
-      </property>
-     </widget>
      <widget class="QDoubleSpinBox" name="laTxtAngles0">
       <property name="geometry">
        <rect>
-        <x>70</x>
-        <y>25</y>
-        <width>105</width>
+        <x>90</x>
+        <y>10</y>
+        <width>101</width>
         <height>25</height>
        </rect>
+      </property>
+      <property name="cursor">
+       <cursorShape>ArrowCursor</cursorShape>
       </property>
       <property name="keyboardTracking">
        <bool>false</bool>
@@ -2071,98 +1519,32 @@ Size: 0.00 0.00 0.00</string>
        <number>7</number>
       </property>
       <property name="minimum">
-       <double>-3.141600000000000</double>
+       <double>-3.141592000000000</double>
       </property>
       <property name="maximum">
-       <double>3.141600000000000</double>
+       <double>0.000000000000000</double>
       </property>
       <property name="singleStep">
        <double>0.100000000000000</double>
       </property>
      </widget>
-     <widget class="QDoubleSpinBox" name="raTxtAngles5">
+     <widget class="QDoubleSpinBox" name="laTxtAngles2">
       <property name="geometry">
        <rect>
-        <x>225</x>
-        <y>150</y>
-        <width>105</width>
-        <height>25</height>
+        <x>90</x>
+        <y>70</y>
+        <width>101</width>
+        <height>26</height>
        </rect>
-      </property>
-      <property name="keyboardTracking">
-       <bool>false</bool>
       </property>
       <property name="decimals">
        <number>7</number>
       </property>
       <property name="minimum">
-       <double>-3.141600000000000</double>
+       <double>-3.141592000000000</double>
       </property>
       <property name="maximum">
-       <double>3.141600000000000</double>
-      </property>
-      <property name="singleStep">
-       <double>0.100000000000000</double>
-      </property>
-     </widget>
-     <widget class="QDoubleSpinBox" name="laTxtAngles4">
-      <property name="geometry">
-       <rect>
-        <x>70</x>
-        <y>125</y>
-        <width>105</width>
-        <height>25</height>
-       </rect>
-      </property>
-      <property name="keyboardTracking">
-       <bool>false</bool>
-      </property>
-      <property name="decimals">
-       <number>7</number>
-      </property>
-      <property name="minimum">
-       <double>-3.141600000000000</double>
-      </property>
-      <property name="maximum">
-       <double>3.141600000000000</double>
-      </property>
-      <property name="singleStep">
-       <double>0.100000000000000</double>
-      </property>
-     </widget>
-     <widget class="QLabel" name="raLblAngles6">
-      <property name="geometry">
-       <rect>
-        <x>185</x>
-        <y>175</y>
-        <width>41</width>
-        <height>17</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Th 6:</string>
-      </property>
-     </widget>
-     <widget class="QDoubleSpinBox" name="raTxtAngles2">
-      <property name="geometry">
-       <rect>
-        <x>225</x>
-        <y>75</y>
-        <width>105</width>
-        <height>25</height>
-       </rect>
-      </property>
-      <property name="keyboardTracking">
-       <bool>false</bool>
-      </property>
-      <property name="decimals">
-       <number>7</number>
-      </property>
-      <property name="minimum">
-       <double>-3.141600000000000</double>
-      </property>
-      <property name="maximum">
-       <double>3.141600000000000</double>
+       <double>3.141592000000000</double>
       </property>
       <property name="singleStep">
        <double>0.100000000000000</double>
@@ -3008,7 +2390,6 @@ Size: 0.00 0.00 0.00</string>
  <resources/>
  <connections/>
  <buttongroups>
-  <buttongroup name="btnGrpRightArm"/>
   <buttongroup name="btnGrpLeftArm"/>
  </buttongroups>
 </ui>

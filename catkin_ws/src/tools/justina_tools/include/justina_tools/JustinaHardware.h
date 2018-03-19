@@ -23,20 +23,13 @@ private:
     //Publishers and subscribers for operating the head
     static ros::Subscriber subHeadCurrentPose;
     static ros::Publisher pubHeadGoalPose;
-
-    //Publisers and subcribers for operating the takeshi arm
-    static ros::Subscriber subArmCurrentPose;
-    static ros::Subscriber subArmCurrentGripper;
-    static ros::Publisher  pubArmGoalPose;
-    static ros::Publisher  pubArmGoalGripper;
-    
     //Publishers and subscribers for operating left arm
     static ros::Subscriber subLeftArmCurrentGripper;
     static ros::Subscriber subLeftArmCurrentPose;
-    static ros::Publisher  pubLeftArmGoalGripper;
-    static ros::Publisher  pubLeftArmGoalPose;
-    static ros::Publisher  pubLeftArmGoalTorqueGrip;
-    static ros::Publisher  pubLeftArmGoalTorque;
+    static ros::Publisher pubLeftArmGoalGripper;
+    static ros::Publisher pubLeftArmGoalPose;
+    static ros::Publisher pubLeftArmGoalTorqueGrip;
+    static ros::Publisher pubLeftArmGoalTorque;
     //Publishers and subscribers for operating right arm
     static ros::Subscriber subRightArmCurrentGripper;
     static ros::Subscriber subRightArmCurrentPose;
@@ -64,9 +57,6 @@ private:
     //Variables for head position
     static float headPan;
     static float headTilt;
-    //Variables for takeshi arm
-    static float armCurrentGripper;
-    static std::vector<float> armCurrentPose;
     //Variables for arms
     static float leftArmCurrentGripper;
     static float rightArmCurrentGripper;
@@ -93,12 +83,6 @@ public:
     static float getHeadCurrentPan();
     static float getHeadCurrentTilt();
     static void setHeadGoalPose(float pan, float tilt);
-    //Methods for operating the takeshi arm
-    static float getArmCurrentGripper();
-    static void setArmGoalGripper(float goalGripper);
-    static void getArmCurrentPose(std::vector<float>& currentPose);
-    static void setArmGoalPose(std::vector<float>& goalAngles);
-    static void setArmGoalPose(float theta0, float theta1, float theta2, float theta3);
     //Methods for operating the left arm
     static float getLeftArmCurrentGripper();
     static void getLeftArmCurrentPose(std::vector<float>& currentPose);
@@ -140,9 +124,6 @@ public:
     
     //callbacks for head operation
     static void callbackHeadCurrentPose(const std_msgs::Float32MultiArray::ConstPtr& msg);
-    //callbacks for TAKESHI arm operation
-    static void callbackArmCurrentGripper(const std_msgs::Float32::ConstPtr& msg);
-    static void callbackArmCurrentPose(const std_msgs::Float32MultiArray::ConstPtr& msg);
     //callbacks for left arm operation
     static void callbackLeftArmCurrentGripper(const std_msgs::Float32::ConstPtr& msg);
     static void callbackLeftArmCurrentPose(const std_msgs::Float32MultiArray::ConstPtr& msg);

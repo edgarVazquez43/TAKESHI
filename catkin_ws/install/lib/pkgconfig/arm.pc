@@ -1,0 +1,8 @@
+prefix=/home/hsr_pumas/HSR_PUMAS/catkin_ws/install
+
+Name: arm
+Description: Description of arm
+Version: 0.0.0
+Cflags: 
+Libs: -L/home/hsr_pumas/HSR_PUMAS/catkin_ws/install/lib 
+Requires: 

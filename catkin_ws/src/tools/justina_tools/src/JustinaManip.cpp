@@ -3,6 +3,7 @@
 bool JustinaManip::is_node_set = false;
 tf::TransformListener * JustinaManip::tf_listener;
 ros::ServiceClient JustinaManip::cltIKFloatArray;
+ros::ServiceClient JustinaManip::cltIKFloatArray_mvIt;
 ros::ServiceClient JustinaManip::cltIKPath;
 ros::ServiceClient JustinaManip::cltIKPose;
 ros::ServiceClient JustinaManip::cltDK;
@@ -17,6 +18,9 @@ ros::Subscriber JustinaManip::subObjOnLeftHand;
 ros::Subscriber JustinaManip::subLaCurrentPos;
 ros::Subscriber JustinaManip::subRaCurrentPos;
 ros::Subscriber JustinaManip::subTorsoCurrentPos;
+// Takeshi subscriber arm
+ros::Subscriber JustinaManip::subArmCurrentPos;
+ros::Subscriber JustinaManip::subArmGoalReached;
 //Publishers for the commands executed by this node
 ros::Publisher JustinaManip::pubLaGoToAngles;
 ros::Publisher JustinaManip::pubRaGoToAngles;
@@ -47,6 +51,10 @@ ros::Publisher JustinaManip::pubLaOpenGripper;
 ros::Publisher JustinaManip::pubRaOpenGripper;
 ros::Publisher JustinaManip::pubTrGoToPose;
 ros::Publisher JustinaManip::pubTrGoToRelPose;
+//Publishers for takeshi hardware ARM
+ros::Publisher JustinaManip::pubArmGoToAngles;
+ros::Publisher JustinaManip::pubArmOpenGripper;
+ros::Publisher JustinaManip::pubArmCloseGripper;
 //For moving up and down torso
 ros::Publisher JustinaManip::pubTorsoUp;
 ros::Publisher JustinaManip::pubTorsoDown;
@@ -58,10 +66,13 @@ bool JustinaManip::_isTrGoalReached = false;
 bool JustinaManip::_isObjOnRightHand = false;
 bool JustinaManip::_isObjOnLeftHand = false;
 bool JustinaManip::_stopReceived = false;
+bool JustinaManip::_isArmGoalReached = false;
 
 std::vector<float> JustinaManip::_laCurrentPos;
 std::vector<float> JustinaManip::_raCurrentPos;
 std::vector<float> JustinaManip::_torsoCurrentPos;
+std::vector<float> JustinaManip::_armCurrentPos;
+
 
 bool JustinaManip::setNodeHandle(ros::NodeHandle* nh)
 {
@@ -71,6 +82,7 @@ bool JustinaManip::setNodeHandle(ros::NodeHandle* nh)
         return false;
     std::cout << "JustinaManip.->Setting ros node..." << std::endl;
     JustinaManip::cltIKFloatArray = nh->serviceClient<manip_msgs::InverseKinematicsFloatArray>("/manipulation/ik_geometric/ik_float_array");
+    JustinaManip::cltIKFloatArray_mvIt = nh->serviceClient<manip_msgs::InverseKinematicsFloatArray>("/manipulation/ik_moveit/gripper_inverse_kinematics"); // TAKESHI
     JustinaManip::cltIKPath = nh->serviceClient<manip_msgs::InverseKinematicsPath>("/manipulation/ik_geometric/ik_path");
     JustinaManip::cltIKPose = nh->serviceClient<manip_msgs::InverseKinematicsPose>("/manipulation/ik_geometric/ik_pose");
     JustinaManip::cltDK = nh->serviceClient<manip_msgs::DirectKinematics>("/manipulation/ik_geometric/direct_kinematics");
@@ -83,7 +95,12 @@ bool JustinaManip::setNodeHandle(ros::NodeHandle* nh)
     JustinaManip::subObjOnLeftHand = nh->subscribe("/hardware/left_arm/object_on_hand", 1, &JustinaManip::callbackObjOnLeftHand);
     JustinaManip::subLaCurrentPos = nh->subscribe("/hardware/left_arm/current_pose", 1, &JustinaManip::callbackLaCurrentPos);
     JustinaManip::subRaCurrentPos = nh->subscribe("/hardware/right_arm/current_pose", 1, &JustinaManip::callbackRaCurrentPos);
+    
     JustinaManip::subTorsoCurrentPos = nh->subscribe("/hardware/torso/current_pose", 1, &JustinaManip::callbackTorsoCurrentPos);
+    JustinaManip::subArmCurrentPos = nh->subscribe("/hardware/arm/current_pose", 1, &JustinaManip::callbackArmCurrentPos);
+    JustinaManip::subArmGoalReached = nh->subscribe("/manipulation/arm_goal_reached", 1, &JustinaManip::callbackArmGoalReached);
+
+    
 
     JustinaManip::subStopRobot = nh->subscribe("/hardware/robot_state/stop", 1, &JustinaManip::callbackRobotStop);
     //Publishers for the commands executed by this node
@@ -117,10 +134,12 @@ bool JustinaManip::setNodeHandle(ros::NodeHandle* nh)
     JustinaManip::pubTrGoToPose = nh->advertise<std_msgs::Float32MultiArray>("/hardware/torso/goal_pose", 1);
     JustinaManip::pubTrGoToRelPose = nh->advertise<std_msgs::Float32MultiArray>("/hardware/torso/goal_rel_pose", 1);
 
+    JustinaManip::pubArmGoToAngles   = nh->advertise<std_msgs::Float32MultiArray>("/hardware/arm/goal_pose", 1);
+    JustinaManip::pubArmOpenGripper  = nh->advertise<std_msgs::Float32>("/hardware/arm/goal_gripper", 1);
+    JustinaManip::pubArmCloseGripper = nh->advertise<std_msgs::Float32>("/hardware/arm/close_gripper", 1);
+
     JustinaManip::is_node_set = true;
     JustinaManip::tf_listener = new tf::TransformListener();
-    // JustinaManip::tf_listener->waitForTransform("base_link", "right_arm_grip_center", ros::Time(0), ros::Duration(10.0));
-    // JustinaManip::tf_listener->waitForTransform("base_link", "left_arm_grip_center", ros::Time(0), ros::Duration(10.0));
 
     //For moving up and down torso
     JustinaManip::pubTorsoUp   = nh->advertise<std_msgs::String>("/hardware/torso/torso_up", 1);
@@ -212,6 +231,21 @@ bool JustinaManip::waitForTorsoGoalReached(int timeOut_ms)
     return JustinaManip::_isTrGoalReached;
 }
 
+bool JustinaManip::waitForArmGoalReached(int timeOut_ms)
+{
+    int attempts = timeOut_ms / 100;
+    ros::Rate loop(10);
+    JustinaManip::_stopReceived = false;
+    JustinaManip::_isArmGoalReached = false;
+    while(ros::ok() && !JustinaManip::_isArmGoalReached && !JustinaManip::_stopReceived && attempts-- >= 0)
+    {
+        ros::spinOnce();
+        loop.sleep();
+    }
+    JustinaManip::_stopReceived = false; //This flag is set True in the subscriber callback
+    return JustinaManip::_isArmGoalReached;
+}
+
 bool JustinaManip::inverseKinematics(std::vector<float>& cartesian, std::vector<float>& articular)
 {
     std::cout << "JustinaManip.->Calling service for inverse kinematics..." << std::endl;
@@ -219,6 +253,18 @@ bool JustinaManip::inverseKinematics(std::vector<float>& cartesian, std::vector<
     srv.request.cartesian_pose.data = cartesian;
     bool success = JustinaManip::cltIKFloatArray.call(srv);
     articular = srv.response.articular_pose.data;
+    return success;
+}
+
+bool JustinaManip::inverseKinematics(std::vector<float>& cartesian, std::vector<float>& articular, float& torso, geometry_msgs::Pose2D& base_correction)
+{
+    std::cout << "JustinaManip.->Calling service for inverse kinematics..." << std::endl;
+    manip_msgs::InverseKinematicsFloatArray srv;
+    srv.request.cartesian_pose.data = cartesian;
+    bool success = JustinaManip::cltIKFloatArray_mvIt.call(srv);
+    articular       = srv.response.articular_pose.data;
+    base_correction = srv.response.base_correction;
+    torso           = srv.response.torso_pose.data;
     return success;
 }
 
@@ -247,9 +293,7 @@ bool JustinaManip::inverseKinematics(float x, float y, float z, std::string fram
     return false;
 }
 
-// bool JustinaManip::inverseKinematics(geometry_msgs::Pose& cartesian, std::vector<float>& articular);
-// bool JustinaManip::inverseKinematics(nav_msgs::Path& cartesianPath, std::vector<std::vector<float> >& articularPath);
-// bool JustinaManip::inverseKinematics(nav_msgs::Path& cartesianPath, std::vector<Float32MultiArray>& articularPath);
+
 bool JustinaManip::directKinematics(std::vector<float>& cartesian, std::vector<float>& articular)
 {
     std::cout << "JustinaManip.->Calling service for direct kinematics..." << std::endl;
@@ -901,6 +945,50 @@ void JustinaManip::getLeftHandPosition(float &x, float &y, float &z){
 	std::cout << "JustinaManip.->left_arm_griper_center.z:" << z << std::endl;
 }
 
+
+void JustinaManip::openGripper(float pos)
+{
+  std_msgs::Float32 msg;
+  msg.data = pos;
+  //std::cout << "open gripper:  " << msg.data << std::endl;
+  JustinaManip::pubArmOpenGripper.publish(msg);
+  return;
+}
+
+void JustinaManip::closeGripper(float torque)
+{
+  std_msgs::Float32 msg;
+  msg.data = torque;
+  JustinaManip::pubArmCloseGripper.publish(msg);
+  return;
+}
+
+void JustinaManip::startArmGoto(std::string location)
+{
+  
+  return;
+}
+
+void JustinaManip::startArmGoToArticular(std::vector<float> articular)
+{
+  std_msgs::Float32MultiArray msg;
+  msg.data = articular;
+  JustinaManip::pubArmGoToAngles.publish(msg);
+  return;
+}
+
+bool JustinaManip::armGoTo(std::string location, int timeOut_ms)
+{
+  return true;
+}
+
+bool JustinaManip::armGoToArticular(std::vector<float> articular, int timeOut_ms)
+{
+  JustinaManip::startArmGoToArticular(articular);
+  return JustinaManip::waitForArmGoalReached(timeOut_ms);
+}
+
+
 //
 //Callbacks for catching goal-reached signals
 //
@@ -956,10 +1044,27 @@ void JustinaManip::callbackRaCurrentPos(const std_msgs::Float32MultiArray::Const
 
 void JustinaManip::callbackTorsoCurrentPos(const std_msgs::Float32MultiArray::ConstPtr& msg)
 {
-    //std::cout << "Torso pose received:  ";
-    JustinaManip::_torsoCurrentPos = msg->data;
-    //std::cout << JustinaManip::_torsoCurrentPos << std::endl;
+  //std::cout << "Torso pose received:  ";
+  JustinaManip::_torsoCurrentPos = msg->data;
+  //std::cout << JustinaManip::_torsoCurrentPos[0] << std::endl;
 }
+
+void JustinaManip::callbackArmCurrentPos(const std_msgs::Float32MultiArray::ConstPtr& msg)
+{
+  // std::cout << "Takeshi-Arm pose received:  ";
+  JustinaManip::_armCurrentPos = msg->data;
+  // std::cout << JustinaManip::_armCurrentPos[0] << std::endl;
+  // std::cout << JustinaManip::_armCurrentPos[1] << std::endl;
+  // std::cout << JustinaManip::_armCurrentPos[2] << std::endl;
+  // std::cout << JustinaManip::_armCurrentPos[3] << std::endl;
+}
+
+void JustinaManip::callbackArmGoalReached(const std_msgs::Bool::ConstPtr& msg)
+{
+  //std::cout << "Torso pose received:  ";
+  //std::cout << JustinaManip::_torsoCurrentPos << std::endl;
+}
+
 
 void JustinaManip::getLaCurrentPos(std::vector<float>& pos)
 {
@@ -976,6 +1081,7 @@ void JustinaManip::getRaCurrentPos(std::vector<float>& pos)
 void JustinaManip::getTorsoCurrentPos(std::vector<float>& pos)
 {
     pos = JustinaManip::_torsoCurrentPos;
+    //std::cout << "JustinaManip->torso current pos:  " << JustinaManip::_torsoCurrentPos[0] << std::endl;
 }
 
 bool JustinaManip::isLaInPredefPos(std::string id)

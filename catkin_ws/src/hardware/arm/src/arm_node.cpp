@@ -1,10 +1,14 @@
 /// @brief Copyright (C) 2016 Toyota Motor Corporation
+#include <ros/ros.h>
+#include <std_msgs/Float32.h>
+#include <std_msgs/Float32MultiArray.h>
+#include <trajectory_msgs/JointTrajectory.h>
 #include <controller_manager_msgs/ControllerState.h>
 #include <controller_manager_msgs/ListControllers.h>
+#include <tmc_control_msgs/GripperApplyEffortGoal.h>
+#include <tmc_control_msgs/GripperApplyEffortAction.h>
 #include <control_msgs/JointTrajectoryControllerState.h>
-#include <trajectory_msgs/JointTrajectory.h>
-#include <std_msgs/Float32MultiArray.h>
-#include <ros/ros.h>
+
 
 
 float torso_goal_pose;
@@ -18,18 +22,26 @@ bool msg_gripper_recived = true;
 
 void armGoalPoseCallback(const std_msgs::Float32MultiArray::ConstPtr& msg)
 {
+  if(msg->data.size() != 4)
+  {
+    std::cout << "[ARM-NODE]: Error data size." << std::endl;
+    std::cout << "[ARM-NODE]: Arm data must be four values." << std::endl;
+  }
+  else
+    msg_arm_recived = true;
+ 
   arm_goal_pose.resize(4);
   
   for(int i = 0; i < 4; i++)
     arm_goal_pose[i] = msg->data[i];
-  msg_arm_recived = true;
+  
 }
 
-void gripperPoseCallback(const std_msgs::Float32MultiArray::ConstPtr& msg)
+void gripperPoseCallback(const std_msgs::Float32::ConstPtr& msg)
 {
   // Expected value between [0.0 - 1.0] where 0.0 is close gripper and 1.0 is totally open gripper
   gripper_goal_pose.resize(1);
-  gripper_goal_pose[0] = -0.105 + (msg->data[0])*( 1.23 + 0.105);  // Joint limits from official page
+  gripper_goal_pose[0] = -0.105 + (msg->data)*( 1.23 + 0.105);  // Joint limits from official page
   
   msg_gripper_recived = true;
 }
@@ -74,6 +86,9 @@ int main(int argc, char **argv)
   ros::Subscriber  sub_pumas_gripp_gp;
   ros::Subscriber  sub_torso_goal_pose;
   ros::Subscriber  sub_hsr_arm_cp;
+
+  // actionlib::SimpleActionClient<tmc_control_msgs::GripperApplyEffortAction> gripperActionClient;
+
   ros::Rate        loop(30);
 
   // Publishers for hsr-hardware
@@ -87,6 +102,8 @@ int main(int argc, char **argv)
   sub_pumas_gripp_gp  = n.subscribe("/hardware/arm/goal_gripper", 10, gripperPoseCallback);
   sub_torso_goal_pose = n.subscribe("/hardware/torso/goal_pose", 10, torsoGoalPoseCallback);
   sub_hsr_arm_cp      = n.subscribe("/hsrb/arm_trajectory_controller/state", 10, armCurrentPoseCallback);
+
+  //  gripperActionClient 
  
 
 
@@ -117,6 +134,10 @@ int main(int argc, char **argv)
   trajectory_msgs::JointTrajectory traj_arm;
   trajectory_msgs::JointTrajectory traj_gripp;
 
+  tmc_control_msgs::GripperApplyEffortGoal goal;
+
+  
+
   traj_arm.joint_names.push_back("arm_lift_joint");
   traj_arm.joint_names.push_back("arm_flex_joint");
   traj_arm.joint_names.push_back("arm_roll_joint");
@@ -143,16 +164,16 @@ int main(int argc, char **argv)
   traj_arm.points[0].velocities[2] = 0.1;
   traj_arm.points[0].velocities[3] = 0.1;
   traj_arm.points[0].velocities[4] = 0.1;
-  traj_gripp.points[0].velocities[0] = 0.5;
+  traj_gripp.points[0].velocities[0] = -0.5;
 
   traj_arm.points[0].positions[0] = 0.0;
   traj_arm.points[0].positions[1] = 0.0;
   traj_arm.points[0].positions[2] = 0.0;
   traj_arm.points[0].positions[3] = 0.0;
   traj_arm.points[0].positions[4] = 0.0;
-  traj_gripp.points[0].positions[0] = 0.0;
+  traj_gripp.points[0].positions[0] = -0.4;
 
-  traj_gripp.points[0].effort[0] = 0.2;
+  traj_gripp.points[0].effort[0] = -0.2;
   
   traj_arm.points[0].time_from_start = ros::Duration(3.0);
   traj_gripp.points[0].time_from_start = ros::Duration(3.0);
@@ -160,6 +181,12 @@ int main(int argc, char **argv)
   arm_goal_pose.resize(5);
   arm_complete_cp.resize(5);
   gripper_goal_pose.resize(1);
+
+
+  
+  goal.effort = -0.2;
+
+  
 
   
   while(ros::ok())

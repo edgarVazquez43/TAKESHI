@@ -1,0 +1,8 @@
+prefix=/home/hsr_pumas/HSR_PUMAS/catkin_ws/install
+
+Name: manip_pln
+Description: Description of manip_pln
+Version: 0.0.0
+Cflags: 
+Libs: -L/home/hsr_pumas/HSR_PUMAS/catkin_ws/install/lib 
+Requires: 

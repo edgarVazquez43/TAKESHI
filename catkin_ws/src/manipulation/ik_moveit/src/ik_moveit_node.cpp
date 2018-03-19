@@ -71,6 +71,13 @@ bool callbackGripperIK(manip_msgs::InverseKinematicsFloatArray::Request  &req,
 	    << std::endl << " --- (MoveIt Node)  --- "
 	    << std::endl;
 
+  if(req.cartesian_pose.data.size() != 6)
+  {
+    std::cout << "Takeshi Can't calculate Inverse Kinematic" << std::endl;
+    std::cout << "Desire cartesian pose must be 6 values" << std::endl;
+    return false;
+  }
+
   std::cout << "Desire pose: " << std::endl
 	    << "  x:  " << req.cartesian_pose.data[0] << std::endl
 	    << "  y:  " << req.cartesian_pose.data[1] << std::endl
@@ -100,19 +107,23 @@ bool callbackGripperIK(manip_msgs::InverseKinematicsFloatArray::Request  &req,
   
   if (found_ik)
   {
-    resp.articular_pose.data.resize(5);
+    resp.articular_pose.data.resize(4);
     kinematic_state->copyJointGroupPositions(joint_group_Arm, result);
 
     for (std::size_t i = 0; i < result.size(); ++i)
       ROS_INFO("Joint: %s   %f", joint_names_Arm[i].c_str(), result[i]);
     
     // Fill message response
-    resp.omni_base_correction.x = result[0];
-    resp.omni_base_correction.y = result[1];
-    resp.omni_base_correction.theta = result[2];
+    resp.base_correction.x = result[0];
+    resp.base_correction.y = result[1];
+    resp.base_correction.theta = result[2];
+
+    resp.torso_pose.data = result[3];
     
-    for (std::size_t i = 3; i < result.size(); ++i)
-      resp.articular_pose.data[i-3] = result[i];
+    for (std::size_t i = 4; i < result.size(); ++i)
+      resp.articular_pose.data[i-4] = result[i];
+
+    
   }
   else
   {

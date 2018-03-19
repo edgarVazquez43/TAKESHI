@@ -1,0 +1,8 @@
+prefix=/home/hsr_pumas/HSR_PUMAS/catkin_ws/install
+
+Name: mvn_pln
+Description: Description of mvn_pln
+Version: 0.0.0
+Cflags: -I/home/hsr_pumas/HSR_PUMAS/catkin_ws/install/include
+Libs: -L/home/hsr_pumas/HSR_PUMAS/catkin_ws/install/lib 
+Requires: 

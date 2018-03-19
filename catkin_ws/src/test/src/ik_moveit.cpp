@@ -66,7 +66,6 @@ int main(int argc, char** argv)
   cartesian.push_back(0.0);      // yaw
   cartesian.push_back(1.5707);      // pitch
   cartesian.push_back(0.0);      // roll
-  cartesian.push_back(0.0);
   srv_ki.request.cartesian_pose.data = cartesian;
 
   // Response data is already respect to base_link frame
@@ -98,7 +97,7 @@ int main(int argc, char** argv)
 	  std::cout << "[Joints values]:  " << std::endl;
 	  for (int i=0; i < srv_ki.response.articular_pose.data.size() ; i++)
 	      std::cout << "   " << srv_ki.response.articular_pose.data[i] << std::endl;
-	  std::cout << "OmniBase correction: " << srv_ki.response.omni_base_correction << std::endl;
+	  std::cout << "OmniBase correction: " << srv_ki.response.base_correction << std::endl;
 	}
 
       

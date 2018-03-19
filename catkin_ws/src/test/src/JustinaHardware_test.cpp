@@ -27,9 +27,27 @@ int main(int argc, char** argv)
   JustinaTasks::setNodeHandle(&n);
   JustinaKnowledge::setNodeHandle(&n);
 
-  JustinaRepresentation::setNodeHandle(&n);
-  JustinaRepresentation::initKDB("", true, 20000);
+  ros::spinOnce();
   ros::Rate loop(10);
+
+  std::vector<float> pos;
+  pos.resize(3);
+
+
+  while(ros::ok())
+  {
+    ros::spinOnce();
+    loop.sleep();
+    
+    // JustinaManip::getTorsoCurrentPos(pos);
+    // std::cout << "Torso current pos: " << pos[0]<< std::endl;
+
+    JustinaManip::openGripper(0.0);
+    boost::this_thread::sleep(boost::posix_time::milliseconds(7000));
+    JustinaManip::openGripper(1.0);
+    boost::this_thread::sleep(boost::posix_time::milliseconds(7000));
+  }
+  
 
   return 0;
 }

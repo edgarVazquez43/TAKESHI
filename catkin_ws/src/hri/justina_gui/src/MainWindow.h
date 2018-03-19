@@ -36,6 +36,7 @@ public:
     float robotTheta;
     float headPan;
     float headTilt;
+    float trsCurrentPos;
     std::vector<float> leftArmPoses;
     std::vector<float> leftArmTorques;
     std::vector<float> rightArmPoses;
@@ -77,9 +78,7 @@ public slots:
     //Hardware
     void hdPanTiltChanged(double d);
     void laAnglesChanged(double);
-    void raAnglesChanged(double);
     void laValuesChanged();
-    void raValuesChanged();
     void laOpenGripperChanged(double d);
     void raOpenGripperChanged(double d);
     void laCloseGripperChanged(double d);
@@ -88,6 +87,9 @@ public slots:
     void raRadioButtonClicked();
     void torsoPoseChanged(double d);
     void torsoLocChanged();
+    //Takeshi Arm
+    void armAnglesChanged(double);
+
     //Speech synthesis and recog
     void spgSayChanged();
     void sprFakeRecognizedChanged();
