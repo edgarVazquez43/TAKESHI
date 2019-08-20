@@ -1,8 +1,0 @@
-prefix=/home/hsr_pumas/HSR_PUMAS/catkin_ws/install
-
-Name: hand_eye_camera
-Description: Description of hand_eye_camera
-Version: 0.0.0
-Cflags: 
-Libs: -L/home/hsr_pumas/HSR_PUMAS/catkin_ws/install/lib 
-Requires: 

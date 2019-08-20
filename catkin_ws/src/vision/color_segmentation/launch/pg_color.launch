@@ -1,0 +1,14 @@
+<launch>
+
+  <node pkg="rosbag" type="play" name="player" output="screen" args="--clock -l /home/jesus/rosbags/loop.bag"/>
+
+  <node pkg="pcl_ros" type="convert_pointcloud_to_image" name="converter">
+    <remap from="/input" to="/hardware/point_cloud_man/rgbd_wrt_robot" />
+    <remap from="/output" to="/hsrb/hand_camera/image_raw" />
+
+  </node>
+
+ <node pkg="color_segmentation" type="pg_segmentation_node" name="pg_segmentation_node" output="screen">
+   <remap from="/image" to="/hsrb/hand_camera/image_raw" />
+   </node>
+</launch>

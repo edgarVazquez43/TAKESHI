@@ -344,6 +344,104 @@ defrule exe-plan-went-person
 	(modify ?f1 (status active))
 )
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;; confirmation
+
+(defrule exe-plan-task-confirmation
+	(plan (name ?name) (number ?num-pln) (status active) (actions confirmation ?conf) (duration ?t))
+	=>
+	(bind ?command (str-cat "" ?conf ""))
+	(assert (send-blackboard ACT-PLN cmd_task_conf ?command ?t 4))
+)
+
+(defrule exe-plan-task-confirmated
+	?f <- (received ?sender command cmd_task_conf conf 1)
+	?f1 <- (plan (name ?name) (number ?num-pln) (status active) (actions confirmation ?conf))
+	=>
+	(retract ?f)
+	(modify ?f1 (status accomplished))
+	(assert (confirmation true))
+)
+
+(defrule exe-plan-task-no-confirmated
+	?f <- (received ?sender command cmd_task_conf conf 0)
+	?f1 <- (plan (name ?name) (number ?num-pln) (status active) (actions confirmation ?conf))
+	=>
+	(retract ?f)
+	(modify ?f1 (status accomplished))
+	(assert (confirmation false))
+)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;
+
+(defrule exe-plan-task-make-task
+	?f <- (plan (name ?name) (number ?num-pln) (status active) (actions make_task ?name ?obj ?status) (actions_num_params ?ini ?end))
+	?f1 <- (confirmation true)
+	=>
+	(retract ?f1)
+	(modify ?f (status accomplished))
+)
+
+(defrule exe-plan-task-no-make-task
+	?f <- (plan (name ?name) (number ?num-pln) (status active) (actions make_task ?name ?obj ?status) (actions_num_params ?ini ?end&:(< ?ini ?end)))
+	?f1 <- (plan (name ?name) (number ?ini))
+	;;?f1 <- (state (name ?plan) (status active) (number ?n))
+	(confirmation false)
+	=>
+	(retract ?f1)
+	(modify ?f (actions_num_params (+ ?ini 1) ?end))
+)
+
+(defrule exe-plan-task-no-make-last-task
+	?f <- (plan (name ?name) (number ?num-pln) (status active) (actions make_task ?name ?obj ?status) (actions_num_params ?ini ?ini))
+	?f1 <- (plan (name ?name) (number ?ini))
+	?f2 <- (plan (name ?name) (number ?num&:(eq ?num (+ ?ini 1))))
+	?f3 <- (confirmation false)
+	=>
+	(retract ?f1 ?f3)
+	(modify ?f (status unaccomplished))
+	(modify ?f2 (status active))
+)
+
+(defrule exe-plan-task-no-make-last-task-two
+	?f <- (plan (name ?name) (number ?num-pln) (status active) (actions make_task ?name ?obj ?status) (actions_num_params ?ini ?ini))
+	?f1 <- (plan (name ?name) (number ?ini))
+	?f2 <- (item (name ?obj))
+	?f4 <- (confirmation false)
+	=>
+	(retract ?f1 ?f4)
+	(modify ?f (status accomplished))
+	(modify ?f2 (status ?status))
+)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;; align with point
+
+(defrule exe-plan-align-with-point
+	(plan (name ?name) (number ?num-pln) (status active) (actions align_with_point ?obj ?ori_frame ?dest_frame) (duration ?t))
+	(item (name ?obj) (pose ?x ?y ?z))
+	=>
+	(bind ?command (str-cat "" ?x " " ?y " " ?z " " ?ori_frame " " ?dest_frame ""))
+	(assert (send-blackboard ACT-PLN cmd_align_point ?command ?t 4))
+)
+
+(defrule exe-plan-aligned-with-point
+	?f <- (received ?sender command cmd_align_point ?x ?y ?z ?ori_frame ?dest_frame 1)
+	?f1 <- (plan (name ?name) (number ?num-pln) (status active) (actions align_with_point ?obj ?ori_frame ?dest_frame))
+	=>
+	(retract ?f)
+	(modify ?f1 (status accomplished))
+)
+
+(defrule exe-plan-no-aligned-with-point
+	?f <- (received ?sender command cmd_align_point ?x ?y ?z ?ori_frame ?dest_frame 0)
+	?f1 <- (plan (name ?name) (number ?num-pln) (status active) (actions align_with_point ?obj ?ori_frame ?dest_frame))
+	=>
+	(retract ?f)
+	(modify ?f1 (status active))
+)
+
 ;;;;;;;;;;;;;;;;;;;;;; finish move of cube on top of cube ;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;; and cube on top of cubestable       ;;;;;;;;;;;;
 
@@ -389,7 +487,7 @@ defrule exe-plan-went-person
 	?f2 <- (plan (name ?name) (number ?num-pln) (status active) (actions put_on_top ?block1 ?block2))
 	=>
 	(retract ?f)
-	;(modify ?f1 (status on-top))
+	(modify ?f1 (status on-top))
 	(modify ?f2 (status accomplished))
 )
 

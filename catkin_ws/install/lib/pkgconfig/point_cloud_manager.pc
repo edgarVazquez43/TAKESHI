@@ -1,8 +1,0 @@
-prefix=/home/hsr_pumas/HSR_PUMAS/catkin_ws/install
-
-Name: point_cloud_manager
-Description: Description of point_cloud_manager
-Version: 0.0.0
-Cflags: -I/home/hsr_pumas/HSR_PUMAS/catkin_ws/install/include
-Libs: -L/home/hsr_pumas/HSR_PUMAS/catkin_ws/install/lib 
-Requires: 

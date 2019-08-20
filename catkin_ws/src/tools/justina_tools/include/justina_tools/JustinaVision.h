@@ -33,6 +33,9 @@
 #include "vision_msgs/FaceRecognition.h"
 #include "vision_msgs/FindWaving.h"
 #include "vision_msgs/GetCubes.h"
+#include "vision_msgs/VisionFlattenedObjectList.h"
+#include "vision_msgs/RecognizeFlattenedObjects.h"
+#include "vision_msgs/HandCameraGrasp.h"
 
 class JustinaVision
 {
@@ -91,8 +94,10 @@ private:
     //Service for find plane
     static ros::ServiceClient cltFindPlane;
     static ros::ServiceClient cltFindTable;
+
     //Service for find vacant plane
     static ros::ServiceClient cltFindVacantPlane;
+    
     //Members for operation of qr reader
     static ros::Publisher pubQRReaderStart;
     //Services for thermal camera
@@ -113,6 +118,8 @@ private:
     static ros::ServiceClient cltGetFaces;
     static ros::ServiceClient cltDetectWaving;
     static ros::ServiceClient cltCubesSeg;
+    static ros::ServiceClient cltFlattenedSeg;
+    static ros::ServiceClient cltHandCameraManip;
 
 public:
     static bool setNodeHandle(ros::NodeHandle* nh);
@@ -153,6 +160,8 @@ public:
     static bool detectObjects(std::vector<vision_msgs::VisionObject>& recoObjList, bool saveFiles = false);
     static bool detectAllObjects(std::vector<vision_msgs::VisionObject>& recoObjList, bool saveFiles = false);
     static void moveBaseTrainVision(const std_msgs::String& msg);
+    static bool detectFlattenedObjects(vision_msgs::VisionFlattenedObjectList& recoObjList, bool saveFiles = false);
+    static bool handCameraManip(std::string objectName);
     //Methods for line finding
     static bool findLine(float& x1, float& y1, float& z1, float& x2, float& y2, float& z2);
     //Methods for plane findinig
@@ -160,6 +169,7 @@ public:
     static bool findTable(std::vector<float>& nearestPoint);
     //Methods for plan vacant finding
     static bool findVacantPlane(std::vector<float>& vacantPlane, std::vector<int>& inliersOnPlane);
+
     //Methods for the qr reader
     static void startQRReader();
     static void stopQRReader();

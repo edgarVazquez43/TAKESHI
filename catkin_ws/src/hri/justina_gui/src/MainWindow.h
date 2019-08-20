@@ -12,10 +12,19 @@
 #include "justina_tools/JustinaHardware.h"
 #include "justina_tools/JustinaNavigation.h"
 #include "justina_tools/JustinaHRI.h"
-#include "justina_tools/JustinaManip.h"
+//#include "justina_tools/JustinaManip.h"
 #include "justina_tools/JustinaVision.h"
 #include "justina_tools/JustinaTools.h"
 #include "justina_tools/JustinaRepresentation.h"
+
+#include "takeshi_tools/TakeshiHardware.h"
+#include "takeshi_tools/TakeshiNavigation.h"
+#include "takeshi_tools/TakeshiHRI.h"
+#include "takeshi_tools/TakeshiManip.h"
+#include "takeshi_tools/TakeshiVision.h"
+#include "takeshi_tools/TakeshiTools.h"
+#include "takeshi_tools/TakeshiRepresentation.h"
+
 #include "QtRosNode.h"
 
 namespace Ui {
@@ -83,10 +92,11 @@ public slots:
     void raOpenGripperChanged(double d);
     void laCloseGripperChanged(double d);
     void raCloseGripperChanged(double d);
-    void laRadioButtonClicked();
     void raRadioButtonClicked();
     void torsoPoseChanged(double d);
     void torsoLocChanged();
+    void ikBtnCalc_pressed();
+    void ikBtnExecute_pressed();
     //Takeshi Arm
     void armAnglesChanged(double);
 

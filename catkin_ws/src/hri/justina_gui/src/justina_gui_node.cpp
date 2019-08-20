@@ -1,6 +1,6 @@
 #include <iostream>
 #include <QApplication>
-#include "justina_tools/JustinaHardware.h"
+//#include "justina_tools/JustinaHardware.h"
 #include "MainWindow.h"
 #include "QtRosNode.h"
 

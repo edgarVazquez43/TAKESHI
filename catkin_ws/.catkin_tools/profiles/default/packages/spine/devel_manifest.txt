@@ -1,4 +1,0 @@
-hardware/spine
-/home/edgar/HSR_PUMAS/catkin_ws/devel/.private/spine/share/spine/cmake/spineConfig.cmake /home/edgar/HSR_PUMAS/catkin_ws/devel/share/spine/cmake/spineConfig.cmake
-/home/edgar/HSR_PUMAS/catkin_ws/devel/.private/spine/share/spine/cmake/spineConfig-version.cmake /home/edgar/HSR_PUMAS/catkin_ws/devel/share/spine/cmake/spineConfig-version.cmake
-/home/edgar/HSR_PUMAS/catkin_ws/devel/.private/spine/lib/pkgconfig/spine.pc /home/edgar/HSR_PUMAS/catkin_ws/devel/lib/pkgconfig/spine.pc

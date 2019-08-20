@@ -78,7 +78,8 @@ bool JustinaNavigation::setNodeHandle(ros::NodeHandle* nh)
     subCollisionRisk = nh->subscribe("/navigation/obs_avoid/collision_risk", 1, &JustinaNavigation::callbackCollisionRisk);
     //Publishers and subscribers for localization
     tf_listener->waitForTransform("map", "base_link", ros::Time(0), ros::Duration(5.0));
-    
+    JustinaManip::setNodeHandle(nh);
+
     is_node_set = true;
     return true;
 }
@@ -338,6 +339,9 @@ void JustinaNavigation::startGetClose(float x, float y)
     std_msgs::Float32MultiArray msg;
     msg.data.push_back(x);
     msg.data.push_back(y);
+    JustinaManip::torsoGoTo(0.0, 1500);
+    JustinaManip::armGoToNavigation();
+    ros::Duration(2.0).sleep();
     JustinaNavigation::_isGlobalGoalReached = false;
     pubMvnPlnGetCloseXYA.publish(msg);
 }
@@ -348,6 +352,9 @@ void JustinaNavigation::startGetClose(float x, float y, float angle)
     msg.data.push_back(x);
     msg.data.push_back(y);
     msg.data.push_back(angle);
+    JustinaManip::torsoGoTo(0.0, 1500);
+    JustinaManip::armGoToNavigation();
+    ros::Duration(2.0).sleep();
     JustinaNavigation::_isGlobalGoalReached = false;
     pubMvnPlnGetCloseXYA.publish(msg);
 }
@@ -356,6 +363,9 @@ void JustinaNavigation::startGetClose(std::string location)
 {
     std_msgs::String msg;
     msg.data = location;
+    JustinaManip::torsoGoTo(0.0, 1500);
+    JustinaManip::armGoToNavigation();
+    ros::Duration(2.0).sleep();
     JustinaNavigation::_isGlobalGoalReached = false;
     pubMvnPlnGetCloseLoc.publish(msg);
 }
@@ -368,14 +378,14 @@ bool JustinaNavigation::getClose(float x, float y, int timeOut_ms)
 
 bool JustinaNavigation::getClose(float x, float y, float angle, int timeOut_ms)
 {
-    JustinaNavigation::startGetClose(x, y, angle);
-    return JustinaNavigation::waitForGlobalGoalReached(timeOut_ms);
+  JustinaNavigation::startGetClose(x, y, angle);
+  return JustinaNavigation::waitForGlobalGoalReached(timeOut_ms);
 }
 
 bool JustinaNavigation::getClose(std::string location, int timeOut_ms)
 {
-    JustinaNavigation::startGetClose(location);
-    return JustinaNavigation::waitForGlobalGoalReached(timeOut_ms);
+  JustinaNavigation::startGetClose(location);
+  return JustinaNavigation::waitForGlobalGoalReached(timeOut_ms);
 }
 
 //This functions call services, so, they block until a response is received. They use the path_calculator node

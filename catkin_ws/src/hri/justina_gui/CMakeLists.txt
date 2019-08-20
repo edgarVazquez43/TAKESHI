@@ -13,6 +13,7 @@ find_package(catkin REQUIRED COMPONENTS
   map_server
   hri_msgs
   justina_tools
+  takeshi_tools
 )
 
 find_package(Qt5Widgets REQUIRED)
@@ -27,8 +28,8 @@ endif(Qt5Widgets_FOUND)
 
 include_directories(
   include
-  ${CMAKE_CURRENT_BINARY_DIR} 
-  ${catkin_INCLUDE_DIRS} 
+  ${CMAKE_CURRENT_BINARY_DIR}
+  ${catkin_INCLUDE_DIRS}
   ${PROJECT_SOURCE_DIR}
   ${PCL_INCLUDE_DIRS}
 )

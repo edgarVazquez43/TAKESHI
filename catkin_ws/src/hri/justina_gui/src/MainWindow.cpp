@@ -7,7 +7,6 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    this->ui->laRbArticular->setChecked(true);
     this->laLastRadioButton = 0;
     this->raLastRadioButton = 0;
     this->recSavingVideo = false;
@@ -19,7 +18,6 @@ MainWindow::MainWindow(QWidget *parent) :
     this->enableInteractiveEdit = false;
     setPathKR();
 
-    QObject::connect(ui->btnStop, SIGNAL(clicked()), this, SLOT(stopRobot()));
     //Navigation
     QObject::connect(ui->navTxtStartPose, SIGNAL(returnPressed()), this, SLOT(navBtnCalcPath_pressed()));
     QObject::connect(ui->navTxtGoalPose, SIGNAL(returnPressed()), this, SLOT(navBtnCalcPath_pressed()));
@@ -36,20 +34,15 @@ MainWindow::MainWindow(QWidget *parent) :
     QObject::connect(ui->laTxtAngles3, SIGNAL(valueChanged(double)), this, SLOT(armAnglesChanged(double)));
     QObject::connect(ui->laTxtOpenGripper, SIGNAL(valueChanged(double)), this, SLOT(laOpenGripperChanged(double)));
     QObject::connect(ui->laTxtCloseGripper, SIGNAL(valueChanged(double)), this, SLOT(laCloseGripperChanged(double)));
-    QObject::connect(ui->laTxtXYZ, SIGNAL(returnPressed()), this, SLOT(laValuesChanged()));
-    QObject::connect(ui->laTxtRPY, SIGNAL(returnPressed()), this, SLOT(laValuesChanged()));
-    QObject::connect(ui->laTxtElbow, SIGNAL(returnPressed()), this, SLOT(laValuesChanged()));
-    QObject::connect(ui->laRbCartesian, SIGNAL(clicked()), this, SLOT(laRadioButtonClicked()));
-    QObject::connect(ui->laRbCartesianRobot, SIGNAL(clicked()), this, SLOT(laRadioButtonClicked()));
-    QObject::connect(ui->laRbArticular, SIGNAL(clicked()), this, SLOT(laRadioButtonClicked()));
+    QObject::connect(ui->ikBtnCalc, SIGNAL(clicked()), this, SLOT(ikBtnCalc_pressed()));
+    QObject::connect(ui->ikBtnExecute, SIGNAL(clicked()), this, SLOT(ikBtnExecute_pressed()));
     //Torso
     QObject::connect(ui->trsTxtSpine, SIGNAL(valueChanged(double)), this, SLOT(torsoPoseChanged(double)));
-    QObject::connect(ui->trsTxtLoc, SIGNAL(returnPressed()), this, SLOT(torsoLocChanged()));
     //Speech synthesis and recog
     QObject::connect(ui->spgTxtSay, SIGNAL(returnPressed()), this, SLOT(spgSayChanged()));
     QObject::connect(ui->sprTxtFakeRecog, SIGNAL(returnPressed()), this, SLOT(sprFakeRecognizedChanged()));
     //Vision
-    QObject::connect(ui->recBtnSaveVideo, SIGNAL(clicked()), this, SLOT(recSaveVideoChanged()));
+    //QObject::connect(ui->recBtnSaveVideo, SIGNAL(clicked()), this, SLOT(recSaveVideoChanged()));
     QObject::connect(ui->recTxtImgFile, SIGNAL(returnPressed()), this, SLOT(recSaveImageChanged()));
     QObject::connect(ui->recBtnSaveImg, SIGNAL(clicked()), this, SLOT(recSaveImageChanged()));
     QObject::connect(ui->sktBtnStartRecog, SIGNAL(clicked()), this, SLOT(sktBtnStartClicked()));
@@ -149,7 +142,7 @@ bool MainWindow::strToFloatArray(std::string str, std::vector<float>& result)
 
 void MainWindow::stopRobot()
 {
-    JustinaHardware::stopRobot();
+    TakeshiHardware::stopRobot();
 }
 
 void MainWindow::navBtnCalcPath_pressed()
@@ -168,7 +161,7 @@ void MainWindow::navBtnCalcPath_pressed()
     if(str.compare("") == 0 || str.compare("robot") == 0) //take robot pose as start position
     {
         this->ui->navTxtStartPose->setText("Robot");
-        JustinaNavigation::getRobotPose(this->robotX, this->robotY, this->robotTheta);
+        TakeshiNavigation::getRobotPose(this->robotX, this->robotY, this->robotTheta);
         startX = this->robotX;
         startY = this->robotY;
         startTheta = this->robotTheta;
@@ -203,13 +196,13 @@ void MainWindow::navBtnCalcPath_pressed()
         goal_location = parts[0];
 
     if(start_location.compare("") == 0 && goal_location.compare("") == 0)
-        JustinaNavigation::planPath(startX, startY, goalX, goalY, this->calculatedPath);
+        TakeshiNavigation::planPath(startX, startY, goalX, goalY, this->calculatedPath);
     else if(start_location.compare("") == 0 && goal_location.compare("") != 0)
-        JustinaNavigation::planPath(startX, startY, goal_location, this->calculatedPath);
+        TakeshiNavigation::planPath(startX, startY, goal_location, this->calculatedPath);
     else if(start_location.compare("") != 0 && goal_location.compare("") == 0)
-        JustinaNavigation::planPath(start_location, goalX, goalY, this->calculatedPath);
+        TakeshiNavigation::planPath(start_location, goalX, goalY, this->calculatedPath);
     else
-        JustinaNavigation::planPath(start_location, goal_location, this->calculatedPath);
+        TakeshiNavigation::planPath(start_location, goal_location, this->calculatedPath);
 }
 
 void MainWindow::navBtnExecPath_pressed()
@@ -241,12 +234,12 @@ void MainWindow::navBtnExecPath_pressed()
                 return;
             }
             //this->ui->navLblStatus->setText("Base Status: Moving to goal point...");
-            JustinaNavigation::startGetClose(goalX, goalY, goalTheta);
+            TakeshiNavigation::startGetClose(goalX, goalY, goalTheta);
         }
         else
         {
             // this->ui->navLblStatus->setText("Base Status: Moving to goal point...");
-            JustinaNavigation::startGetClose(goalX, goalY);
+            TakeshiNavigation::startGetClose(goalX, goalY);
         }
         return;
     }
@@ -254,7 +247,7 @@ void MainWindow::navBtnExecPath_pressed()
     {
         goal_location = parts[0];
         //this->ui->navLblStatus->setText("Base Status: Moving to goal point...");
-        JustinaNavigation::startGetClose(goal_location);
+        TakeshiNavigation::startGetClose(goal_location);
     }
 }
 
@@ -275,7 +268,7 @@ void MainWindow::navMoveChanged()
         float lateral;
         if(!(ssLateral >> lateral))
             return;
-        JustinaNavigation::startMoveLateral(lateral);
+        TakeshiNavigation::startMoveLateral(lateral);
         return;
     }
 
@@ -290,20 +283,20 @@ void MainWindow::navMoveChanged()
         if(!(ssAngle >> angle))
             return;
     }
-    JustinaNavigation::startMoveDistAngle(dist, angle);
+    TakeshiNavigation::startMoveDistAngle(dist, angle);
 }
 
 void MainWindow::navObsDetectionEnableClicked()
 {
     if(this->navDetectingObstacles)
     {
-        JustinaNavigation::enableObstacleDetection(false);
+        TakeshiNavigation::enableObstacleDetection(false);
         this->navDetectingObstacles = false;
         this->ui->navBtnStartObsDetection->setText("Enable");
     }
     else
     {
-        JustinaNavigation::enableObstacleDetection(true);
+        TakeshiNavigation::enableObstacleDetection(true);
         this->navDetectingObstacles = true;
         this->ui->navBtnStartObsDetection->setText("Disable");
     }
@@ -314,21 +307,21 @@ void MainWindow::hdPanTiltChanged(double)
     float goalPan = this->ui->hdTxtPan->value();
     float goalTilt = this->ui->hdTxtTilt->value();
     std::cout << "QMainWindow.->Setting new head goal pose: " << goalPan << "  " << goalTilt  << std::endl;
-    //JustinaHardware::setHeadGoalPose(goalPan, goalTilt);
-    JustinaManip::startHdGoTo(goalPan, goalTilt);
+    //::setHeadGoalPose(goalPan, goalTilt);
+    TakeshiManip::startHdGoTo(goalPan, goalTilt);
 }
 
 void MainWindow::laAnglesChanged(double d)
 {
-    if(this->laIgnoreValueChanged)
-        return;
-    
-    std::vector<float> goalAngles;
-    goalAngles.push_back(this->ui->laTxtAngles0->value());
-    goalAngles.push_back(this->ui->laTxtAngles1->value());
-    goalAngles.push_back(this->ui->laTxtAngles2->value());
-    goalAngles.push_back(this->ui->laTxtAngles3->value());
-    JustinaManip::startLaGoToArticular(goalAngles);
+//    if(this->laIgnoreValueChanged)
+//        return;
+
+//    std::vector<float> goalAngles;
+//    goalAngles.push_back(this->ui->laTxtAngles0->value());
+//    goalAngles.push_back(this->ui->laTxtAngles1->value());
+//    goalAngles.push_back(this->ui->laTxtAngles2->value());
+//    goalAngles.push_back(this->ui->laTxtAngles3->value());
+//    TakeshiManip::startLaGoToArticular(goalAngles);
 }
 
 void MainWindow::armAnglesChanged(double d)
@@ -341,7 +334,7 @@ void MainWindow::armAnglesChanged(double d)
     goalAngles.push_back(this->ui->laTxtAngles1->value());
     goalAngles.push_back(this->ui->laTxtAngles2->value());
     goalAngles.push_back(this->ui->laTxtAngles3->value());
-    JustinaManip::startArmGoToArticular(goalAngles);
+    TakeshiManip::startArmGoToArticular(goalAngles);
 }
 
 
@@ -352,137 +345,39 @@ void MainWindow::laValuesChanged()
     std::vector<float> rpy;
     std::vector<float> elbow;
     std::vector<float> values;
-    this->strToFloatArray(this->ui->laTxtXYZ->text().toStdString(), xyz);
-    this->strToFloatArray(this->ui->laTxtRPY->text().toStdString(), rpy);
-    this->strToFloatArray(this->ui->laTxtElbow->text().toStdString(), elbow);
     values.insert(values.end(), xyz.begin(), xyz.end());
     values.insert(values.end(), rpy.begin(), rpy.end());
     values.insert(values.end(), elbow.begin(), elbow.end());
     bool success = values.size() == 7 || values.size() == 6 || values.size() == 3;
-    if(!success) //If cannot get floats, then it is assumed that a predefined position is given
-    {
-        std::string goalLoc = this->ui->laTxtXYZ->text().toStdString();
-        if(goalLoc.compare("") != 0)
-        {
-            JustinaManip::startLaGoTo(goalLoc);
-            //JustinaManip::laGoTo(goalLoc, 5000);
-        }
-    }
-    else
-    {
-        if(this->ui->laRbCartesianRobot->isChecked())
-            JustinaManip::startLaGoToCartesianWrtRobot(values);
-        else if(this->ui->laRbCartesian->isChecked())
-            JustinaManip::startLaGoToCartesian(values);
-        else if(this->ui->laRbArticular->isChecked())
-            JustinaManip::startLaGoToArticular(values);
-    }
 }
 
 void MainWindow::laOpenGripperChanged(double d)
 {
-    JustinaManip::openGripper((float)d);
+    TakeshiManip::openGripper((float)d);
 }
 
 void MainWindow::raOpenGripperChanged(double d)
 {
-    JustinaManip::startRaOpenGripper((float)d);
+//    TakeshiManip::startRaOpenGripper((float)d);
 }
 
 void MainWindow::laCloseGripperChanged(double d)
 {
-    JustinaManip::startLaCloseGripper((float)d);
+    TakeshiManip::closeGripper((float)d);
 }
 
 void MainWindow::raCloseGripperChanged(double d)
 {
-    JustinaManip::startRaCloseGripper((float)d);
+//    TakeshiManip::startRaCloseGripper((float)d);
 }
 
-void MainWindow::laRadioButtonClicked()
-{
-    int currentRb = -1;
-    if(this->ui->laRbArticular->isChecked()) currentRb = 0;
-    else if(this->ui->laRbCartesian->isChecked()) currentRb = 1;
-    else if(this->ui->laRbCartesianRobot->isChecked()) currentRb = 2;
-    else return;
-
-    if(currentRb == this->laLastRadioButton)
-        return;
-    
-    this->laIgnoreValueChanged = true;
-
-    std::vector<float> xyz;
-    std::vector<float> rpy;
-    std::vector<float> elbow;
-    std::vector<float> oldValues;
-    std::vector<float> newValues;
-    this->strToFloatArray(this->ui->laTxtXYZ->text().toStdString(), xyz);
-    this->strToFloatArray(this->ui->laTxtRPY->text().toStdString(), rpy);
-    this->strToFloatArray(this->ui->laTxtElbow->text().toStdString(), elbow);
-    oldValues.insert(oldValues.end(), xyz.begin(), xyz.end());
-    oldValues.insert(oldValues.end(), rpy.begin(), rpy.end());
-    oldValues.insert(oldValues.end(), elbow.begin(), elbow.end());
-    bool success = oldValues.size() == 7;
-    
-    if(!success)
-    {
-        this->laIgnoreValueChanged = false;
-        if(this->laLastRadioButton == 0) this->ui->laRbArticular->setChecked(true);
-        if(this->laLastRadioButton == 1) this->ui->laRbCartesian->setChecked(true);
-        if(this->laLastRadioButton == 2) this->ui->laRbCartesianRobot->setChecked(true);
-        return;
-    }
-    
-    if(this->ui->laRbArticular->isChecked())
-    {
-        this->ui->laLblGoalValues->setText("Angles:");
-        if(this->laLastRadioButton == 2)
-            JustinaTools::transformPose("base_link", oldValues, "left_arm_link0", oldValues);  
-        success = JustinaManip::inverseKinematics(oldValues, newValues);
-    }
-    else if(this->ui->laRbCartesian->isChecked())
-    {
-        this->ui->laLblGoalValues->setText("XYZ  RPY  Elbow:");
-        if(this->laLastRadioButton == 0)
-            success = JustinaManip::directKinematics(newValues, oldValues);
-        else
-            success = JustinaTools::transformPose("base_link", oldValues, "left_arm_link1", newValues);
-    }
-    else
-    {
-        this->ui->laLblGoalValues->setText("XYZ  RPY  Elbow:");
-        if(this->laLastRadioButton == 0)
-            success = JustinaManip::directKinematics(oldValues, oldValues);
-        
-        success = JustinaTools::transformPose("left_arm_link1", oldValues, "base_link", newValues);
-    }
-    if(!success)
-    {
-        this->laIgnoreValueChanged = false;
-        if(this->laLastRadioButton == 0) this->ui->laRbArticular->setChecked(true);
-        if(this->laLastRadioButton == 1) this->ui->laRbCartesian->setChecked(true);
-        if(this->laLastRadioButton == 2) this->ui->laRbCartesianRobot->setChecked(true);
-        return;
-    }
-
-    QString str = QString::number(newValues[0],'f',3)+"  "+QString::number(newValues[1],'f',3)+"  "+QString::number(newValues[2],'f',3);
-    this->ui->laTxtXYZ->setText(str);
-    str = QString::number(newValues[3],'f',3)+"  "+QString::number(newValues[4],'f',3)+"  "+QString::number(newValues[5],'f',3);
-    this->ui->laTxtRPY->setText(str);
-    str = QString::number(newValues[6],'f',3);
-    this->ui->laTxtElbow->setText(str);
-    
-    this->laLastRadioButton = currentRb;
-    this->laIgnoreValueChanged = false;
-}
 
 void MainWindow::raRadioButtonClicked()
 {
     int currentRb = -1;
     if(currentRb == this->raLastRadioButton)
         return;
-    
+
     this->raIgnoreValueChanged = true;
 
     std::vector<float> xyz;
@@ -500,7 +395,7 @@ void MainWindow::raRadioButtonClicked()
         this->raIgnoreValueChanged = false;
         return;
     }
-        
+
     this->raLastRadioButton = currentRb;
     this->raIgnoreValueChanged = false;
 }
@@ -508,8 +403,8 @@ void MainWindow::raRadioButtonClicked()
 void MainWindow::torsoPoseChanged(double d)
 {
     float goalSpine = this->ui->trsTxtSpine->value();
-    std::cout << "QMainWindow.->Setting new torso pose: " << goalSpine << std::endl;
-    JustinaManip::startTorsoGoTo(goalSpine, 0.0, 0.0);
+    //std::cout << "QMainWindow.->Setting new torso pose: " << goalSpine << std::endl;
+    TakeshiManip::startTorsoGoTo(goalSpine);
     this->ui->trsLblStatus->setText("Status: Moving to ...");
 }
 
@@ -531,12 +426,43 @@ void MainWindow::sprFakeRecognizedChanged()
     JustinaHRI::fakeSpeechRecognized(strToFake);
 }
 
+void MainWindow::ikBtnCalc_pressed()
+{
+    std::cout << "QMainWindow.->Calculating Inverse Kinematics...."<< std::endl;
+    std::vector<float> cartesian;
+    std::vector<float> articular;
+    float torso;
+    geometry_msgs::Pose2D base_correction;
+
+    if(TakeshiManip::inverseKinematicsGeometric(cartesian, articular, torso, base_correction) )
+    {
+        std::cout << "Inverse Kinematics (articular): "
+                  << articular[0] << "  " <<
+                     articular[1] << "  " <<
+                     articular[2] << "  " <<
+                     articular[3] << "  " <<std::endl;
+        std::cout << "Inverse Kinematics (Torso):  "<< torso << std::endl;
+        std::cout << "Inverse Kinematics (Base Correction):  "<<
+                     base_correction.x << " - " <<
+                     base_correction.y << " - " <<
+                     base_correction.theta << " - " <<std::endl;
+    }
+    else
+        std::cout << "QMainWindow.->Cannot calculate inverse kinematics... :´( "<< std::endl;
+}
+
+void MainWindow::ikBtnExecute_pressed()
+{
+    std::cout << "QMainWindow.->Executing Inverse Kinematics...."<< std::endl;
+}
+
+
+//This function is not used for now
 void MainWindow::recSaveVideoChanged()
 {
     if(this->recSavingVideo)
     {
         std::cout << "QMainWindow.->Stop saving video." << std::endl;
-        JustinaHardware::stopSavingCloud();
         this->ui->recBtnSaveVideo->setText("Start saving video");
         this->ui->recLblStatus->setText("Status: Stand by");
         this->recSavingVideo = false;
@@ -551,7 +477,7 @@ void MainWindow::recSaveVideoChanged()
             return;
         }
         std::cout << "QMainWindow.->Starting to save video at: " << fileName << std::endl;
-        JustinaHardware::startSavingCloud(fileName);
+        //TakeshiHardware::startSavingCloud(fileName);
         this->ui->recBtnSaveVideo->setText("Stop saving video");
         this->ui->recLblStatus->setText("Status: saving video...");
         this->recSavingVideo = true;
@@ -635,7 +561,7 @@ void MainWindow::facTrainPressed()
             return;
         }
     }
-    
+
     if(numOfFrames <= 0)
     {
         std::cout << "QMainWindow.->Sending face training without number of frames. " << std::endl;
@@ -737,12 +663,16 @@ void MainWindow::updateGraphicsReceived()
     float rX;
     float rY;
     float rT;
+    float trsCurrPos;
     std::vector<float> trCp;
-    JustinaNavigation::getRobotPose(rX, rY, rT);
-    JustinaManip::getTorsoCurrentPos(trCp);
+    TakeshiNavigation::getRobotPose(rX, rY, rT);
+    //TakeshiManip::getTorsoCurrentPos(trCp);
+    TakeshiManip::getTorsoCurrentPos(trsCurrPos);
+    //std::cout << "UI->TakeshiManip::TorsoCurrentPos: " << trsCurrPos << std::endl;
     //std::cout << "MainWindow.->Current pose: " << currentX << "  " << currentY << "  " << currentTheta << std::endl;
     QString robotTxt = "Robot Pose: "+ QString::number(rX,'f',3) + "  " + QString::number(rY,'f',3) + "  " + QString::number(rT,'f',4);
-    QString trsTxt = "Current pos: "+ QString::number(trCp[0],'f',3);
+    //QString trsTxt = "Current pos: "+ QString::number(trCp[0],'f',3);
+    QString trsTxt = "spine:  "+ QString::number(trsCurrPos,'f',2);
     this->ui->navLblRobotPose->setText(robotTxt);
     this->ui->trsLblSpine->setText(trsTxt);
     this->robotX = rX;
@@ -751,28 +681,28 @@ void MainWindow::updateGraphicsReceived()
 
     float pan;
     float tilt;
-    JustinaHardware::getHeadCurrentPose(pan, tilt);
+    TakeshiHardware::getHeadCurrentPose(pan, tilt);
     QString headTxt = QString::number(pan, 'f', 4) + "  " + QString::number(tilt, 'f', 4);
     this->ui->hdLblHeadPose->setText(headTxt);
     this->headPan = pan;
     this->headTilt = tilt;
 
-    if(JustinaNavigation::isGoalReached())
+    if(TakeshiNavigation::isGoalReached())
         this->ui->navLblStatus->setText("Base Status: Goal Reached (Y)");
     else
         this->ui->navLblStatus->setText("Base Status: Moving to goal pose...");
 
-    if(JustinaManip::isLaGoalReached())
-        this->ui->laLblStatus->setText("LA: Goal Reached (Y)");
-    else
-        this->ui->laLblStatus->setText("LA: Moving to goal...");
-    
-    if(JustinaManip::isHdGoalReached())
+//    if(TakeshiManip::isLaGoalReached())
+//        this->ui->laLblStatus->setText("LA: Goal Reached (Y)");
+//    else
+//        this->ui->laLblStatus->setText("LA: Moving to goal...");
+
+    if(TakeshiManip::isHdGoalReached())
         this->ui->hdLblStatus->setText("Status: Goal Pose reached (Y)");
     else
         this->ui->hdLblStatus->setText("Status: Moving to goal pose...");
 
-    if(JustinaManip::isTorsoGoalReached())
+    if(TakeshiManip::isTorsoGoalReached())
         this->ui->trsLblStatus->setText("Status: Goal Reached!");
 
     std::string faceId = "";
@@ -798,24 +728,23 @@ void MainWindow::updateGraphicsReceived()
             this->ui->facLblResultSmile->setText("Smiling: No");
     }
 
-    if(JustinaNavigation::obstacleInFront())
+    if(TakeshiNavigation::obstacleInFront())
         this->ui->navLblObstacleInFront->setText("Obs In Front: True");
     else
         this->ui->navLblObstacleInFront->setText("Obs In Front: False");
 
-    if(JustinaNavigation::collisionRisk())
+    if(TakeshiNavigation::collisionRisk())
         this->ui->navLblRiskOfCollision->setText("Risk of Collision: True");
     else
         this->ui->navLblRiskOfCollision->setText("Risk of Collision: False");
 
     this->ui->sprLblLastRecog->setText(QString::fromStdString("Recog: " + JustinaHRI::lastRecogSpeech()));
 
-    this->ui->pgbBatt1->setValue((JustinaHardware::leftArmBatteryPerc() + JustinaHardware::rightArmBatteryPerc())/2);
-    this->ui->pgbBatt2->setValue((JustinaHardware::headBatteryPerc() + JustinaHardware::baseBatteryPerc())/2);
-    QString batt1Txt = QString::number((JustinaHardware::leftArmBattery() + JustinaHardware::rightArmBattery())/2, 'f', 2) + " V";
-    QString batt2Txt = QString::number((JustinaHardware::headBattery() + JustinaHardware::baseBattery())/2, 'f', 2) + " V";
-    this->ui->lblBatt1Level->setText(batt1Txt);
-    this->ui->lblBatt2Level->setText(batt2Txt);
+    //This should be replaced when we can read battery level from the real robot
+    //this->ui->pgbBatt1->setValue((TakeshiHardware::leftArmBatteryPerc() + TakeshiHardware::rightArmBatteryPerc())/2);
+    //QString batt1Txt = QString::number((TakeshiHardware::leftArmBattery() + TakeshiHardware::rightArmBattery())/2, 'f', 2) + " V";
+    //QString batt2Txt = QString::number((TakeshiHardware::headBattery() + TakeshiHardware::baseBattery())/2, 'f', 2) + " V";
+    //this->ui->lblBatt1Level->setText(batt1Txt);
 
     JustinaKnowledge::getInitKnownLoc(initKnownLoacations);
     if(defInitKnownLoacations || initKnownLoacations){
@@ -925,7 +854,7 @@ void MainWindow::on_addLoc_clicked()
 void MainWindow::on_GetRobotPose_clicked()
 {
     float x, y, theta;
-    JustinaNavigation::getRobotPose(x, y, theta);
+    TakeshiNavigation::getRobotPose(x, y, theta);
     this->ui->addXLoc->setText(QString::number(x));
     this->ui->addYLoc->setText(QString::number(y));
     this->ui->addALoc->setText(QString::number(theta));
@@ -1231,7 +1160,7 @@ void MainWindow::on_rotateButton_clicked()
     std::stringstream ss;
     ss << "rotate" << std::endl;
     msg.data = ss.str();
-    JustinaVision::moveBaseTrainVision(msg);  
+    JustinaVision::moveBaseTrainVision(msg);
 }
 
 void MainWindow::on_trainObjButton_clicked()
@@ -1252,18 +1181,18 @@ void MainWindow::on_trainObjButton_clicked()
 
 void MainWindow::on_pushButtonDownTorso_clicked()
 {
-    std_msgs::String msg;
-    std::stringstream ss;
-    ss << "moveDown" << std::endl;
-    msg.data = ss.str();
-    JustinaManip::moveTorsoDown(msg); 
+//    std_msgs::String msg;
+//    std::stringstream ss;
+//    ss << "moveDown" << std::endl;
+//    msg.data = ss.str();
+//    TakeshiManip::moveTorsoDown(msg);
 }
 
 void MainWindow::on_pushButtonUpTorso_clicked()
 {
-    std_msgs::String msg;
-    std::stringstream ss;
-    ss << "moveUp" << std::endl;
-    msg.data = ss.str();
-    JustinaManip::moveTorsoUp(msg); 
+//    std_msgs::String msg;
+//    std::stringstream ss;
+//    ss << "moveUp" << std::endl;
+//    msg.data = ss.str();
+//    TakeshiManip::moveTorsoUp(msg);
 }

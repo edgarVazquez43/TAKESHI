@@ -27,11 +27,17 @@
 	; ACTIONS
 	(cd-task (cd cmdSpeech) (actor robot)(obj robot)(from sensors)(to status)(name-scheduled cubes)(state-number 1))
         (intento 1)
-        (num_intentos 3)
+        (num_intentos 1)
 	(plan_active no)
         (num_places 0)
         (visit_places 0)
 
+	;;for speech generation of the number of orders in eegpsr cat2 montreal
+	(num_order 1)
+	(order _)
+	
+	;;;for speech generation of the person description in eegpsr cat2 montreal
+	(person_description _)
 	
 	
 	;(state (name cubes) (number 4)(duration 6000)(status active))
@@ -103,6 +109,19 @@
 	
 )
 
+;;; verifica si el comando interpretado es de tipo almacenar, actualizar o preguntar por informacion
+;;; en la base de conocimientos
+
+(defrule int_instruction
+	?f <- (received ?sender command cmd_int ?plan ?steps ?args 1)
+	=>
+	(retract ?f)
+	(assert (cd-task (cd get_task) (actor robot)(obj robot)(from sensors)(to status)(name-scheduled cubes)(state-number 3)))
+        (printout t "Inicia modulo crear PLAN" crlf)
+	(assert (num_steps (+ ?steps 1)))
+	(assert (plan_name ?plan))
+)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; se manda el mensaje para pedir CONFIRMACION
 
@@ -147,6 +166,26 @@
 	(retract ?f1)
 	(bind ?command (str-cat "" ?robot " Get Task"))
         (assert (send-blackboard ACT-PLN cmd_task ?command 6000 4))
+)
+
+(defrule task_command_fifth
+	?f <- (received ?sender command cmd_task ?user ?action_type ?param1 ?param2 ?param3 ?param4 ?param5 ?step 1)
+	(plan_name ?plan)
+	=>
+	(retract ?f)
+	(printout t "Se obtuvo tarea: " ?action_type crlf)
+	(assert (cd-task (cd get_task) (actor robot) (obj robot) (from sensor) (to status) (name-scheduled cubes) (state-number 3)))
+	(assert (task ?plan ?action_type ?param1 ?param2 ?param3 ?param4 ?param5 ?step))
+)
+
+(defrule task_command_fourth
+	?f <- (received ?sender command cmd_task ?user ?action_type ?param1 ?param2 ?param3 ?param4 ?step 1)
+	(plan_name ?plan)
+	=>
+	(retract ?f)
+	(printout t "Se obtuvo tarea: " ?action_type crlf)
+	(assert (cd-task (cd get_task) (actor robot) (obj robot) (from sensors) (to status) (name-scheduled cubes) (state-number 3)))
+	(assert (task ?plan ?action_type ?param1 ?param2 ?param3 ?param4 ?step))
 )
 
 (defrule task_command_three
@@ -206,6 +245,7 @@
 	?f3 <- (plan_name ?plan)
         (num_intentos ?nint)
         ?f4 <- (intento ?intento&:(< ?intento ?nint))
+	?f5 <- (item (name robot))
         => 
 	(retract ?f)
 	(retract ?f1)
@@ -214,9 +254,10 @@
 	(assert (cd-task (cd cmdSpeech) (actor robot)(obj robot)(from sensors)(to status)(name-scheduled cubes)(state-number 1)))
         (printout t "NO HAY TAREAS" crlf)
 	(assert (name-scheduled ?plan 1 (+ ?steps 1)))
-	(assert (task ?plan update_object_location algo arena ?steps))
+	(assert (task ?plan update_object_location algo current_loc ?steps))
         (assert (task ?plan speech_generator speech_1 (+ ?steps 1)))
 	(modify ?f2 (status active))
+	(modify ?f5 (zone frontexit))
         (assert (intento (+ ?intento 1)))
 )
 
@@ -227,6 +268,7 @@
         ?f3 <- (plan_name ?plan)
         (num_intentos ?nint)
         ?f4 <- (intento ?intento&:(eq ?intento ?nint))
+	?f5 <- (item (name robot))
         => 
         (retract ?f)
         (retract ?f1)
@@ -237,7 +279,9 @@
         (assert (name-scheduled ?plan 1 (+ ?steps 1)))
         (assert (task ?plan update_object_location algo exitdoor ?steps))
 	(assert (task ?plan speech_generator speech_2 (+ ?steps 1)))
+	;;(assert (task ?plan finish_clips finish_clips (+ ?steps 2)))
         (modify ?f2 (status active))
+	(modify ?f5 (zone frontexit))
         (assert (intento 1))
 )
 

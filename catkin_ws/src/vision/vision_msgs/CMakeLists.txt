@@ -6,10 +6,10 @@ find_package(catkin REQUIRED COMPONENTS
   roscpp
   rospy
   sensor_msgs
-  std_msgs 
+  std_msgs
   message_generation
 )
- 
+
 add_message_files(
   FILES
   VisionObject.msg
@@ -27,7 +27,15 @@ add_message_files(
   VisionRect.msg
   TrackedObject.msg
   Cube.msg
-  CubesSegmented.msg 
+  CubesSegmented.msg
+  VisionFlattenedObject.msg
+  VisionFlattenedObjectList.msg
+  MSG_VisionPlasticTray.msg
+  OpenPoseKeyPoint.msg
+  OpenPoseRecognition.msg
+  OpenPoseRecognitions.msg
+  ObjectCoordinatesForDetection.msg
+  Bounding_Box.msg
 )
 
 add_service_files(
@@ -35,9 +43,12 @@ add_service_files(
   RecognizeObject.srv
   RecognizeObjects.srv
   DetectObjects.srv
+  DetectObjectsInPlane.srv
+  DetectHandles.srv
   TrainObject.srv
   FindLines.srv
   FindPlane.srv
+  FindPlaneAtHeight.srv
   GetThermalAngle.srv
   GetPanoramic.srv
   DetectGripper.srv
@@ -45,6 +56,10 @@ add_service_files(
   FindWaving.srv
   FaceRecognition.srv
   GetCubes.srv
+  RecognizeFlattenedObjects.srv
+  HandCameraGrasp.srv
+  SRV_DetectPlasticTrayZones.srv
+  OpenPoseRecognize.srv
 )
 
 generate_messages(
@@ -58,4 +73,3 @@ catkin_package(
 include_directories(
   ${catkin_INCLUDE_DIRS}
 )
-

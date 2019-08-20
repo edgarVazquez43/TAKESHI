@@ -1,0 +1,3 @@
+#JSGF V1.0;
+grammar carry_my_luggage;
+public <stop_commands> = (STOP FOLLOW ME| HERE IS THE CAR | TAKE THE BAG | HELP ME);

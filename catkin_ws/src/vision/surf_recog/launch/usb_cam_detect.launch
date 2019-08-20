@@ -1,0 +1,19 @@
+<launch>
+
+  <node pkg="usb_cam" type="usb_cam_node" name="usb_cam" output="screen">
+    <param name="pixel_format" value="yuyv"/>
+    </node>
+
+ <node pkg="surf_recog" type="surf_detector_node" name="surf_detector" output="screen">
+   <remap from="/image" to="/usb_cam/image_raw" />
+   <param name="inFile" value="/tin.xml"/>
+   <param name="minHessian" value="600"/>
+   <param name="good_ratio" value="0.7"/>
+   <param name="ransacTHR" value="6"/>
+   <param name="show_img" value="true"/>
+   </node>
+
+<node pkg="rostopic" type="rostopic" name="en_surf" args=" pub -1 /enable_surf std_msgs/Bool 'data: true'" output="screen"/>
+
+
+</launch>

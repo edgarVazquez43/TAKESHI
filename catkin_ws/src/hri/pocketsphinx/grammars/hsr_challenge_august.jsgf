@@ -1,0 +1,12 @@
+#JSGF V1.0;
+grammar confirmation_g;
+public <confirmation_g> = (<clean_verb> <areas>);
+
+// Valid sentences for pick specific objects
+<objects>     =(RED MUG|GREEN MUG|BLUE MUG|PURPLE MUG|RED LEGO|GREEN LEGO|YELLOW LEGO|ROPE|DISH TOWEL|BILL|TRASH);
+
+// Valid sentences for clean areas
+<clean_verb>  = (CLEAN THE);
+<areas>       = (TRASH AREA|TRAY AREA|MUGS AREA);
+
+// Confirmation sentences

@@ -1,0 +1,230 @@
+/////////////////////////////////////////
+/////*   By - Edd-II (Suppourt)     *//
+#include <iostream>
+#include "ros/ros.h"
+#include "justina_tools/JustinaHardware.h"
+#include "justina_tools/JustinaHRI.h"
+#include "justina_tools/JustinaManip.h"
+#include "justina_tools/JustinaNavigation.h"
+#include "justina_tools/JustinaTools.h"
+#include "justina_tools/JustinaVision.h"
+#include "justina_tools/JustinaTasks.h"
+#include "justina_tools/JustinaKnowledge.h"
+#include "std_msgs/Bool.h"
+#include "string"
+
+#define SM_INIT_STATE           00
+#define SM_NAVIGATE_TABLE       10
+#define SM_RECO_OBJ_TABLE       20
+#define SM_PDF_GEN              25
+#define SM_GRASP_OBJ            30
+#define SM_NAVIGATE_SHELf       40
+#define SM_RECO_OBJ_SHELF_UP    50
+#define SM_RECO_OBJ_SHELF_MDDL  60
+#define SM_RECO_OBJ_SHELF_DOWN  70
+#define SM_PLACE_OBJ_SHELF      80
+#define SM_FINAL_STATE          100
+
+bool success;
+bool fail;
+bool saveFiles;
+int  next_state;
+
+std::vector<vision_msgs::VisionObject> recoObjList;
+std::vector<vision_msgs::VisionObject> recoObj_shelf;
+std::vector<std::string> classes;
+std::vector<float> obj_position;
+
+// Strings for append to pdf file.
+std::string name_test = "storingGroseries_Takeshi_3";
+std::stringstream justina_say;
+
+
+
+bool clasificationObjects(std::vector<vision_msgs::VisionObject> recoObjList,
+			  std::vector<geometry_msgs::Pose>& positionsClasses,
+			  std::vector<std::string>& classes)
+{
+
+  return true;
+}
+
+
+
+int main(int argc, char** argv)
+{
+  std::cout << "------------ TEST  ---------" << std::endl;
+  ros::init(argc, argv, "act_pln_storing");
+
+  ros::NodeHandle n;
+  JustinaHardware::setNodeHandle(&n);
+  JustinaHRI::setNodeHandle(&n);
+  JustinaManip::setNodeHandle(&n);
+  JustinaNavigation::setNodeHandle(&n);
+  JustinaTools::setNodeHandle(&n);
+  JustinaVision::setNodeHandle(&n);
+  JustinaTasks::setNodeHandle(&n);
+  JustinaKnowledge::setNodeHandle(&n);
+
+  ros::Rate loop(30);
+
+  success    = false;
+  fail       = false;
+  saveFiles  = true;
+
+  JustinaTools::pdfStart(name_test);
+  JustinaTools::pdfAppend(name_test, "");
+  JustinaTools::pdfAppend(name_test, "Attempt:  3");
+  JustinaTools::pdfAppend(name_test, "");
+  JustinaTools::pdfAppend(name_test, "");
+
+
+  next_state = SM_INIT_STATE;
+
+  while( ros::ok() && !success)
+  {
+    switch(next_state)
+    {
+    case SM_INIT_STATE:
+      std::cout << "--------------------------------------------" << std::endl;
+      std::cout << "        CASE:  INIT-CASE" << std::endl << std::endl;
+      JustinaHRI::waitAfterSay("I am ready for storing groseries test.", 3000);
+      next_state = SM_NAVIGATE_TABLE;
+      break;
+
+    case SM_NAVIGATE_TABLE:
+      std::cout << "---------------------------------------------" << std::endl;
+      std::cout << "        CASE:  NAVIGATE-TABLE" << std::endl << std::endl;
+
+      JustinaManip::armGoToNavigation();
+      JustinaHRI::say("I navigate to kitchen table.");
+      if(!JustinaNavigation::getClose("kitchen_table", 25000))
+	if(!JustinaNavigation::getClose("kitchen_table", 25000) )
+	  JustinaNavigation::getClose("kitchen_table", 25000);
+
+      ros::Duration(2.0).sleep();
+      next_state = SM_RECO_OBJ_TABLE;
+      break;
+
+   case SM_RECO_OBJ_TABLE:
+      std::cout << "---------------------------------------------" << std::endl;
+      std::cout << "        CASE:  RECO-OBJ     " << std::endl << std::endl;
+
+      JustinaHRI::say("I am searching for objects on the table.");
+      // Aling whit table
+      JustinaTasks::alignWithTable();
+
+      // Find objects
+      JustinaManip::hdGoTo(1.5707, 0.0, 6000);
+      JustinaManip::hdGoTo(1.5707, -0.9, 6000);
+      ros::Duration(3.0).sleep();
+      JustinaVision::detectAllObjects(recoObjList, saveFiles);
+      justina_say.str(std::string());
+      justina_say << "I found " << recoObjList.size() << " objects";
+      std::cout << "I found " << recoObjList.size() << " objects" << std::endl;
+      JustinaHRI::say( justina_say.str() );
+
+      for(int i = 0; i < recoObjList.size(); i++)
+      {
+	std::cout << "Obj[" << i << "]: " << recoObjList[i].id << recoObjList[i].category << std::endl;
+      }
+
+      obj_position.resize(3);
+      obj_position[0] = recoObjList[0].pose.position.x;
+      obj_position[1] = recoObjList[0].pose.position.y;
+      obj_position[2] = recoObjList[0].pose.position.z;
+      next_state = SM_GRASP_OBJ;
+      // next_state = -1;
+      break;
+
+    case SM_PDF_GEN:
+      std::cout << "---------------------------------------------" << std::endl;
+      std::cout << "        CASE:  PDF-GEN     " << std::endl << std::endl;
+      JustinaTools::pdfImageStop(name_test, "/home/$USER/objs/");
+      next_state = SM_GRASP_OBJ;
+      break;
+
+   case SM_GRASP_OBJ:
+      std::cout << "---------------------------------------------" << std::endl;
+      std::cout << "        CASE:  GRASP_OBJ" << std::endl << std::endl;
+      std::cout << "Object coordinates:  " << obj_position[0] << "  " << obj_position[1] << "  " << obj_position[2] << std::endl;
+      JustinaManip::hdGoTo(1.5707, 0.0, 6000);
+      JustinaManip::hdGoTo(0.0, 0.0, 6000);
+
+      //Fuction only to speak
+      justina_say.str(std::string());
+      justina_say << "I am going to grasping... the " << recoObjList[0].id << " object";
+      std::cout << "I am going to grasping... the " << recoObjList[0].id << " object" << std::endl;
+      JustinaHRI::say(justina_say.str() );
+      JustinaTasks::graspObjectLateral(obj_position[0], obj_position[1], obj_position[2]);
+
+      next_state = SM_NAVIGATE_SHELf;
+      break;
+
+    case SM_NAVIGATE_SHELf:
+      std::cout << "---------------------------------------------" << std::endl;
+      std::cout << "        CASE:  NAVIGATE_SHELF" << std::endl << std::endl;
+      JustinaManip::armGoToNavigation();
+      JustinaHRI::say("I navigate to shelf");
+      if( !JustinaNavigation::getClose("shelf", 25000) )
+	if( !JustinaNavigation::getClose("shelf", 25000) )
+	  JustinaNavigation::getClose("shelf", 25000);
+
+      // next_state = SM_PLACE_OBJ_SHELF;
+      next_state = SM_PLACE_OBJ_SHELF;
+      break;
+
+    case SM_RECO_OBJ_SHELF_UP:
+      std::cout << "---------------------------------------------" << std::endl;
+      std::cout << "        CASE:  RECO-OBJ-SHELF-UP   " << std::endl << std::endl;
+
+      // Aling whit table
+      JustinaTasks::alignWithTable();
+
+      // Find objects
+      JustinaManip::hdGoTo(1.5707, 0.0, 6000);
+      JustinaManip::hdGoTo(1.5707, -0.9, 6000);
+      ros::Duration(3.0).sleep();
+      JustinaVision::detectAllObjects(recoObjList, saveFiles);
+
+      next_state = SM_RECO_OBJ_SHELF_DOWN;
+      break;
+
+    case SM_RECO_OBJ_SHELF_DOWN:
+      std::cout << "---------------------------------------------" << std::endl;
+      std::cout << "        CASE:  RECO-OBJ-SHELF-DOWN   " << std::endl << std::endl;
+
+      JustinaManip::torsoGoTo(0.2, 2000);
+      ros::Duration(2.5).sleep();
+      JustinaVision::detectAllObjects(recoObjList, saveFiles);
+
+      next_state = SM_RECO_OBJ_TABLE;
+      break;
+
+
+    case SM_PLACE_OBJ_SHELF:
+      std::cout << "---------------------------------------------" << std::endl;
+      std::cout << "        CASE:  PLACE-OBJ_SHELF   " << std::endl << std::endl;
+
+      JustinaHRI::say("I am goind to place object into the shelf.");
+      // JustinaNavigation::moveDistAngle(0.0, -1.5707, 10000);
+      ros::Duration(2.0).sleep();
+
+      // JustinaTasks::placeObject(float=heightObject, bool=isBag)
+      JustinaTasks::placeObject(0.0, false);
+
+      next_state = SM_NAVIGATE_TABLE;
+      break;
+
+    default:
+      std::cout << "----------------------------------------------" << std::endl;
+      std::cout << "        CASE:  FINAL-CASE" << std::endl << std::endl;
+      JustinaHRI::say("I finish the storing groseries test.");
+      success = true;
+      break;
+    }
+
+  }
+
+  return 0;
+}

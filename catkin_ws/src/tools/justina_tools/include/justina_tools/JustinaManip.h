@@ -80,11 +80,12 @@ private:
     static ros::Publisher pubArmGoToAngles;
     static ros::Publisher pubArmOpenGripper;
     static ros::Publisher pubArmCloseGripper;
+    static ros::Publisher pubArmSuctionActivate;
     
     //For moving up and down torso
     static ros::Publisher pubTorsoUp;
     static ros::Publisher pubTorsoDown;
-
+    
     static bool _isLaGoalReached;
     static bool _isRaGoalReached;
     static bool _isHdGoalReached;
@@ -98,7 +99,7 @@ private:
 public:
     static std::vector<float> _laCurrentPos;
     static std::vector<float> _raCurrentPos;
-    static std::vector<float> _torsoCurrentPos;
+    static float _torsoCurrentPos;
     static std::vector<float> _armCurrentPos;
     
     static bool setNodeHandle(ros::NodeHandle* nh);
@@ -114,6 +115,7 @@ public:
     //Methods for calculating inverse kinematics
     static bool inverseKinematics(std::vector<float>& cartesian, std::vector<float>& articular);
     static bool inverseKinematics(std::vector<float>& cartesian, std::vector<float>& articular, float& torso, geometry_msgs::Pose2D& base_correction);  // Takeshi
+    static bool inverseKinematicsGeometric(std::vector<float>& cartesian, std::vector<float>& articular, float& torso, geometry_msgs::Pose2D& base_correction);  // Takeshi
     static bool inverseKinematics(float x, float y, float z, float roll, float pitch, float yaw, std::vector<float>& articular);
     static bool inverseKinematics(float x, float y, float z, std::vector<float>& articular);
     static bool inverseKinematics(std::vector<float>& cartesian, std::string frame_id, std::vector<float>& articular);
@@ -165,7 +167,7 @@ public:
     static void startHdGoTo(float pan, float tilt);
     static void startHdGoTo(std::string location);
     static void startHdMove(std::string movement);
-    static void startTorsoGoTo(float goalSpine, float goalWaist, float goalShoulders);
+    static void startTorsoGoTo(float goalSpine);
     static void startTorsoGoToRel(float goalRelSpine, float goalRelWaist, float goalRelShoulders);
     static bool laGoToArticular(std::vector<float>& articular, int timeOut_ms);
     static bool laGoToCartesian(std::vector<float>& cartesian, int timeOut_ms);
@@ -196,7 +198,7 @@ public:
     static bool hdGoTo(float pan, float tilt, int timeOut_ms);
     static bool hdGoTo(std::string location, int timeOut_ms);
     static bool hdMove(std::string movement, int timeOut_ms);
-    static bool torsoGoTo(float goalSpine, float goalWaist, float goalShoulders, int timeOut_ms);
+    static bool torsoGoTo(float goalSpine, int timeOut_ms);
     static bool torsoGoToRel(float goalRelSpine, float goalRelWaist, float goalRelShoulders, int timeOut_ms);
     static bool objOnRightHand();
     static bool objOnLeftHand();
@@ -204,7 +206,7 @@ public:
     static void getLeftHandPosition(float &x, float &y, float &z);
     static void getLaCurrentPos(std::vector<float>& pos);
     static void getRaCurrentPos(std::vector<float>& pos);
-    static void getTorsoCurrentPos(std::vector<float>& pos);
+    static void getTorsoCurrentPos(float &pos);
     static bool isLaInPredefPos(std::string id);
     static bool isRaInPredefPos(std::string id);
     //Methods for moving torso up or down
@@ -213,10 +215,19 @@ public:
     //Methods for moving Takeshi ARM
     static void openGripper(float pos);
     static void closeGripper(float torque);
+    static void armSetSuction(bool state);
     static void startArmGoto(std::string location);
     static void startArmGoToArticular(std::vector<float> articular);
     static bool armGoTo(std::string location, int timeOut_ms);
     static bool armGoToArticular(std::vector<float> articular, int timeOut_ms);
+    static bool armGoToArticular(float th0, float th1, float th2, float th3, int timeOut_ms);
+    static bool armGoToNavigation();
+    static bool armGoToFindPerson();
+    static bool armGoToFindObjects();
+    static bool armGraspBag();
+    static bool armDeliverBag();
+    static bool armReleaseObject();
+    static bool armSuctionPose();
 
     //Callbacks for catching goal-reached signals
     static void callbackRobotStop(const std_msgs::Empty::ConstPtr& msg);
@@ -228,7 +239,7 @@ public:
     static void callbackObjOnLeftHand(const std_msgs::Bool::ConstPtr& msg);
     static void callbackLaCurrentPos(const std_msgs::Float32MultiArray::ConstPtr& msg);
     static void callbackRaCurrentPos(const std_msgs::Float32MultiArray::ConstPtr& msg);
-    static void callbackTorsoCurrentPos(const std_msgs::Float32MultiArray::ConstPtr& msg);
+    static void callbackTorsoCurrentPos(const std_msgs::Float32::ConstPtr& msg);
 
     static void callbackArmCurrentPos(const std_msgs::Float32MultiArray::ConstPtr& msg);
     static void callbackArmGoalReached(const std_msgs::Bool::ConstPtr& msg);

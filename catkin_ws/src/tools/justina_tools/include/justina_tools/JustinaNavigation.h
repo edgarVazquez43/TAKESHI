@@ -18,6 +18,7 @@
 #include "navig_msgs/Location.h"
 #include "point_cloud_manager/GetRgbd.h"
 #include "tf/transform_listener.h"
+#include "justina_tools/JustinaManip.h"
 
 class JustinaNavigation
 {

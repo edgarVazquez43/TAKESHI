@@ -14,7 +14,8 @@ find_package(catkin REQUIRED COMPONENTS
 	sensor_msgs
 	geometry_msgs
 	visualization_msgs
-	justina_tools
+	#justina_tools
+	takeshi_tools
 	cmake_modules
 	tf
 	tf_conversions
@@ -29,9 +30,14 @@ find_package(Eigen3 REQUIRED)
 set(OPENPOSE_DIR "$ENV{OPENPOSE_HOME}")
 
 if(OPENPOSE_DIR)               # <--- Use 'BOOST_DIR', not 'DEFINED ${BOOST_DIR}'
-	find_package(CUDA REQUIRED)
-	find_package(gflags REQUIRED)
-	message(STATUS "OPENPOSE_HOME at ${OPENPOSE_DIR}")
+find_package(GFlags)
+find_package(Glog)
+find_package(OpenPose REQUIRED)
+find_package(OpenCV)
+find_package(Eigen3 REQUIRED)            # <--- Use 'BOOST_DIR', not 'DEFINED ${BOOST_DIR}'
+find_package(CUDA REQUIRED)
+find_package(gflags REQUIRED)
+message(STATUS "OPENPOSE_HOME at ${OPENPOSE_DIR}")
 	## Generate messages in the 'msg' folder
 	# add_message_files(
 	#   FILES
@@ -65,17 +71,20 @@ if(OPENPOSE_DIR)               # <--- Use 'BOOST_DIR', not 'DEFINED ${BOOST_DIR}
 		${catkin_INCLUDE_DIRS}
 		${CUDA_INCLUDE_DIRS}
 		${Eigen_INCLUDE_DIRS}
-		${OPENPOSE_DIR}/include
-		${OPENPOSE_DIR}/3rdparty/caffe/include
-		${OPENPOSE_DIR}/3rdparty/caffe/.build_release/src
+		${OpenPose_INCLUDE_DIRS}
+		${GFLAGS_INCLUDE_DIR}
+		${GLOG_INCLUDE_DIR}
+		${OpenCV_INCLUDE_DIRS}
 		)
 
 	add_library(OpenPose src/OpenPose.cpp)
-	target_link_libraries(OpenPose 
-		${catkin_LIBRARIES} 
+	target_link_libraries(OpenPose
+		${catkin_LIBRARIES}
 		${Eigen_LIBRARIES}
-		${OPENPOSE_DIR}/build/lib/libopenpose.so
-		${OPENPOSE_DIR}/3rdparty/caffe/.build_release/lib/libcaffe.so
+		${OpenPose_LIBS}
+		${GFLAGS_LIBRARY}
+		${GLOG_LIBRARY}
+		${OpenCV_LIBS}
 		gflags
 		)
 
@@ -84,4 +93,3 @@ if(OPENPOSE_DIR)               # <--- Use 'BOOST_DIR', not 'DEFINED ${BOOST_DIR}
 else()
 	message(WARNING "Undefined OPENPOSE_HOME env var, this package will not be compiled.")
 endif()
-

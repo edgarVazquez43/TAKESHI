@@ -26,11 +26,12 @@ private:
     static ros::Publisher pubSpgSay;
     static ros::Subscriber subSprRecognized;
     static ros::Subscriber subSprHypothesis;
-    // static ros::ServiceClient cltSpgSay;
+    static ros::ServiceClient cltSpgSay;
     static ros::ServiceClient cltSprStatus;
     static ros::ServiceClient cltSprGrammar;
     static ros::ServiceClient cltSRoiTrack;
     static ros::ServiceClient cltstopRoiTrack;
+    static ros::Subscriber subStartTest;
     //Members for operating human_follower node
     static ros::Publisher pubHybridFollow;
     static ros::Publisher pubFollowStartStop;
@@ -45,12 +46,12 @@ private:
     static bool newSprRecognizedReceived;
     static bool _legsFound;
     static bool _legsRearFound;
+    static bool _startTest;
     //Variabeles for qr reader
     static ros::Subscriber subQRReader;
     static boost::posix_time::ptime timeLastQRReceived;
     static std::string lastQRReceived;
     static sound_play::SoundClient * sc;
-
     static ros::Subscriber subBBBusy;
 
 public:
@@ -120,6 +121,8 @@ public:
     static bool rearLegsFound();
     static void initRoiTracker();
 
+    static bool isTriggerStartTest();
+
 private:
     //Speech recog and synthesis
     static void callbackSprRecognized(const std_msgs::String::ConstPtr& msg);
@@ -130,5 +133,6 @@ private:
     //Methods for qr reader
     static void callbackQRRecognized(const std_msgs::String::ConstPtr& msg);
     static void callbackBusy(const std_msgs::String::ConstPtr& msg);
+    static void callbackStartTest(const std_msgs::Bool::ConstPtr& msg);
     static Queue *tas;
 };

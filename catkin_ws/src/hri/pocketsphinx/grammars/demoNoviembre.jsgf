@@ -1,0 +1,7 @@
+#JSGF V1.0;
+grammar demo;
+public <action> = (<pick> | <follow> | <deliver> );
+<pick> = PICK UP THE OBJECT;
+<follow> = FOLLOW ME;
+<deliver> = (DELIVER OBJECT | TAKE IT) TO THE <places>;
+<places> = (LIVING ROOM | DINING TABLE);

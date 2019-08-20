@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<launch>
+  <group ns="hardware">
+    <!-- <include file="$(find takeshi_start)/launch/sigverse_servers.launch" /> -->
+    <!-- <node name="joy" pkg="joy" type="joy_node" output="screen"/> -->
+    <include file="$(find xtion)/launch/cloudify.launch"/>
+    <node name="xtion" pkg="xtion" type="xtion_node" output="screen"/>
+  </group>
+
+  <node name="openpose_node" pkg="openpose" type="open_pose_node" output="screen">
+    <param name="debug_mode" value="false"/>
+    <param name="file_links_config" value="$(find openpose)/OpenPoseConfig.xml"/>
+    <param name="model_folder" value="$(env OPENPOSE_HOME)/models/"/>
+    <param name="net_resolution" value="640x480"/>
+    <remap from="/vision/openpose/enable_estimate_pose" to="/vision/skeleton_finder/enable_tracking"/>
+    <remap from="/vision/openpose/skeleton_recog" to="/vision/skeleton_finder/skeleton_recog"/>
+  </node>
+
+  <node name="skel_follower" pkg="skeleton_follower" type="skeleton_follower_node" args="" output="screen">
+    <remap from="/hsrb/command_velocity" to="/hsrb/opt_command_velocity" />
+    <param name="k_y" value="0.2" type="double"/>
+    <param name="setpoint_y" value="0.0" type="double"/>
+    <param name="k_x" value="0.2" type="double"/>
+    <param name="setpoint_x" value="2.0" type="double"/>
+  </node>
+</launch>

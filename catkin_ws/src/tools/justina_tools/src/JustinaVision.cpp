@@ -76,6 +76,8 @@ ros::ServiceClient JustinaVision::cltGripperPos;
 ros::ServiceClient JustinaVision::cltGetFaces;
 ros::ServiceClient JustinaVision::cltDetectWaving;
 ros::ServiceClient JustinaVision::cltCubesSeg;
+ros::ServiceClient JustinaVision::cltFlattenedSeg;
+ros::ServiceClient JustinaVision::cltHandCameraManip;
 
 bool JustinaVision::setNodeHandle(ros::NodeHandle* nh)
 {
@@ -151,6 +153,8 @@ bool JustinaVision::setNodeHandle(ros::NodeHandle* nh)
     JustinaVision::cltDetectWaving = nh->serviceClient<vision_msgs::FindWaving>("/vision/face_recognizer/detect_waving");
     //Services for segment cubes
     JustinaVision::cltCubesSeg = nh->serviceClient<vision_msgs::GetCubes>("/vision/cubes_segmentation/cubes_seg");
+    JustinaVision::cltFlattenedSeg = nh->serviceClient<vision_msgs::RecognizeFlattenedObjects>("/vision/obj_reco/flattened_object");
+    JustinaVision::cltHandCameraManip = nh->serviceClient<vision_msgs::HandCameraGrasp>("/vision/hand_camera_grasp");
 
     return true;
 }
@@ -160,7 +164,7 @@ void JustinaVision::takePano(){
     std_msgs::Empty msg;
     JustinaVision::pubTakePanoMaker.publish(msg);
 }
-    
+
 void JustinaVision::clearPano(){
     std_msgs::Empty msg;
     JustinaVision::panoImageRecived = false;
@@ -448,6 +452,48 @@ bool JustinaVision::detectAllObjects(std::vector<vision_msgs::VisionObject>& rec
     return true;
 }
 
+
+bool JustinaVision::detectFlattenedObjects(vision_msgs::VisionFlattenedObjectList& recoObjList,
+					   bool saveFiles)
+{
+  std::cout << "JustinaVision.->Trying to detect flattened objects... " << std::endl;
+  vision_msgs::RecognizeFlattenedObjects srv;
+
+  if(!cltFlattenedSeg.call(srv))
+    {
+      std::cout << std::endl << "Justina::Vision can't detect any flattened object" << std::endl << std::endl;
+      return false;
+    }
+
+  // Fill message....
+  recoObjList = srv.response.recog_objects;
+  if(recoObjList.objectList.size() < 1)
+    {
+      std::cout << std::endl << "Justina::Vision can't detect any flattened object" << std::endl << std::endl;
+      return false;
+    }
+  std::cout << "JustinaVision.->Detected " << int(recoObjList.objectList.size()) << "flattened objects" << std::endl;
+  return true;
+
+}
+
+bool JustinaVision::handCameraManip(std::string nameObject)
+{
+  std::cout << "JustinaVision.->Trying to grasp objetc with feedback... " << std::endl;
+  vision_msgs::HandCameraGrasp srv;
+  srv.request.name = nameObject;
+
+  if(!cltHandCameraManip.call(srv))
+    {
+      std::cout << std::endl << "Justina::Vision can't grasp object whit feedback" << std::endl << std::endl;
+      return false;
+    }
+
+  return true;
+}
+
+
+
 //Methods for move the train object and move the tranining base
 void JustinaVision::trainObject(const std::string name)
 {
@@ -551,9 +597,9 @@ bool JustinaVision::findTable(std::vector<float>& nearestPoint)
     {
         nearestPoint.push_back(fp.response.nearestPoint.x);
         nearestPoint.push_back(fp.response.nearestPoint.y);
-        nearestPoint.push_back(fp.response.nearestPoint.z);    
+        nearestPoint.push_back(fp.response.nearestPoint.z);
     }
-    
+
 
     return true;
 }
@@ -708,4 +754,3 @@ bool JustinaVision::getCubesSeg(vision_msgs::CubesSegmented& cubes)
 
     return true;
 }
-

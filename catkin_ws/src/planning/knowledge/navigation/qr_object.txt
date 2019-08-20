@@ -1,0 +1,4 @@
+mineral_water
+eggplant
+wooden_bowl
+blue_cup

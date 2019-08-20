@@ -143,7 +143,7 @@ defrule exe-plan-stated-actuator
 ;;;;;;;;;;;;;;;;;; reglas para moverse hacia un lugar
 
 (defrule exe-plan-go-place
-        ?f3 <- (plan (name ?name) (number ?num-pln)(status active)(statusTwo active)(actions go_to_place ?place)(duration ?t))
+        ?f3 <- (plan (name ?name) (number ?num-pln)(status active)(actions go_to_place ?place)(duration ?t))
         (item (name ?place)(pose ?x ?y ?z))
                 ?f2 <- (item (name robot));;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
         =>
@@ -151,8 +151,8 @@ defrule exe-plan-stated-actuator
         (assert (send-blackboard ACT-PLN goto ?command ?t 4))
         ;(waitsec 1) 
         ;(assert (wait plan ?name ?num-pln ?t))
-                (modify ?f2 (zone frontexit));;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-        (modify ?f3 (statusTwo inactive))
+                ;(modify ?f2 (zone frontexit));;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+        ;(modify ?f3 (statusTwo inactive))
 )
 
 (
@@ -176,7 +176,8 @@ defrule exe-plan-went-place
         ;?f4 <- (wait plan ?name ?num-pln ?t)
         =>
         (retract ?f)
-        (modify ?f2 (statusTwo active))
+	;(modify ?f2 (statusTwo active)) ; normal performance
+        (modify ?f2 (status active)) ;;; for IROS
         
 )
 
@@ -289,17 +290,17 @@ defrule exe-plan-went-person
 ;;;;;;;;;;;;;;;;;;;;;;;;;;find specific person          ;;;;;;;;;;;;;;;;;;;;;;;;;;
                
  (defrule exe-plan-find-specific-person                
-         (plan (name ?name) (number ?num-pln)(status active)(actions find-object ?spc ?person)(duration ?t))           
+         (plan (name ?name) (number ?num-pln)(status active)(actions find-person ?spc ?person ?place)(duration ?t))           
        ?f1 <- (item (name ?person))            
          =>            
-         (bind ?command (str-cat "" ?spc " " ?person ""))              
+         (bind ?command (str-cat "" ?spc " " ?person " " ?place ""))              
          (assert (send-blackboard ACT-PLN find_object ?command ?t 4))          
  )             
                
  (defrule exe-plan-found-specific-person               
-         ?f <-  (received ?sender command find_object find_spc_person ?spc ?person 1)          
+         ?f <-  (received ?sender command find_object find_spc_person ?spc ?person ?place 1)          
        ?f1 <- (item (name ?person))            
-         ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions find-object ?spc ?person))         
+         ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions find-person ?spc ?person ?place))         
                        
          =>            
          (retract ?f)          
@@ -309,12 +310,13 @@ defrule exe-plan-went-person
  )             
                
  (defrule exe-plan-no-found-specific-person            
-         ?f <-  (received ?sender command find_object find_spc_person ?spc ?person 0)          
+         ?f <-  (received ?sender command find_object find_spc_person ?spc ?person ?place 0)          
          ?f1 <- (item (name ?person))          
-         ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions find-object ?spc ?person))             
+         ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions find-person ?spc ?person ?place))             
          =>            
          (retract ?f)
-         (modify ?f2 (status active))          
+	 (modify ?f2 (status accomplished)) ;;;for IROS
+         ;(modify ?f2 (status active))          
  )             
                
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -332,16 +334,20 @@ defrule exe-plan-went-person
 (defrule exe-asked-for-person
     ?f <-  (received ?sender command ask_person ?person 1)
     ?f1 <- (item (name ?person))            
-    ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions find-object ?spc ?person))
+    ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions find-person ?spc ?person ?place))
+    ?f3 <- (item (name man))
+    ?f4 <- (item (name man_guide))
     =>
     (retract ?f)          
     (modify ?f2 (status accomplished))          
     (modify ?f1 (status went))
+    (modify ?f3 (status went)) ;IROS
+    (modify ?f4 (status went)) ;IROS
 )
 
 (defrule exe-no-asked-for-person
          ?f <-  (received ?sender command ask_person ?person 0)                  
-         ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions find-object ?spc ?person))             
+         ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions find-person ?spc ?person ?place))             
          =>            
          (retract ?f)          
          (modify ?f2 (status active))      
@@ -387,4 +393,80 @@ defrule exe-plan-went-person
         (modify ?f2 (status accomplished))
         ;(modify ?f1 (status finded))
 )
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;; reglas para continuar o eliminar el resto del plan
 
+(defrule exe-plan-task-make-task
+	?f <- (plan (name ?name) (number ?num-pln) (status active) (actions make_task ?name ?obj ?status) (actions_num_params ?ini ?end))
+	?f1 <- (confirmation true)
+	=>
+	(retract ?f1)
+	(modify ?f (status accomplished))
+)
+
+(defrule exe-plan-task-no-make-task
+	?f <- (plan (name ?name) (number ?num-pln) (status active) (actions make_task ?name ?obj ?status) (actions_num_params ?ini ?end&:(< ?ini ?end)))
+	?f1 <- (plan (name ?name) (number ?ini))
+	;;?f1 <- (state (name ?plan) (status active) (number ?n))
+	(confirmation false)
+	=>
+	(retract ?f1)
+	(modify ?f (actions_num_params (+ ?ini 1) ?end))
+)
+
+(defrule exe-plan-task-no-make-last-task
+	?f <- (plan (name ?name) (number ?num-pln) (status active) (actions make_task ?name ?obj ?status) (actions_num_params ?ini ?ini))
+	?f1 <- (plan (name ?name) (number ?ini))
+	?f2 <- (plan (name ?name) (number ?num&:(eq ?num (+ ?ini 1))))
+	?f3 <- (confirmation false)
+	=>
+	(retract ?f1 ?f3)
+	(modify ?f (status accomplished))
+	(modify ?f2 (status active))
+)
+
+(defrule exe-plan-task-no-make-last-task-two
+	?f <- (plan (name ?name) (number ?num-pln) (status active) (actions make_task ?name ?obj ?status) (actions_num_params ?ini ?ini))
+	?f1 <- (plan (name ?name) (number ?ini))
+	?f2 <- (item (name ?obj))
+	?f4 <- (confirmation false)
+	=>
+	(retract ?f1 ?f4)
+	(modify ?f (status accomplished))
+	(modify ?f2 (status ?status))
+)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;; speech any
+(defrule exe-plan-speech-anything
+	(plan (name ?name) (number ?num-pln) (status active) (actions speech-anything ?speech) (duration ?t))
+	=>
+	(bind ?command (str-cat "" ?speech ""))
+	(assert (send-blackboard ACT-PLN spg_say ?command ?t 4))
+)
+
+(defrule exe-plan-speeched-anything
+	?f <- (received ?sender command spg_say $?spc 1)
+	?f1 <- (plan (name ?name) (number ?num-pln) (status active) (actions speech-anything ?speech))
+	=>
+	(retract ?f)
+	(modify ?f1 (status accomplished))
+)
+
+(defrule exe-plan-no-speeched-anything
+	?f <- (received ?sender command spg_say $?spc 0)
+	?f1 <- (plan (name ?name) (number ?num-pln) (status active) (actions speech-anything ?speech))
+	=>
+	(retract ?f)
+	(modify ?f1 (status active))
+)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;; change an object status
+(defrule exe-plan-update-status-object
+	?f <- (plan (name ?name) (number ?num-pln) (status active) (actions update_status ?obj ?status))
+	?f1 <- (item (name ?obj))
+	=>
+	(modify ?f (status accomplished))
+	(modify ?f1 (status ?status))
+)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

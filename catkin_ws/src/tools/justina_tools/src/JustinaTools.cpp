@@ -244,7 +244,7 @@ bool JustinaTools::transformPose(std::string src_frame, std::vector<float>& xyz_
 }
 
 void JustinaTools::pdfImageExport(std::string testName, std::string output){
-  std::string path="/home/$USER/JUSTINA/catkin_ws/src/vision/vision_export/pdfScript.sh";
+  std::string path="/home/$USER/HSR_PUMAS/catkin_ws/src/vision/vision_export/pdfScript.sh";
   std::stringstream temp;
   temp << path;
   temp << " ";
@@ -257,7 +257,7 @@ void JustinaTools::pdfImageExport(std::string testName, std::string output){
 }
 
 void JustinaTools::pdfStart(std::string theFile){
-  std::string path="/home/$USER/JUSTINA/catkin_ws/src/vision/vision_export/createPdfScript.sh";
+  std::string path="/home/$USER/HSR_PUMAS/catkin_ws/src/vision/vision_export/createPdfScript.sh";
   std::stringstream temp;
   temp << path;
   temp << " ";
@@ -269,7 +269,7 @@ void JustinaTools::pdfStart(std::string theFile){
 
 void JustinaTools::pdfStart(std::string theFile,std::string firstPath, std::string secondPath){
   //the last two strings passed doenst need the last slash
-  std::string path="/home/$USER/JUSTINA/catkin_ws/src/vision/vision_export/createPdfScript.sh";
+  std::string path="/home/$USER/HSR_PUMAS/catkin_ws/src/vision/vision_export/createPdfScript.sh";
   std::stringstream temp;
   temp << path;
   temp << " ";
@@ -284,7 +284,7 @@ void JustinaTools::pdfStart(std::string theFile,std::string firstPath, std::stri
 }
 
 void JustinaTools::pdfAppend(std::string fileAp,std::string lineAp){
-  std::string path="/home/$USER/JUSTINA/catkin_ws/src/vision/vision_export/appendPdfScript.sh";
+  std::string path="/home/$USER/HSR_PUMAS/catkin_ws/src/vision/vision_export/appendPdfScript.sh";
   std::stringstream temp;
   temp << path;
   temp << " ";
@@ -297,7 +297,7 @@ void JustinaTools::pdfAppend(std::string fileAp,std::string lineAp){
 }
 
 void JustinaTools::pdfStop(std::string theFile){
-  std::string path="/home/$USER/JUSTINA/catkin_ws/src/vision/vision_export/stopPdfScript.sh";
+  std::string path="/home/$USER/HSR_PUMAS/catkin_ws/src/vision/vision_export/stopPdfScript.sh";
   std::stringstream temp;
   temp << path;
   temp << " ";
@@ -308,7 +308,7 @@ void JustinaTools::pdfStop(std::string theFile){
 }
 
 void JustinaTools::pdfImageStop(std::string theFile, std::string output){
-  std::string path="/home/$USER/JUSTINA/catkin_ws/src/vision/vision_export/stopPdfWImg.sh";
+  std::string path="/home/$USER/HSR_PUMAS/catkin_ws/src/vision/vision_export/stopPdfWImg.sh";
   std::stringstream temp;
   temp << path;
   temp << " ";

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<launch>
+  <node name="rviz" pkg="rviz" type="rviz" args="-d $(find knowledge)/hri/config.rviz"/>
+  <remap from="/hardware/mobile_base/cmd_vel" to="/hsrb/command_velocity"/>
+  <param name="robot_description_semantic" textfile="$(find knowledge)/manipulation/hsrb.srdf"/>
+
+
+<group ns="navigation">
+    <group ns="localization">
+      <node name="map_server" pkg="map_server" type="map_server" output="screen" args="$(find knowledge)/navigation/occupancy_grids/biorobotica2019-I_2beta.yaml"/>
+      <node name="loc_amcl" pkg="amcl" type="amcl" output="screen" args="scan:=/hsrb/base_scan">
+        <param name="odom_alpha1" value="0.4"/>
+        <param name="odom_alpha2" value="0.4"/>
+        <param name="odom_alpha3" value="0.4"/>
+        <param name="odom_alpha4" value="0.4"/>
+        <param name="odom_alpha5" value="0.4"/>
+        <param name="initial_pose_x" value="2.3"/>
+        <param name="initial_pose_y" value="0.1"/>
+        <param name="initial_pose_a" value="1.57"/>
+        <param name="update_min_a" value="0.1"/>
+        <param name="laser_min_range" value="0.3"/>
+        <param name="odom_model_type" value="omni-corrected"/>
+      </node>
+    </group>
+  </group>
+  <group ns="knowledge">
+      <node name="ltm" pkg="knowledge" type="ltm_node" output="screen" args="-f $(find knowledge)/navigation/demoLocations.txt -d $(find knowledge)/navigation/known_delimitation_canada.txt -o $(find knowledge)/navigation/biorobotica2019-I.txt"/>
+    <node name="pred_ques" pkg="knowledge" type="pred_ques_node" output="screen" args="-f $(find knowledge)/speech_recognition/Questions.xml"/>
+    <node name="pred_arms_poses" pkg="knowledge" type="pred_poses_mani_node" output="screen" args="-f $(find knowledge)/manipulation/predef_poses/"/>
+  </group>
+</launch>

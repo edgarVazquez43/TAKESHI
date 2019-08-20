@@ -1,0 +1,6 @@
+#JSGF V1.0;
+grammar receptionist_names;
+#public <reception_name> = (<prefix_name><name>);
+public <reception_name> = (<name>| <prefix_name><name>);
+<name> = ( AMELIA | ANGEL | AVA | CHARLIE | CHARLOTTE | HUNTER | MAX | MIA | OLIVIA  | PARKER | SAM | CHARLIE | JACK | NOAH | OLIVER | THOMAS | WILLIAM);
+<prefix_name> = (MY NAME IS|I AM|<NULL>);

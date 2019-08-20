@@ -26,15 +26,17 @@ int main(int argc, char** argv)
 		max_attempts = value;
 	}
     }
-    
+
     std::cout << "INITIALIZING MOVING PLANNER BY MARCOSOFT..." << std::endl;
     ros::init(argc, argv, "mvn_pln");
     ros::NodeHandle n;
     ros::Rate loop(10);
-    
-    JustinaNavigation::setNodeHandle(&n);
-    JustinaManip::setNodeHandle(&n);
-    JustinaKnowledge::setNodeHandle(&n);
+
+    TakeshiNavigation::setNodeHandle(&n);
+    ros::Duration(20.0).sleep();
+    //std::cout << "Aqui truena...." << std::endl;
+    TakeshiManip::setNodeHandle(&n);
+    TakeshiKnowledge::setNodeHandle(&n);
     MvnPln mvnPln;
     mvnPln.allow_move_lateral(allow_move_lateral);
     mvnPln.initROSConnection(&n);

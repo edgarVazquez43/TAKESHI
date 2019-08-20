@@ -1,0 +1,5 @@
+#JSGF V1.0;
+grammar receptionist_drinks;
+public <reception_drink> = (<drink>|<prefix_drink><drink>);
+<drink> = (MARTINI | GIN TONIC | MARGARITA | MOJITO | RED WINE | CHARDONNAY | TEQUILA | BEER | WHISKEY | RUM);
+<prefix_drink> = (I LIKE|MY FAVORITE DRINK IS);

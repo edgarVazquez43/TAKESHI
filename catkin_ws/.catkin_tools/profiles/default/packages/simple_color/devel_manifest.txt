@@ -1,5 +1,0 @@
-vision/simple_color
-/home/edgar/HSR_PUMAS/catkin_ws/devel/.private/simple_color/share/simple_color/cmake/simple_colorConfig.cmake /home/edgar/HSR_PUMAS/catkin_ws/devel/share/simple_color/cmake/simple_colorConfig.cmake
-/home/edgar/HSR_PUMAS/catkin_ws/devel/.private/simple_color/share/simple_color/cmake/simple_colorConfig-version.cmake /home/edgar/HSR_PUMAS/catkin_ws/devel/share/simple_color/cmake/simple_colorConfig-version.cmake
-/home/edgar/HSR_PUMAS/catkin_ws/devel/.private/simple_color/lib/simple_color/simple_color_node /home/edgar/HSR_PUMAS/catkin_ws/devel/lib/simple_color/simple_color_node
-/home/edgar/HSR_PUMAS/catkin_ws/devel/.private/simple_color/lib/pkgconfig/simple_color.pc /home/edgar/HSR_PUMAS/catkin_ws/devel/lib/pkgconfig/simple_color.pc

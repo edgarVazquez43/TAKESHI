@@ -1,0 +1,7 @@
+#JSGF V1.0;
+grammar receptionist;
+public <reception_name> = (<name> | <confirmation>);
+public <reception_drink> = (<drink> | <confirmation>);
+<name> = ( ADRIAN | EDGAR | HUGO | JESUS | MARY | JOHN | JACK | OLIVER | MARCO  | ALEJANDRA | ROBERTO | DIEGO );
+<drink> = (MARTINI | GIN TONIC | MARGARITA | MOJITO | RED WINE | CHARDONNAY | TEQUILA | BEER | WHISKEY);
+<confirmation> = TAKESHI (YES|NO);

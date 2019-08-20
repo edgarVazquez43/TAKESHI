@@ -1,59 +1,109 @@
 <?xml version="1.0" encoding="utf-8"?>
 <questions>
   <question>
-    <q>in which city are we in</q>
-    <a>we are in nagoya, japan</a>
+    <q>whats is robotics</q>
+    <a>the scientific study of robot</a>
   </question>
   <question>
-    <q>what is the name of your team</q>
-    <a>the name of my team is pumas</a>
+    <q>who is considered as the father of industrial robot</q>
+    <a>the father of industrial robot is joseph engelberger</a>
   </question>
   <question>
-    <q>how many teams participate in robocup at home this year</q>
-    <a>there were 31 last time i counted them</a>
+     <q>give one example for a computer programming language that can be used for robot programming</q>
+     <a>one example for a computer programming language is aml (a manufacturing language)</a>
   </question>
   <question>
-    <q>who won the popular vote in the us election</q>
-    <a>hilary clinton was the popular vote in the us</a>
+    <q>what is the major disadvantage of using a robot</q>
+    <a>the major disadvantage of using a robot is heavy investment</a>
   </question>
   <question>
-    <q>what is the highest mountain in japan</q>
-    <a>the highest mountain in japan is fuji-san</a>
+    <q>name the language used in expert system</q>
+    <a>languages used in expert system are lisp and prolog</a>
   </question>
   <question>
-    <q>name the two robocup at home standard platforms</q>
-    <a>domestic standard platform league and social standard platform league</a>
+     <q>name one of the most important parts in expert system</q>
+
+    <a>the most important part in expert is system knowledge base</a>
   </question>
   <question>
-    <q>what does dspl stand for</q>
-    <a>domestic service platform league</a>
+    <q>wich system was designed for diagnosis and therapy recommendation for infectious disease</q>
+
+    <a>the system designed for diagnosis and therapy recommendation for infectious disease was mycin</a>
   </question>
   <question>
-    <q>what does sspl stand for</q>
-    <a>social standard platform league</a>
+    <q>what is the importance of ai</q>
+
+    <a>human intelligence have certain limit in speed and accuracy. it is interrupted due to the lack of presence of mind, mood, etc.but ai systems have their own superb abilities</a>
   </question>
   <question>
-    <q>who did alphabet sell boston dynamics to</q>
-    <a>softbank robotics</a>
+     <q>weaving the web was written by</q>
+
+    <a>tim burners lee</a>
   </question>
   <question>
-    <q>nagoya has one of the largest train stations in the world how large is it</q>
-    <a>over 410000 square metres</a>
+     <q>what is beta test</q>
+
+    <a>is a trial test of a computer or software before the commercial launch</a>
   </question>
   <question>
-    <q>what's your team's home city</q>
-    <a>mexico city</a>
+    <q>what is the extension of pdf</q>
+
+    <a>the extension of pdf is portable document format</a>
   </question>
   <question>
-    <q>who created star wars</q>
-    <a>george lucas</a>
+    <q>expand rdbms</q>
+
+    <a>relational database management system</a>
   </question>
   <question>
-    <q>who lives in a pineaple under the sea</q>
-    <a>sponge bob squarepants</a>
+     <q>difference engine was developed by</q>
+
+    <a>charles babbage</a>
   </question>
   <question>
-    <q>what invented grace hopper</q>
-    <a>grace hopper invented the first compiler</a>
+     <q>orkut.com is now owned by</q>
+
+    <a>google</a>
   </question>
+  <question>
+     <q>world's first microprocessor is</q>
+
+    <a>intel 4004</a>
+  </question>
+  <question>
+     <q>what is sql</q>
+
+    <a>sql is structured query language</a>
+  </question>
+  <question>
+     <q>what is the expansion of sms</q>
+
+    <a>the expansion of sms is short message service</a>
+  </question>
+  <question>
+     <q>wich it company's nickname is the big blue</q>
+
+    <a>ibm</a>
+  </question>
+  <question>
+     <q>what is the full form of ieee</q>
+
+    <a>the full form of ieee is institute of electric and electronic engineers</a>
+  </question>
+  <question>
+     <q>email was developed by</q>
+
+    <a>raymonds samuel tomlinson (ray tomlinson)</a>
+  </question>
+  <question>
+     <q>who is netizen</q>
+
+    <a>netizen is net citizen (citizen who uses internet)</a>
+  </question>
+  <question>
+    <q>what is scareware</q>
+    <a>scarewares are fake antivirus softwares</a>
+  </question>
+
+
 </questions>

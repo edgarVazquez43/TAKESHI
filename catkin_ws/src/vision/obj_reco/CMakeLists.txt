@@ -8,6 +8,7 @@ project(obj_reco)
   std_msgs
   vision_msgs
   justina_tools
+  takeshi_tools
   roslib
   cv_bridge
   image_transport
@@ -40,7 +41,7 @@ include_directories(
 )
 
 add_executable(
-  obj_reco_node 
+  obj_reco_node
   src/obj_reco_node.cpp
   src/ObjExtractor.cpp
   src/PlanarSegment.cpp
@@ -55,7 +56,5 @@ target_link_libraries(obj_reco_node
    ${PCL_LIBRARIES}
    ${OpenCV_LIBS}
    ${catkin_LIBRARIES}
-   /usr/local/lib/libopencv_tracking.so.3.3.1  
+
 )
-
-

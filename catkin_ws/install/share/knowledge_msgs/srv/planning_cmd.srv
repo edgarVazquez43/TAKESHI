@@ -1,5 +1,0 @@
-string params
-string name
----
-bool success
-string args

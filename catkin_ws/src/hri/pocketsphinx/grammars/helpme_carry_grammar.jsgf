@@ -1,0 +1,11 @@
+#JSGF V1.0;
+grammar helpme_carry;
+public <helpme_carry_grammar> = (<mode> THIS BAG TO THE <location>) | (<stop_commands>) | (<instruction_commands>);
+
+// Valid commands
+<stop_commands>        = HERE IS THE CAR | STOP FOLLOW ME | TAKESHI STOP;
+<instruction_commands> = (TAKE THE BAG | FOLLOW ME);
+<mode> = (TAKE | GET); 
+<location> = (BED|BEDROOM|CENTER TABLE|FRIDGE|DINING <dining_conf>|ENTRANCE|KITCHEN TABLE|KITCHEN|LIVING ROOM|SIDE TABLE| HALL|SHELF|NIGHT STAND|TV TABLE);
+<dining_conf> = (TABLE|ROOM);
+

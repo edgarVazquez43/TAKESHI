@@ -1,0 +1,43 @@
+#pragma once
+#include <iostream>
+#include <cmath>
+#include <QThread>
+#include "ros/ros.h"
+#include <ros/package.h>
+#include "std_msgs/Bool.h"
+#include "std_msgs/String.h"
+#include "std_msgs/Float32.h"
+#include "std_msgs/Float32MultiArray.h"
+#include "geometry_msgs/PoseWithCovarianceStamped.h"
+#include "nav_msgs/GetMap.h"
+#include "nav_msgs/Path.h"
+#include "hri_msgs/RecognizedSpeech.h"
+#include "navig_msgs/PathFromMap.h"
+#include "takeshi_tools/TakeshiHardware.h"
+#include "takeshi_tools/TakeshiNavigation.h"
+#include "takeshi_tools/TakeshiHRI.h"
+#include "takeshi_tools/TakeshiManip.h"
+#include "takeshi_tools/TakeshiVision.h"
+#include "takeshi_tools/TakeshiTools.h"
+#include "takeshi_tools/TakeshiKnowledge.h"
+#include "takeshi_tools/TakeshiRepresentation.h"
+
+
+class QtRosNode : public QThread
+{
+Q_OBJECT
+public:
+    QtRosNode();
+    ~QtRosNode();
+
+    ros::NodeHandle* n;
+    bool gui_closed;
+
+    void run();
+    void setNodeHandle(ros::NodeHandle* nh);
+
+signals:
+    void updateGraphics();
+    void onRosNodeFinished();
+
+};

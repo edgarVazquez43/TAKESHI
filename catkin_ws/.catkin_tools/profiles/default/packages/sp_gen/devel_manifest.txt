@@ -1,5 +1,0 @@
-hri/sp_gen
-/home/edgar/HSR_PUMAS/catkin_ws/devel/.private/sp_gen/share/sp_gen/cmake/sp_genConfig.cmake /home/edgar/HSR_PUMAS/catkin_ws/devel/share/sp_gen/cmake/sp_genConfig.cmake
-/home/edgar/HSR_PUMAS/catkin_ws/devel/.private/sp_gen/share/sp_gen/cmake/sp_genConfig-version.cmake /home/edgar/HSR_PUMAS/catkin_ws/devel/share/sp_gen/cmake/sp_genConfig-version.cmake
-/home/edgar/HSR_PUMAS/catkin_ws/devel/.private/sp_gen/lib/sp_gen/sp_gen_node /home/edgar/HSR_PUMAS/catkin_ws/devel/lib/sp_gen/sp_gen_node
-/home/edgar/HSR_PUMAS/catkin_ws/devel/.private/sp_gen/lib/pkgconfig/sp_gen.pc /home/edgar/HSR_PUMAS/catkin_ws/devel/lib/pkgconfig/sp_gen.pc

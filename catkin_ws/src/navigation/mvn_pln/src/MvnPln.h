@@ -29,10 +29,11 @@
 #include "navig_msgs/PathFromMap.h"
 #include "navig_msgs/PlanPath.h"
 #include "navig_msgs/Location.h"
-#include "justina_tools/JustinaNavigation.h"
-#include "justina_tools/JustinaManip.h"
-#include "justina_tools/JustinaHardware.h"
-#include "justina_tools/JustinaKnowledge.h"
+
+#include "takeshi_tools/TakeshiNavigation.h"
+#include "takeshi_tools/TakeshiManip.h"
+#include "takeshi_tools/TakeshiKnowledge.h"
+
 #include "point_cloud_manager/GetRgbd.h"
 
 #define SM_INIT 0
@@ -104,5 +105,5 @@ private:
     void callbackLaserScan(const sensor_msgs::LaserScan::ConstPtr& msg);
     void callbackCollisionRisk(const std_msgs::Bool::ConstPtr& msg);
     void callbackGoalReached(const std_msgs::Bool::ConstPtr& msg);
-    void callbackCollisionPoint(const geometry_msgs::PointStamped::ConstPtr& msg); 
+    void callbackCollisionPoint(const geometry_msgs::PointStamped::ConstPtr& msg);
 };

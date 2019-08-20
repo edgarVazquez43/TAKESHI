@@ -83,7 +83,7 @@ bool JustinaHardware::setNodeHandle(ros::NodeHandle* nh)
     pubRightArmGoalTorqueGrip = nh->advertise<std_msgs::Float32>("/hardware/right_arm/torque_gripper", 1);
     pubRightArmGoalTorque = nh->advertise<std_msgs::Float32MultiArray>("/hardware/right_arm/goal_torque", 1);
     //Subscribers for operating torso
-    subTorsoCurrentPose = nh->subscribe<std_msgs::Float32MultiArray>("/hardware/torso/current_pose", 1, &JustinaHardware::callbackTorsoCurrentPose);
+    subTorsoCurrentPose = nh->subscribe<std_msgs::Float32>("/hardware/torso/current_pose", 1, &JustinaHardware::callbackTorsoCurrentPose);
     //Publishers and subscribers for operating mobile base
     pubBaseSpeeds = nh->advertise<std_msgs::Float32MultiArray>("/hardware/mobile_base/speeds", 1);
     pubBaseCmdVel = nh->advertise<geometry_msgs::Twist>("/hardware/mobile_base/cmd_vel", 1);
@@ -419,13 +419,9 @@ void JustinaHardware::callbackRightArmCurrentPose(const std_msgs::Float32MultiAr
 }
 
 //callbacks for torso
-void JustinaHardware::callbackTorsoCurrentPose(const std_msgs::Float32MultiArray::ConstPtr& msg)
+void JustinaHardware::callbackTorsoCurrentPose(const std_msgs::Float32::ConstPtr& msg)
 {
-    if(msg->data.size() != 3)
-        return;
-    JustinaHardware::torsoCurrentSpine = msg->data[0];
-    JustinaHardware::torsoCurrentWaist = msg->data[1];
-    JustinaHardware::torsoCurrentShoulders = msg->data[2];
+    JustinaHardware::torsoCurrentSpine = msg->data;
 }
 //callbacks for robot state
 void JustinaHardware::callbackBaseBattery(const std_msgs::Float32::ConstPtr& msg)

@@ -29,6 +29,7 @@ add_service_files(
   wait_for_switch.srv
   StrQueryKDB.srv
   InitKDB.srv
+  IsPointInKnownArea.srv
 )
 
 add_message_files(
@@ -40,6 +41,8 @@ add_message_files(
   PlanningCmdClips.msg
   RecognizedSpeech.msg
   RepeatedSentence.msg
+  SphinxSetFile.msg
+  SphinxSetSearch.msg
 )
 
 ## Generate added messages and services with any dependencies listed here

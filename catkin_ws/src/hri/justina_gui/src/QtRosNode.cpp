@@ -10,7 +10,7 @@ QtRosNode::~QtRosNode()
 }
 
 void QtRosNode::run()
-{    
+{
     ros::Rate loop(10);
     while(ros::ok() && !this->gui_closed)
     {
@@ -28,9 +28,18 @@ void QtRosNode::setNodeHandle(ros::NodeHandle* nh)
     JustinaHardware::setNodeHandle(nh);
     JustinaNavigation::setNodeHandle(nh);
     JustinaHRI::setNodeHandle(nh);
-    JustinaManip::setNodeHandle(nh);
+    //JustinaManip::setNodeHandle(nh);
     JustinaVision::setNodeHandle(nh);
     JustinaTools::setNodeHandle(nh);
     JustinaKnowledge::setNodeHandle(nh);
     JustinaRepresentation::setNodeHandle(nh);
+
+    TakeshiHardware::setNodeHandle(nh);
+    TakeshiNavigation::setNodeHandle(nh);
+    TakeshiHRI::setNodeHandle(nh);
+    TakeshiManip::setNodeHandle(nh);
+    TakeshiVision::setNodeHandle(nh);
+    TakeshiTools::setNodeHandle(nh);
+    TakeshiKnowledge::setNodeHandle(nh);
+    TakeshiRepresentation::setNodeHandle(nh);
 }

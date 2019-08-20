@@ -39,6 +39,9 @@ int main(int argc, char** argv)
   ros::init(argc, argv, "IK_test_MoveIt");
   ros::NodeHandle    n;
   ros::Publisher     marker_pub;
+  ros::Publisher     arm_pub;
+  ros::Publisher     torso_pub;
+
   ros::ServiceClient cltIKinematicsArm;
 
   std::vector<float>          cartesian;
@@ -56,16 +59,17 @@ int main(int argc, char** argv)
 
   // ROS Topic Publisher 
   marker_pub = n.advertise<visualization_msgs::Marker>("visualization_marker", 10);
-
+  arm_pub    = n.advertise<std_msgs::Float32MultiArray>("/hardware/arm/goal_pose", 10);
+  torso_pub  = n.advertise<std_msgs::Float32>("/hardware/torso/goal_pose", 10);
 
   // Data request to Inverse Kinematic
-  cartesian.push_back( 0.35);   // X-axis respect robot
+  cartesian.push_back( 0.45);   // X-axis respect robot
   cartesian.push_back( 0.10);   // Y-axis respect robot     
-  cartesian.push_back( 0.80);     // Z-axis respect robot
+  cartesian.push_back( 0.90);     // Z-axis respect robot
   
-  cartesian.push_back(0.0);      // yaw
-  cartesian.push_back(1.5707);      // pitch
-  cartesian.push_back(0.0);      // roll
+  cartesian.push_back(0.0);       // yaw
+  cartesian.push_back(-1.5707);    // pitch
+  cartesian.push_back(3.141592);       // roll
   srv_ki.request.cartesian_pose.data = cartesian;
 
   // Response data is already respect to base_link frame
@@ -75,16 +79,19 @@ int main(int argc, char** argv)
 
   markerSetup();
 
-  
-  
+ 
+  ros::Rate loop(30);
 
-  ros::Rate loop(10);
+  loop.sleep();
+  ros::spinOnce();
+  ros::Duration(0.5).sleep();
 
-  while(ros::ok())
-    {
+  //while(ros::ok()) {
+  for(int i = 0; i < 5; i++ ){
       endEffector_marker.pose.position = endEffector_pose.position;
       marker_pub.publish(endEffector_marker);
       ros::spinOnce();
+  }
       
       if(!cltIKinematicsArm.call(srv_ki))
         {
@@ -97,14 +104,23 @@ int main(int argc, char** argv)
 	  std::cout << "[Joints values]:  " << std::endl;
 	  for (int i=0; i < srv_ki.response.articular_pose.data.size() ; i++)
 	      std::cout << "   " << srv_ki.response.articular_pose.data[i] << std::endl;
-	  std::cout << "OmniBase correction: " << srv_ki.response.base_correction << std::endl;
+	  std::cout << "OmniBase correction: " << std::endl << srv_ki.response.base_correction << std::endl;
+	  std::cout << "Torso correction: " << srv_ki.response.torso_pose << std::endl;
 	}
 
+      std_msgs::Float32MultiArray arm_msg;
+      std_msgs::Float32 trs_msg;
+      arm_msg = srv_ki.response.articular_pose;
+      trs_msg.data = srv_ki.response.torso_pose.data;
+
+      arm_pub.publish(arm_msg);
+      torso_pub.publish(trs_msg);
+
+      loop.sleep();
+      ros::spinOnce();
+      ros::Duration(0.5).sleep();
       
       std::cout << "---------------------------" << std::endl;
-
-      
-      loop.sleep();
-    }
+      // }
   return 0;
 }

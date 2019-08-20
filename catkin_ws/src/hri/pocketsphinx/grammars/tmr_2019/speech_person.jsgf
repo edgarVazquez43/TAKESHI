@@ -1,0 +1,74 @@
+#JSGF version 1.0;
+
+grammar speech_person;
+public <sap_grammmar> = (<arenaq> | <objq> | <crowdq> | <predefq>);
+<arenaq> = WHERE IS LOCATED THE (<placements> | <beacons>) | IN WHICH ROOM IS THE (<placements> | <beacons>)
+  | HOW MANY DOORS HAS <rooms> | HOW MANY <arenaq0> ARE IN THE <rooms>;
+<crowdq> = HOW MANY <people> ARE IN THE CROWD | HOW MANY PEOPLE IN THE CROWD ARE <crowdq0> |
+  TELL ME THE NUMBER OF <people> IN THE CROWD | WAS THE <posprs> PERSON <gprsng> |
+  TELL ME IF THE <crowdq1> WAS <gprsn> | TELL ME HOW MANY PEOPLE WERE WEARING <color>;
+<objq> = WHERE CAN I FIND A <objects> | HOW MANY <categories> THERE ARE |
+  WHAT IS THE COLOR OF <kobjects> | HOW MANY <objq0> ARE IN <placements> |
+  WHAT OBJECTS ARE STORED IN <placements> | WHERE CAN I FIND A <objq1> |
+  TO WHICH CATEGORY BELONG THE <objects> | DO THE <objects> AND <objects> BELONG TO THE SAME CATEGORY |
+  WHICH IS THE <adja> <objq2> |
+  BETWEEN THE <objects> AND <objects> WHICH ONE IS <adjr>;
+
+<adja> = HEAVIEST | SMALLEST | BIGGEST | LIGHTEST;
+<adjr> = HEAVIER | SMALLER | BIGGER | LIGHTER;
+
+<objq0> = <categories> | OBJECTS;
+<objq1> = <categories> | <objects>;
+<objq2> = <categories> | OBJECT;
+
+<people> = <appl> | <gppl>;
+<appl> = CHILDREN | ADULTS | ELDERS;
+<gppl> = MALES | FEMALES | MEN | WOMEN | BOYS | GIRLS;
+<posppl> = STANDING OR SITTING | STANDING OR LYING | SITTING OR LYING;
+<posprs> = STANDING | SITTING | LYING;
+<gprsn> =  MALE | FEMALE | MAN | WOMAN;
+<gprsng> =  MALE OR FEMALE | MAN OR WOMAN | BOY OR GIRL;
+
+<color> = RED | BLUE | WHITE | BLACK | GREEN | YELLOW;
+<categories> = SNACK | FOOD | DRINK;
+
+<crowdq0> = <posppl> | <gestures>;
+<crowdq1> = <posprs> | <gestures>;
+
+<arenaq0> = <placements> | <beacons>;
+<gestures> =  WAVING | RISING LEFT ARM | RISING RIGHT ARM | POINTING LEFT | POINTING RIGHT;
+<locations> = <beacons> | <placements> | <rooms>;
+<beacons> = NIGHTSTAND | BED | TV TABLE | FRIDGE | CENTER TABLE | SIDE TABLE | KITCHEN TABLE | SHELF | DINING TABLE;
+<placements> = <beacons>;
+<rooms> = BEDROOM | LIVING ROOM | KITCHEN | HALL | DINING ROOM;
+
+<names> = <males> | <females>;
+<males> = BRIAN | MICHAEL | CHRISTOPHER | WILLIAM | JOHN | DAVID | JAMES | ROBERT | SCOTT | RICHARD ;
+<females> = ANGIE | MARY | AMY | KIMBERLY | LISA | MELISSA | MICHELLE | JENIFFER | ELIZABETH | JULIE;
+
+<objects> = <aobjects> | <kobjects>;
+<aobjects> = CEREAL | CORN | JUICE | COKE | CREAM | PRINGLES CHOCOLATE | APPLE | ENERGY DRINK;
+<kobjects> = <aobjects>;
+
+<predefq> =  WHATS IS ROBOTICS |
+      WHO IS CONSIDERED AS THE FATHER OF INDUSTRIAL ROBOT |
+      GIVE ONE EXAMPLE FOR A COMPUTER PROGRAMMING LANGUAGE THAT CAN BE USED FOR ROBOT PROGRAMMING |
+      WHAT IS THE MAJOR DISADVANTAGE OF USING A ROBOT |
+      NAME THE LANGUAGE USED IN EXPERT SYSTEM |
+      NAME ONE OF THE MOST IMPORTANT PARTS IN EXPERT SYSTEM |
+      WICH SYSTEM WAS DESIGNED FOR DIAGNOSIS AND THERAPY RECOMMENDATION FOR INFECTIOUS DISEASE |
+      WHAT IS THE IMPORTANCE OF AI |
+      WEAVING THE WEB WAS WRITTEN BY |
+      WHAT IS BETA TEST |
+      WHAT IS THE EXTENSION OF PDF |
+      EXPAND RDBMS |
+      DIFFERENCE ENGINE WAS DEVELOPED BY |
+      ORKUT.COM IS NOW OWNED BY |
+      WORLD'S FIRST MICROPROCESSOR IS |
+      WHAT IS SQL |
+      WHAT IS THE EXPANSION OF SMS |
+      WICH IT COMPANY'S NICKNAME IS THE BIG BLUE |
+      WHAT IS THE FULL FORM OF IEEE |
+      EMAIL WAS DEVELOPED BY |
+      WHO IS NETIZEN |
+      WHAT IS SCAREWARE ;

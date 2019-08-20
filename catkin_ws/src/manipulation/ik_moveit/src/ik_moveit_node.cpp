@@ -150,8 +150,11 @@ int main(int argc, char** argv)
   ros::ServiceServer srvSrvIKFloatArray;
   ros::ServiceServer srvSrvDKFloatArray;
 
-  robot_model_loader::RobotModelLoader robot_model_loader("robot_description");    // Instancia de RobotModelLoader
-  robot_model::RobotModelPtr kinematic_model = robot_model_loader.getModel();      // Get kinematic model
+  // Instancia de RobotModelLoader
+  robot_model_loader::RobotModelLoader robot_model_loader("robot_description");
+
+  // Get kinematic model
+  robot_model::RobotModelPtr kinematic_model = robot_model_loader.getModel();      
 
   ROS_INFO("Model frame: %s", kinematic_model->getModelFrame().c_str());
 

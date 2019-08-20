@@ -1,6 +1,9 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(act_pln)
 
+## Compile as C++11, supported in ROS Kinetic and newer
+add_compile_options(-std=c++11)
+
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
@@ -18,105 +21,30 @@ find_package(catkin REQUIRED COMPONENTS
   vision_msgs
   bbros_bridge
   justina_tools
+  takeshi_tools
   std_srvs
-  sp_rec
+  roslib
+  message_generation
 )
 
-## System dependencies are found with CMake's conventions
-# find_package(Boost REQUIRED COMPONENTS system)
+# Generate messages in the 'msg' folder
+add_message_files(
+  FILES
+  virtualMsg.msg
+)
 
+generate_messages(
+  DEPENDENCIES
+  std_msgs
+)
 
-## Uncomment this if the package has a setup.py. This macro ensures
-## modules and global scripts declared therein get installed
-## See http://ros.org/doc/api/catkin/html/user_guide/setup_dot_py.html
-# catkin_python_setup()
-
-################################################
-## Declare ROS messages, services and actions ##
-################################################
-
-## To declare and build messages, services or actions from within this
-## package, follow these steps:
-## * Let MSG_DEP_SET be the set of packages whose message types you use in
-##   your messages/services/actions (e.g. std_msgs, actionlib_msgs, ...).
-## * In the file package.xml:
-##   * add a build_depend tag for "message_generation"
-##   * add a build_depend and a run_depend tag for each package in MSG_DEP_SET
-##   * If MSG_DEP_SET isn't empty the following dependency has been pulled in
-##     but can be declared for certainty nonetheless:
-##     * add a run_depend tag for "message_runtime"
-## * In this file (CMakeLists.txt):
-##   * add "message_generation" and every package in MSG_DEP_SET to
-##     find_package(catkin REQUIRED COMPONENTS ...)
-##   * add "message_runtime" and every package in MSG_DEP_SET to
-##     catkin_package(CATKIN_DEPENDS ...)
-##   * uncomment the add_*_files sections below as needed
-##     and list every .msg/.srv/.action file to be processed
-##   * uncomment the generate_messages entry below
-##   * add every package in MSG_DEP_SET to generate_messages(DEPENDENCIES ...)
-
-## Generate messages in the 'msg' folder
-# add_message_files(
-#   FILES
-#   Message1.msg
-#   Message2.msg
-# )
-
-## Generate services in the 'srv' folder
-# add_service_files(
-#   FILES
-#   Service1.srv
-#   Service2.srv
-# )
-
-## Generate actions in the 'action' folder
-# add_action_files(
-#   FILES
-#   Action1.action
-#   Action2.action
-# )
-
-## Generate added messages and services with any dependencies listed here
-# generate_messages(
-#   DEPENDENCIES
-#   geometry_msgs#   manip_msgs#   nav_msgs#   navig_msgs#   std_msgs#   vision_msgs
-# )
-
-################################################
-## Declare ROS dynamic reconfigure parameters ##
-################################################
-
-## To declare and build dynamic reconfigure parameters within this
-## package, follow these steps:
-## * In the file package.xml:
-##   * add a build_depend and a run_depend tag for "dynamic_reconfigure"
-## * In this file (CMakeLists.txt):
-##   * add "dynamic_reconfigure" to
-##     find_package(catkin REQUIRED COMPONENTS ...)
-##   * uncomment the "generate_dynamic_reconfigure_options" section below
-##     and list every .cfg file to be processed
-
-## Generate dynamic reconfigure parameters in the 'cfg' folder
-# generate_dynamic_reconfigure_options(
-#   cfg/DynReconf1.cfg
-#   cfg/DynReconf2.cfg
-# )
-
-###################################
-## catkin specific configuration ##
-###################################
-## The catkin_package macro generates cmake config files for your package
-## Declare things to be passed to dependent projects
-## INCLUDE_DIRS: uncomment this if you package contains header files
-## LIBRARIES: libraries you create in this project that dependent projects also need
-## CATKIN_DEPENDS: catkin_packages dependent projects also need
-## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
 #  INCLUDE_DIRS include
 #  LIBRARIES act_pln
 #  CATKIN_DEPENDS geometry_msgs manip_msgs nav_msgs navig_msgs point_cloud_manager roscpp rospy std_msgs tf vision_msgs
-   CATKIN_DEPENDS justina_tools roscpp rospy sp_rec hri_msgs
+   CATKIN_DEPENDS justina_tools roscpp rospy  hri_msgs takeshi_tools
 #  DEPENDS system_lib
+  CATKIN_DEPENDS message_runtime
 )
 
 ###########
@@ -126,34 +54,426 @@ catkin_package(
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
 # include_directories(include)
+#include_directories(
+#  ${catkin_INCLUDE_DIRS}
+#)
+
+find_package(OpenCV REQUIRED)
+#find_package(PCL REQUIRED)
+set(CMAKE_PREFIX_PATH "/usr/local/")
+set(OpenCV_INCLUDE_DIRS "/usr/local/include")
+
+
 include_directories(
   ${catkin_INCLUDE_DIRS}
+  ${OpenCV_INCLUDE_DIRS}
+#  ${PCL_INCLUDE_DIRS}
 )
 
-## Declare a C++ library
-# add_library(act_pln
-#   src/${PROJECT_NAME}/act_pln.cpp
+
+#######################################
+###    ACHY BREAKY HEART  [TEST]    ###
+# add_executable(achy_breaky_heart
+#  src/achy_breaky_heart.cpp
 # )
 
-## Add cmake target dependencies of the library
-## as an example, code may need to be generated before libraries
-## either from message generation or dynamic reconfigure
-# add_dependencies(act_pln ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+# add_dependencies(achy_breaky_heart ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
-## Declare a C++ executable
-#add_executable(act_pln_node
+# target_link_libraries(achy_breaky_heart
+#  ${catkin_LIBRARIES}
+# )
 
-add_executable(helpMeCarry_test
-  src/helpMeCarry_test.cpp
-)
+#######################################
+###    COYO TEST  [TEST]    ###
+ add_executable(test_faces_osc
+  src/test_faces_osc.cpp
+ )
 
-## Add cmake target dependencies of the executable
-## same as for the library above
+ add_dependencies(test_faces_osc ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
-
-add_dependencies(helpMeCarry_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-
-target_link_libraries(helpMeCarry_test
+ target_link_libraries(test_faces_osc
   ${catkin_LIBRARIES}
+ )
+
+#####################################
+####    HELP-ME CARRY   [TEST]    ###
+# add_executable(helpMeCarry_test
+#   src/helpMeCarry_test.cpp
+#   )
+
+# add_dependencies(helpMeCarry_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+
+# target_link_libraries(helpMeCarry_test
+#   ${catkin_LIBRARIES}
+# )
+
+#####################################
+####    GPRS   [TEST]    ###
+# add_executable(gpsr_test
+#   src/gpsr_test.cpp
+#   )
+
+# add_dependencies(gpsr_test ${${PROJECT_NAME}_EXPORTED_TARGETS_TARGETS} ${catkin_EXPORTED_TARGETS})
+
+# target_link_libraries (gpsr_test
+#  ${catkin_LIBRARIES}
+# )
+
+
+#######################################
+###    SPEECH AND PERSON  [TEST]    ###
+# add_executable(speech_person_test
+#   src/speech_person_test.cpp
+# )
+
+# add_dependencies(speech_person_test
+# ${${PROJECT_NAME}_EXPORTED_TARGETS}
+# ${catkin_EXPORTED_TARGETS})
+
+# target_link_libraries(speech_person_test
+#   ${catkin_LIBRARIES}
+#   )
+
+#######################################
+###    OPEN-CHALLENGE  [TEST]    ###
+#add_executable(open_challenge_montreal
+#  src/open_Challenge_montreal.cpp
+#)
+#
+#add_dependencies(open_challenge_montreal
+#  ${${PROJECT_NAME}_EXPORTED_TARGETS}
+#  ${catkin_EXPORTED_TARGETS}
+#  )
+#
+#target_link_libraries(open_challenge_montreal
+#  ${catkin_LIBRARIES}
+#)
+
+#######################################
+####    EEGPSR  [TEST]    ###
+#add_executable(eegpsr
+#  src/eegpsr_test.cpp
+#)
+#
+#add_dependencies(eegpsr
+#  ${${PROJECT_NAME}_EXPORTED_TARGETS}
+#  ${catkin_EXPORTED_TARGETS}
+#  )
+#
+#target_link_libraries(eegpsr
+#  ${catkin_LIBRARIES}
+#)
+#
+
+#######################################
+###    Bring Me  [TEST]    ###
+#add_executable(bring_me_test
+#  src/bring_me_test.cpp
+#)
+#
+#add_dependencies(bring_me_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+#
+#target_link_libraries(bring_me_test
+#  ${catkin_LIBRARIES}
+#  )
+
+#######################################
+###    Tidy Up Here  [TEST]    ###
+#add_executable(tidy_up_here_test
+#  src/tidy_up_here_test.cpp
+#)
+#
+#add_dependencies(tidy_up_here_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+#
+#target_link_libraries(tidy_up_here_test
+#  ${catkin_LIBRARIES}
+#  )
+
+######################################
+###    Automatic Search  [TEST]    ###
+# add_executable(search_online
+#   src/search_objects_online.cpp
+# )
+#
+# add_dependencies(search_online ${${PROJECT_NAME}_EXPORTED_TARGETS} # ${catkin_EXPORTED_TARGETS})
+#
+# target_link_libraries(search_online
+#   ${catkin_LIBRARIES}
+#   )
+
+#######################################
+###    Time Monitor    ###
+# add_executable(time_monitor
+#   src/monitor.cpp
+# )
+
+# add_dependencies(time_monitor ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+
+# target_link_libraries(time_monitor
+#   ${catkin_LIBRARIES}
+#   )
+
+#######################################
+###    Time Monitor    ###
+ add_executable(test_task
+   src/test.cpp
+ )
+add_dependencies(test_task ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+
+ target_link_libraries(test_task
+   ${catkin_LIBRARIES}
+   ${OpenCV_LIBS}
+   )
+
+###Another TEST because we cant have enough of them
+# add_executable(coyo_test_task
+#   src/test_coyo.cpp
+# )
+
+# add_dependencies(coyo_test_task ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+
+# target_link_libraries(coyo_test_task
+#   ${catkin_LIBRARIES}
+#   )
+
+#######################################
+###    Final Tokio    ###
+#add_executable(final_tokio
+#  src/final_tokio.cpp
+#)
+#
+#add_dependencies(final_tokio ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+#
+#target_link_libraries(final_tokio
+#  ${catkin_LIBRARIES}
+#  )
+
+########################################
+########  demo pickup ########
+#add_executable(demoPickUp src/demo_pick.cpp )
+#add_dependencies(demoPickUp ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+#
+#target_link_libraries(demoPickUp
+#${catkin_LIBRARIES}
+#)
+
+
+########################################
+########        demo full       ########
+##Follow navigation handover and all that good stuff!!!
+
+# add_executable(finalTMR src/demo_noviembre_18.cpp )
+# add_dependencies(finalTMR ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+
+# target_link_libraries(finalTMR ${catkin_LIBRARIES}
+#   )
+
+##############################################
+########     HSR-CHALLENGE Test       ########
+add_executable(hsr_challenge src/hsr_challenge.cpp )
+add_dependencies(hsr_challenge ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+
+
+target_link_libraries(hsr_challenge
+${catkin_LIBRARIES}
 )
+
+########################################
+########  Receptionist Test ########
+add_executable(receptionist src/receptionist.cpp )
+add_dependencies(receptionist ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+
+target_link_libraries(receptionist
+${catkin_LIBRARIES}
+)
+
+
+########################################
+########  carry_my_luggage Test ########
+
+add_executable(carry_my_luggage src/carry_my_luggage.cpp )
+add_dependencies(carry_my_luggage ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+
+target_link_libraries(carry_my_luggage
+${catkin_LIBRARIES}
+)
+
+
+#######################################
+###    ROBOT INSPECTION  2019    ###
+add_executable(robot_inspection_TMR_2019
+  src/robot_inspection_TMR_2019.cpp
+)
+add_dependencies(robot_inspection_TMR_2019 ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+target_link_libraries(robot_inspection_TMR_2019
+  ${catkin_LIBRARIES}
+  )
+
+
+#######################################
+###    Clean Up  [TEST]    ###
+#add_executable(clean_up_test
+#  src/clean_up_test.cpp
+#)
+
+#add_dependencies(clean_up_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+
+#target_link_libraries(clean_up_test
+#  ${catkin_LIBRARIES}
+#  )
+
+#######################################
+###    Clean Up 2019    ###
+ add_executable(clean_up_2019
+   src/clean_up_2019.cpp
+ )
+
+ add_dependencies(clean_up_2019 ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+
+ target_link_libraries(clean_up_2019
+   ${catkin_LIBRARIES}
+   )
+
+#######################################
+###    Clean Up 2019    ###
+add_executable(clean_up_tester
+  src/clean_up_tester.cpp
+)
+
+add_dependencies(clean_up_tester ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+
+target_link_libraries(clean_up_tester
+  ${catkin_LIBRARIES}
+  )
+
+#######################################
+###    STORING-GROSERIES  [TEST]    ###
+add_executable(storing_groseries_test
+ src/storing_groseries_test.cpp
+)
+
+add_dependencies(storing_groseries_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+
+target_link_libraries(storing_groseries_test
+ ${catkin_LIBRARIES}
+)
+
+
+#######################################
+###    SERVING DRINKS  [TEST]    ###
+add_executable(serving_drinks
+ src/serving_drinks_test.cpp
+)
+
+add_dependencies(serving_drinks ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+
+target_link_libraries(serving_drinks
+ ${catkin_LIBRARIES}
+ )
+
+#######################################
+###    RESTAURANT  [TEST]    ###
+add_executable(restaurant_test
+#  src/restaurant_canada.cpp
+   src/restaurant.cpp
+)
+
+add_dependencies(restaurant_test
+  ${${PROJECT_NAME}_EXPORTED_TARGETS}
+  ${catkin_EXPORTED_TARGETS}
+  )
+
+target_link_libraries(restaurant_test
+  ${catkin_LIBRARIES}
+  )
+
+#######################################
+###    P&G  [TEST]    ###
+add_executable(pg_test
+ src/pg_test.cpp
+)
+
+add_dependencies(pg_test
+ ${${PROJECT_NAME}_EXPORTED_TARGETS}
+ ${catkin_EXPORTED_TARGETS}
+ )
+
+target_link_libraries(pg_test
+ ${catkin_LIBRARIES}
+ )
+
+#######################################
+###    TAKE OUT GARBAGE  [TEST]    ###
+add_executable(take_out_garbage
+ src/take_out_garbage.cpp
+)
+
+add_dependencies(take_out_garbage
+ ${${PROJECT_NAME}_EXPORTED_TARGETS}
+ ${catkin_EXPORTED_TARGETS}
+ )
+
+target_link_libraries(take_out_garbage
+ ${catkin_LIBRARIES}
+)
+
+#######################################
+###    Hand Me that    ###
+add_executable(hand_me_that_task
+  src/hand_me_that/hand_me_that.cpp
+  src/hand_me_that/interactive_clean_test.h 
+  src/hand_me_that/interactive_clean_test.cpp 
+)
+
+add_dependencies(hand_me_that_task ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+
+target_link_libraries(hand_me_that_task
+  ${catkin_LIBRARIES}
+  )
+
+#######################################
+###    TEST OSCAR  [TEST]    ###
+add_executable( test_oscar
+ src/test_oscar.cpp
+)
+
+add_dependencies(test_oscar
+ ${${PROJECT_NAME}_EXPORTED_TARGETS}
+ ${catkin_EXPORTED_TARGETS}
+ )
+
+target_link_libraries(test_oscar
+ ${catkin_LIBRARIES}
+)
+
+
+
+
+
+#######################################
+###    VR HSR    ###
+add_executable(vr_hsr_test
+  src/vr_hsr/vr_robocup2019.cpp
+)
+
+add_dependencies(hand_me_that_task ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+
+target_link_libraries(vr_hsr_test
+  ${catkin_LIBRARIES}
+  )
+
+
+#######################################
+###    VR HSR    ###
+add_executable(final_robocup_sydney
+  src/final_robocup.cpp
+)
+
+add_dependencies(final_robocup_sydney
+  ${${PROJECT_NAME}_EXPORTED_TARGETS}
+  ${catkin_EXPORTED_TARGETS})
+
+target_link_libraries(final_robocup_sydney
+  ${catkin_LIBRARIES}
+  )
 

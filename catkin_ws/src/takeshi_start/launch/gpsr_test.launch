@@ -1,0 +1,6 @@
+<launch>                                                                                              
+  <include file="$(find takeshi_start)/launch/takeshi.launch"/>                               
+  <node name="gpsr_test" pkg="act_pln" type="gpsr_test" output="screen"  args="-f $(find knowledge)/navigation/TMR-2018.txt 0 60 gpsr_monterrey.xml"/>
+  
+</launch>                                                                                             
+                    

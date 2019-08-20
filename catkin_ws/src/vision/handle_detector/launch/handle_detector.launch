@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<launch>
+  <node name="rviz" pkg="rviz" type="rviz" args="-d $(find knowledge)/hri/handle.rviz"/>
+  <group ns="hardware">
+    <node name="xtion" pkg="xtion" type="xtion_node" output="screen"/>
+  </group>
+
+  <node name="handle_detector_node" pkg="handle_detector" type="handle_detector_node"  args="" output="screen">
+    <!-- <remap from="/cloud" to="/hsrb/head_rgbd_sensor/depth_registered/rectified_points"/> -->
+    <remap from="/cloud" to="/hardware/point_cloud_man/rgbd_wrt_robot"/>
+    <remap from="/cloud" to="/hardware/point_cloud_man/rgbd_wrt_robot"/>
+    <remap from="/processed_cloud" to="/hsrb/processed_cloud"/>
+    <param name="voxel_size" value="0.01"/>
+    <param name="crop_size" value="2.0"/>
+    <param name="seg_ratio" value="0.5"/>
+    <!-- Must be larger than voxelSize -->
+    <param name="cluster_tolerance" value="0.025"/>
+    <param name="prism_height" value="0.8"/>
+    <param name="min_points_cluster" value="40" type="int"/>
+    <param name="max_points_cluster" value="80" type="int"/>
+
+  </node>
+</launch>

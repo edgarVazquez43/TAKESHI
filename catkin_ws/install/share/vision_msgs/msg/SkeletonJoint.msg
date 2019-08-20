@@ -1,3 +1,0 @@
-std_msgs/String name_joint
-geometry_msgs/Vector3 position
-geometry_msgs/Quaternion orientation

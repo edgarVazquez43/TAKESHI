@@ -1,0 +1,23 @@
+yolo_model:
+
+  config_file:
+    name: objects_mayo_40.cfg
+  weight_file:
+    name: objects_mayo_40.weights
+  threshold:
+    value: 0.5
+  detection_classes:
+    names:
+        - blue_mug
+        - green_mug
+        - purple_mug
+        - red_mug
+        - bill
+        - blue_lego
+        - red_lego
+        - yellow_lego
+        - apple_juice
+        - cajeta_cokkies
+        - pineapple_cookies
+        - soap
+        - strawberry_cookies

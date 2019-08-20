@@ -1,0 +1,9 @@
+<launch>
+ <node pkg="color_segmentation" type="sat_segmentation_node" name="sat_segmentation_node" output="screen">
+   <remap from="/image" to="/hsrb/hand_camera/image_raw" />
+   <!-- <remap from="/image" to="/hsrb/hand_camera/image_raw" /> -->
+   <param name="minSat" value="150"/>
+   <param name="maxSat" value="255"/>
+   <param name="debug" value="true"/>
+   </node>
+</launch>

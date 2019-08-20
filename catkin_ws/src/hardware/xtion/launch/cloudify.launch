@@ -1,0 +1,34 @@
+<launch>
+   <arg name="sensor" default="/hsrb/head_rgbd_sensor"/>
+  <node pkg="nodelet" type="nodelet" args="manager" name="nodelet_manager" output="screen"/>
+
+  <!-- Rectify rgb camera -->
+  <node pkg="nodelet" type="nodelet" name="rectifyrgb" args="load image_proc/rectify  nodelet_manager --no-bond">
+    <remap from="camera_info" to="$(arg sensor)/rgb/camera_info" />
+    <remap from="image_mono" to="$(arg sensor)/rgb/image_raw"/>
+    <remap from="image_rect" to="$(arg sensor)/rgb/image_rect"/>
+  </node>
+
+  <node pkg="nodelet" type="nodelet" name="rectifydepth" args="load image_proc/rectify  nodelet_manager --no-bond">
+    <remap from="camera_info" to="$(arg sensor)/depth/camera_info" />
+    <remap from="image_mono" to="$(arg sensor)/depth/image_raw"/>
+    <remap from="image_rect" to="$(arg sensor)/depth/image_rect"/>
+  </node>
+
+  <!-- Register map into rgb camera -->
+  <node pkg="nodelet" type="nodelet" name="registery" args="load depth_image_proc/register  nodelet_manager --no-bond">
+    <remap from="rgb/camera_info" to="$(arg sensor)/rgb/camera_info" />
+    <remap from="depth/camera_info" to="$(arg sensor)/depth/camera_info"/>
+    <remap from="depth/image_rect" to="$(arg sensor)/depth/image_raw"/>
+    <remap from="depth_registered/camera_info" to="$(arg sensor)/depth_registered/camera_info"/>
+    <remap from="depth_registered/image_rect" to="$(arg sensor)/depth_registered/image_rect"/>
+  </node>
+
+  <!-- Convert it into a point cloud -->
+  <node pkg="nodelet" type="nodelet" name="cloudify" output="screen" args="load depth_image_proc/point_cloud_xyzrgb  nodelet_manager --no-bond">
+    <remap from="rgb/camera_info" to="$(arg sensor)/rgb/camera_info" />
+    <remap from="rgb/image_rect_color" to="$(arg sensor)/rgb/image_rect"/>
+    <remap from="depth_registered/image_rect" to="$(arg sensor)/depth_registered/image_rect"/>
+    <remap from="depth_registered/points" to="$(arg sensor)/depth_registered/rectified_points"/>
+  </node>
+</launch>

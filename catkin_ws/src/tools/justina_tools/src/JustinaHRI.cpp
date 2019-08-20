@@ -8,7 +8,7 @@ ros::Publisher JustinaHRI::pubFakeSprHypothesis;
 ros::Publisher JustinaHRI::pubSpgSay;                // publish for takeshi
 ros::Subscriber JustinaHRI::subSprRecognized; 
 ros::Subscriber JustinaHRI::subSprHypothesis;
-// ros::ServiceClient JustinaHRI::cltSpgSay;         // publish for takeshi
+ros::ServiceClient JustinaHRI::cltSpgSay;         // publish for justina SP_GEN
 ros::ServiceClient JustinaHRI::cltSprStatus;
 ros::ServiceClient JustinaHRI::cltSprGrammar;
 ros::ServiceClient JustinaHRI::cltSRoiTrack;
@@ -22,6 +22,8 @@ ros::Publisher JustinaHRI::pubLegsEnable;
 ros::Publisher JustinaHRI::pubLegsRearEnable;
 ros::Subscriber JustinaHRI::subLegsFound;
 ros::Subscriber JustinaHRI::subLegsRearFound;
+ros::Subscriber JustinaHRI::subStartTest;
+
 //Variables for speech
 std::string JustinaHRI::_lastRecoSpeech = "";
 std::vector<std::string> JustinaHRI::_lastSprHypothesis;
@@ -42,6 +44,7 @@ std::string JustinaHRI::lastQRReceived;
 //
 JustinaHRI::Queue *JustinaHRI::tas;
 ros::Subscriber JustinaHRI::subBBBusy;
+bool JustinaHRI::_startTest = false;
 
 bool JustinaHRI::setNodeHandle(ros::NodeHandle* nh)
 {
@@ -59,7 +62,7 @@ bool JustinaHRI::setNodeHandle(ros::NodeHandle* nh)
   pubSpgSay            = nh->advertise<tmc_msgs::Voice>("/talk_request", 1);
   subSprHypothesis     = nh->subscribe("/recognizedSpeech", 1, &JustinaHRI::callbackSprHypothesis);
   subSprRecognized     = nh->subscribe("/hri/sp_rec/recognized", 1, &JustinaHRI::callbackSprRecognized);
-  // cltSpgSay            = nh->serviceClient<bbros_bridge::Default_ROS_BB_Bridge>("/spg_say");
+  cltSpgSay            = nh->serviceClient<bbros_bridge::Default_ROS_BB_Bridge>("/spg_say");
   cltSprStatus         = nh->serviceClient<bbros_bridge::Default_ROS_BB_Bridge>("/spr_status");
   cltSprGrammar        = nh->serviceClient<bbros_bridge::Default_ROS_BB_Bridge>("/spr_grammar");
   cltSRoiTrack         = nh->serviceClient<std_srvs::Trigger>("/vision/roi_tracker/init_track_inFront");
@@ -73,9 +76,9 @@ bool JustinaHRI::setNodeHandle(ros::NodeHandle* nh)
   subLegsFound       = nh->subscribe("/hri/leg_finder/legs_found", 1, &JustinaHRI::callbackLegsFound);
   subLegsRearFound   = nh->subscribe("/hri/leg_finder/legs_found_rear", 1, &JustinaHRI::callbackLegsRearFound);
   subBBBusy          = nh->subscribe("/busy", 1, &JustinaHRI::callbackBusy);
+  subStartTest       = nh->subscribe("/hardware/start_button", 1, &JustinaHRI::callbackStartTest);
 
   std::cout << "JustinaHRI.->Setting ros node..." << std::endl;
-  //JustinaHRI::cltSpGenSay = nh->serviceClient<bbros_bridge>("
   subQRReader = nh->subscribe("/hri/qr/recognized", 1, &JustinaHRI::callbackQRRecognized);
   sc = new sound_play::SoundClient(*nh, "/hri/robotsound");
   JustinaHRI::inicializa();
@@ -354,38 +357,38 @@ void JustinaHRI::startSay(std::string strToSay)
 void JustinaHRI::say(std::string strToSay)
 {
   std::cout << "JustinaHRI.->Saying: " << strToSay << std::endl;
-  // bbros_bridge::Default_ROS_BB_Bridge srv;
-  // srv.request.parameters = strToSay;
-  // srv.request.timeout = 10000;
-  // cltSpgSay.call(srv);
-
+  bbros_bridge::Default_ROS_BB_Bridge srv;
+  srv.request.parameters = strToSay;
+  srv.request.timeout = 10000;
+  
   tmc_msgs::Voice msg_voice;
   msg_voice.queueing  = true;
   msg_voice.language  = 1;
   msg_voice.sentence = strToSay;
+
+  cltSpgSay.call(srv);
   pubSpgSay.publish(msg_voice);
 }
 
-bool JustinaHRI::waitAfterSay(std::string strToSay, int timeout) {
-  // bbros_bridge::Default_ROS_BB_Bridge srv;
-  // srv.request.parameters = strToSay;
-  // srv.request.timeout = timeout;
-  // if (cltSpgSay.call(srv)) {
-  //     boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
-  //     return true;
-  // }
-  // return false;
-
+bool JustinaHRI::waitAfterSay(std::string strToSay, int timeout)
+{
   std::cout << "JustinaHRI.->Saying: " << strToSay
 	    << " and  wait for" <<  timeout << "seconds" << std::endl;
+  
+  bbros_bridge::Default_ROS_BB_Bridge srv;
+  srv.request.parameters = strToSay;
+  srv.request.timeout = timeout;
   
   tmc_msgs::Voice msg_voice;
   msg_voice.queueing  = true;
   msg_voice.language  = 1;
   msg_voice.sentence = strToSay;
-  
-  boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
+
+  cltSpgSay.call(srv);
   pubSpgSay.publish(msg_voice);
+
+  ros::spinOnce();
+  boost::this_thread::sleep(boost::posix_time::milliseconds(timeout));
   return true;
 }
 
@@ -501,6 +504,14 @@ bool JustinaHRI::rearLegsFound()
   return JustinaHRI::_legsRearFound;
 }
 
+bool JustinaHRI::isTriggerStartTest()
+{
+  std::cout << "Return_value: " << JustinaHRI::_startTest << std::endl;
+  return JustinaHRI::_startTest;
+}
+
+
+
 void JustinaHRI::callbackSprRecognized(const std_msgs::String::ConstPtr& msg)
 {
   _lastRecoSpeech = msg->data;
@@ -524,7 +535,7 @@ void JustinaHRI::callbackSprHypothesis(const hri_msgs::RecognizedSpeech::ConstPt
 
 void JustinaHRI::callbackLegsFound(const std_msgs::Bool::ConstPtr& msg)
 {
-  std::cout << "JustinaHRI.->Legs found signal received!" << std::endl;
+  //std::cout << "JustinaHRI.->Legs found signal received!" << std::endl;
   JustinaHRI::_legsFound = msg->data;
 }
 
@@ -557,6 +568,13 @@ void JustinaHRI::callbackBusy(const std_msgs::String::ConstPtr& msg){
   std::cout << "name:" << msg->data << std::endl;
 	
   JustinaHRI::asyncSpeech();
+}
+
+void JustinaHRI::callbackStartTest(const std_msgs::Bool::ConstPtr& msg)
+{
+  std::cout  << "--------- startTest Callback ---------" << std::endl;
+  JustinaHRI::_startTest = msg->data;
+  std::cout << "Value: " << JustinaHRI::_startTest << std::endl;
 }
 
 

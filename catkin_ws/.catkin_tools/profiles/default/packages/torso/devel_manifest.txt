@@ -1,4 +1,0 @@
-hardware/torso
-/home/edgar/HSR_PUMAS/catkin_ws/devel/.private/torso/share/torso/cmake/torsoConfig-version.cmake /home/edgar/HSR_PUMAS/catkin_ws/devel/share/torso/cmake/torsoConfig-version.cmake
-/home/edgar/HSR_PUMAS/catkin_ws/devel/.private/torso/share/torso/cmake/torsoConfig.cmake /home/edgar/HSR_PUMAS/catkin_ws/devel/share/torso/cmake/torsoConfig.cmake
-/home/edgar/HSR_PUMAS/catkin_ws/devel/.private/torso/lib/pkgconfig/torso.pc /home/edgar/HSR_PUMAS/catkin_ws/devel/lib/pkgconfig/torso.pc

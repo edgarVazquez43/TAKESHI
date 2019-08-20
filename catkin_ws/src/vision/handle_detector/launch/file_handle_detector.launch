@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<launch>
+  <node name="rviz" pkg="rviz" type="rviz" args="-d $(find knowledge)/hri/handle.rviz"/>
+
+  <node pkg="tf" type="static_transform_publisher" name="xtion_base_link" args="0 0.964 0.061  0.483 -0.481 0.522 0.514  base_link head_rgbd_sensor_link 100"/>
+
+  <node name="cloud_publisher" pkg="pcl_ros" type="pcd_to_pointcloud" args="/home/jesus/maestria/tesis/cloud/hsr_bags/WRS2018.pcd 2" output="screen">
+    <remap from="/cloud_pcd" to="/hsrb/head_rgbd_sensor/depth_registered/rectified_points"/>
+    <param name="frame_id" value="head_rgbd_sensor_link" type="str"/>
+  </node>
+
+  <group ns="hardware">
+    <node name="xtion" pkg="xtion" type="xtion_node" output="screen"/>
+  </group>
+
+  <node name="handle_detector_node" pkg="handle_detector" type="handle_detector_node" args="" output="screen">
+    <!-- <remap from="/cloud" to="/hsrb/head_rgbd_sensor/depth_registered/rectified_points"/> -->
+    <remap from="/cloud" to="/hardware/point_cloud_man/rgbd_wrt_robot"/>
+    <remap from="/cloud" to="/hardware/point_cloud_man/rgbd_wrt_robot"/>
+    <remap from="/processed_cloud" to="/hsrb/processed_cloud"/>
+    <param name="voxel_size" value="0.01"/>
+    <param name="crop_size" value="2.0"/>
+    <param name="seg_ratio" value="0.5"/>
+    <!-- Must be larger than voxelSize -->
+    <param name="cluster_tolerance" value="0.025"/>
+      <param name="prism_height" value="0.15"/>
+    <param name="min_points_cluster" value="30"/>
+    <param name="max_points_cluster" value="300" type="int"/>
+  </node>
+</launch>

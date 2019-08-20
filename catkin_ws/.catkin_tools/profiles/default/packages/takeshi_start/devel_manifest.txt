@@ -1,4 +1,0 @@
-takeshi_start
-/home/edgar/HSR_PUMAS/catkin_ws/devel/.private/takeshi_start/share/takeshi_start/cmake/takeshi_startConfig-version.cmake /home/edgar/HSR_PUMAS/catkin_ws/devel/share/takeshi_start/cmake/takeshi_startConfig-version.cmake
-/home/edgar/HSR_PUMAS/catkin_ws/devel/.private/takeshi_start/share/takeshi_start/cmake/takeshi_startConfig.cmake /home/edgar/HSR_PUMAS/catkin_ws/devel/share/takeshi_start/cmake/takeshi_startConfig.cmake
-/home/edgar/HSR_PUMAS/catkin_ws/devel/.private/takeshi_start/lib/pkgconfig/takeshi_start.pc /home/edgar/HSR_PUMAS/catkin_ws/devel/lib/pkgconfig/takeshi_start.pc

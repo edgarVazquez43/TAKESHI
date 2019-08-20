@@ -60,7 +60,7 @@ void ManipPln::setNodeHandle(ros::NodeHandle* n)
     this->pubRaGoalTorque = nh->advertise<std_msgs::Float32MultiArray>("/hardware/right_arm/goal_torque", 1);
     this->pubHdGoalTorque = nh->advertise<std_msgs::Float32MultiArray>("/hardware/head/goal_torque", 1);
     //Publishers of the marker manipulation
-    this->pubMarkerManipulation = nh->advertise<visualization_msgs::MarkerArray>("/manipulation/manip_marker", 1); 
+    this->pubMarkerManipulation = nh->advertise<visualization_msgs::MarkerArray>("/manipulation/manip_marker", 1);
     //Stuff for tranformations and inverse kinematics
     this->cltIkFloatArray = nh->serviceClient<manip_msgs::InverseKinematicsFloatArray>("/manipulation/ik_geometric/ik_float_array");
     this->cltIkFloatArrayWithoutOpt = nh->serviceClient<manip_msgs::InverseKinematicsFloatArray>("/manipulation/ik_geometric/ik_float_array_without_opt");
@@ -271,7 +271,7 @@ void ManipPln::spin()
                 this->laFeedbackNewGoal = false;
                 std_msgs::Bool msg;
                 msg.data = false;
-                this->pubStartGetGripperPosition.publish(msg); 
+                this->pubStartGetGripperPosition.publish(msg);
             }
             else{
                 std_msgs::Float32MultiArray middle_goal_msgs;
@@ -289,7 +289,7 @@ void ManipPln::spin()
                     std::cout << "ManipPln.->Cannot calculate inverse kinematics for the requested cartesian pose :'( " << std::endl;
                     std_msgs::Bool msg;
                     msg.data = false;
-                    this->pubStartGetGripperPosition.publish(msg); 
+                    this->pubStartGetGripperPosition.publish(msg);
                     this->laFeedbackNewGoal = false;
                 }
                 else{
@@ -323,7 +323,7 @@ void ManipPln::spin()
                     manipMarker.markers.push_back(marker);
                 }
             }
-            
+
         }
 
         if(this->raFeedbackNewGoal){
@@ -369,7 +369,7 @@ void ManipPln::spin()
                 this->raFeedbackNewGoal = false;
                 std_msgs::Bool msg;
                 msg.data = false;
-                this->pubStartGetGripperPosition.publish(msg); 
+                this->pubStartGetGripperPosition.publish(msg);
             }
             else{
                 std_msgs::Float32MultiArray middle_goal_msgs;
@@ -387,7 +387,7 @@ void ManipPln::spin()
                     std::cout << "ManipPln.->Cannot calculate inverse kinematics for the requested cartesian pose :'( " << std::endl;
                     std_msgs::Bool msg;
                     msg.data = false;
-                    this->pubStartGetGripperPosition.publish(msg); 
+                    this->pubStartGetGripperPosition.publish(msg);
                     this->raFeedbackNewGoal = false;
                 }
                 else{
@@ -456,7 +456,7 @@ void ManipPln::spin()
                 }
             }
         }
-        
+
         if(raNewGoalTraj){
             std::vector<float> topGoalArticular = rGoalArticularTraj[0];
             std::vector<float> topGoalCartesian = rGoalCartesianTraj[0];
@@ -784,7 +784,7 @@ void ManipPln::callbackLaGoToPoseWrtArmFeedback(const std_msgs::Float32MultiArra
         this->laFeedbackNewGoal = false;
         std_msgs::Bool msgGetGripper;
         msgGetGripper.data = false;
-        this->pubStartGetGripperPosition.publish(msgGetGripper); 
+        this->pubStartGetGripperPosition.publish(msgGetGripper);
     }
     else{
         visualization_msgs::Marker marker;
@@ -837,7 +837,7 @@ void ManipPln::callbackRaGoToPoseWrtArmFeedback(const std_msgs::Float32MultiArra
         this->raFeedbackNewGoal = false;
         std_msgs::Bool msgGetGripper;
         msgGetGripper.data = false;
-        this->pubStartGetGripperPosition.publish(msgGetGripper); 
+        this->pubStartGetGripperPosition.publish(msgGetGripper);
     }
     else{
         visualization_msgs::Marker marker;
@@ -1045,7 +1045,7 @@ void ManipPln::callbackLaGoToPoseWrtArmTraj(const std_msgs::Float32MultiArray::C
             nexPos.data = msg->data;
             nexPos.data[0] = x;
             nexPos.data[1] = y;
-            nexPos.data[2] = z; 
+            nexPos.data[2] = z;
             srv.request.cartesian_pose.data = nexPos.data;
             if(!this->cltIkFloatArrayWithoutOpt.call(srv)){
                 std::cout << "ManipPln.->Cannot calculate inverse kinematics for the requested cartesian pose :'( " << std::endl;
@@ -1139,7 +1139,7 @@ void ManipPln::callbackRaGoToPoseWrtArmTraj(const std_msgs::Float32MultiArray::C
             nexPos.data = msg->data;
             nexPos.data[0] = x;
             nexPos.data[1] = y;
-            nexPos.data[2] = z; 
+            nexPos.data[2] = z;
             srv.request.cartesian_pose.data = nexPos.data;
             if(!this->cltIkFloatArrayWithoutOpt.call(srv)){
                 std::cout << "ManipPln.->Cannot calculate inverse kinematics for the requested cartesian pose :'( " << std::endl;

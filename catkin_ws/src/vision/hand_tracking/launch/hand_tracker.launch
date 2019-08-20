@@ -1,0 +1,12 @@
+<launch>
+
+
+ <node pkg="hand_tracking" type="hand_tracker_node.py" name="hand_tracker_node" output="screen">
+   <remap from="/image" to="/hsrb/hand_camera/image_raw" />
+   <!-- <param name="image_transport" value="compressed"/> -->
+
+   <param name="hands" value="2"/>
+   <param name="thr" value="0.2"/>
+   <param name="graph_file" value="frozen_inference_graph.pb"/>
+    </node>
+</launch>

@@ -59,7 +59,8 @@
 	(item (type Objects) (name red_block) (zone table) (image cube) (attributes pick) (pose 0.0 0.0 0.0)(num 0.092))
 	(item (type Objects) (name orange_block) (zone table) (image cube) (attributes pick) (pose 0.0 0.0 0.0)(num 0.092))
 	(item (type Objects) (name blue_block) (zone table) (image cube) (attributes pick) (pose 0.0 0.0 0.0)(num 0.092))
-	(item (type Objects) (name green_block) (zone table) (image cube) (attributes pick) (pose 0.0 0.0 0.0)(num 0.092))	
+	(item (type Objects) (name green_block) (zone table) (image cube) (attributes pick) (pose 0.0 0.0 0.0)(num 0.092))
+	(item (type Objects) (name yellow_block) (zone table) (image pyramid) (attributes pick) (pose 0.0 0.0 0.0) (num 0.092))	
 
 	(item (type Objects) (name person)(zone living_room)(image person) (attributes pick)(pose -0.5 0.0 0.0))
 	(item (type Objects) (name susan)(zone living_room)(image Anna) (attributes pick)(pose -1.87 8.64 0.0))
@@ -149,13 +150,16 @@
 	
 	(item (type Objects) (name stack)(pose -3.55 -3.0 0.0))
 	(item (type Objects) (name stack_exp)(pose -3.55 -3.0 0.0))
-	(item (type Speech) (name speech_1)(image I_finish_the_simulation,_I_am_going_to_execute_the_command))
+	(item (type Speech) (name speech_1)(image that_is_what_happened,_Now_I_make_a_new_plan_for_complete_the_command))
 	(pile (name original))
 	(pile (name simul))
 
 	(item (type Objects) (name red_exp) (image red_block))	
 	(item (type Objects) (name green_exp) (image green_block))	
-	(item (type Objects) (name blue_exp) (image blue_block))	
+	(item (type Objects) (name blue_exp) (image blue_block))
+	(item (type Objects) (name blue_exp) (image yellow_block))
+
+	(simul_moves 0)	
 
 )
 

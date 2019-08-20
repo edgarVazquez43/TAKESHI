@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<launch>
+  <!--group ns="hardware">
+    <node name="head" pkg="head" type="head_node" output="screen"/>
+    <node name="arm" pkg="arm" type="arm_node" output="screen"/>
+    <node name="xtion" pkg="xtion" type="xtion_node" output="screen"/>
+  </group-->
+
+
+  <node name="usb_cam" pkg="usb_cam" type="usb_cam_node" output="screen">
+      <param name="video_device" value="/dev/video0"/>
+      <param name="image_width" value="640"/>
+      <param name="image_height" value="480"/>
+      <param name="pixel_format" value="yuyv"/>
+      <param name="camera_frame_id" value="usb_cam"/>
+      <param name="io_method" value="mmap"/>
+    </node>
+
+
+  <node name="openpose_node" pkg="openpose" type="open_pose_node" output="screen">
+    <param name="debug_mode" value="true"/>
+    <param name="file_links_config" value="$(find openpose)/OpenPoseConfig.xml"/>
+    <param name="model_folder" value="$(env OPENPOSE_HOME)/models/"/>
+    <param name="net_resolution" value="640x480"/>
+    <remap from="/vision/openpose/enable_estimate_pose" to="/vision/skeleton_finder/enable_tracking"/>
+  </node>
+</launch>

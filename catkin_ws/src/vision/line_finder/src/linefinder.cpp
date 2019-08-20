@@ -16,6 +16,7 @@ limits::limits()
 	deltaX = 0;
 	deltaY = 0;
 	deltaZ = 0;
+	
 };
 
 limits::~limits()
@@ -63,7 +64,7 @@ cv::Mat getXYZPoint (cv::Mat xyzCloud, int x, int y)
 	point.at<double>(0) = -1*xyzCloud.at<cv::Vec3f>(y,x)[1];
 	point.at<double>(1) = xyzCloud.at<cv::Vec3f>(y,x)[2];
 	point.at<double>(2) = xyzCloud.at<cv::Vec3f>(y,x)[0];
-	
+
 	return point;
 };
 
@@ -78,7 +79,7 @@ cv::Mat getCloudPoint (cv::Mat point)
 	pcPoint.at<double>(0) = point.at<double>(2);
 	pcPoint.at<double>(1) = -1*point.at<double>(0);
 	pcPoint.at<double>(2) = point.at<double>(1);
-	
+
 	return pcPoint;
 };
 
@@ -98,7 +99,7 @@ cv::Mat pointRotation (cv::Mat point, double angle)
 	return pointRotated;
 };
 
-// Calculate the normal module of point(x, y) 
+// Calculate the normal module of point(x, y)
 // with respect to the canonincal (natural) horizontal vector
 double horizontalNormalModule (cv::Mat xyzCloud, int x, int y, double angle)
 {
@@ -110,7 +111,7 @@ double horizontalNormalModule (cv::Mat xyzCloud, int x, int y, double angle)
 	cv::Mat point_3 = getXYZPoint (xyzCloud, x+2, y-2);
 	cv::Mat point_4 = getXYZPoint (xyzCloud, x-2, y+2);
 
-	if ( (point_1.at<double>(2) != 0) && (point_2.at<double>(2) != 0) && 
+	if ( (point_1.at<double>(2) != 0) && (point_2.at<double>(2) != 0) &&
 		 (point_3.at<double>(2) != 0) && (point_4.at<double>(2) != 0))
 	{
 		cv::Mat point_a = cv::Mat::zeros(1, 3, CV_64FC1);
@@ -127,26 +128,26 @@ double horizontalNormalModule (cv::Mat xyzCloud, int x, int y, double angle)
 		XYZr = cv::norm(point_r);
 		hmod = fabs(point_r.at<double>(1)/XYZr);
 
-/*		point_a.at<double>(0) = point_2.at<double>(0) - point_1.at<double>(0); 
-		point_a.at<double>(1) = point_2.at<double>(1) - point_1.at<double>(1); 
+/*		point_a.at<double>(0) = point_2.at<double>(0) - point_1.at<double>(0);
+		point_a.at<double>(1) = point_2.at<double>(1) - point_1.at<double>(1);
 		point_a.at<double>(2) = point_2.at<double>(2) - point_1.at<double>(2);
 
-		point_b.at<double>(0) = point_3.at<double>(0) - point_4.at<double>(0); 
-		point_b.at<double>(1) = point_3.at<double>(1) - point_4.at<double>(1); 
+		point_b.at<double>(0) = point_3.at<double>(0) - point_4.at<double>(0);
+		point_b.at<double>(1) = point_3.at<double>(1) - point_4.at<double>(1);
 		point_b.at<double>(2) = point_3.at<double>(2) - point_4.at<double>(2);
 
-		point_c.at<double>(0) = point_a.at<double>(1)*point_b.at<double>(2) - 
+		point_c.at<double>(0) = point_a.at<double>(1)*point_b.at<double>(2) -
 								point_a.at<double>(2)*point_b.at<double>(1);
 
-		point_c.at<double>(1) = point_a.at<double>(2)*point_b.at<double>(0) - 
+		point_c.at<double>(1) = point_a.at<double>(2)*point_b.at<double>(0) -
 								point_a.at<double>(0)*point_b.at<double>(2);
 
-		point_c.at<double>(2) = point_a.at<double>(0)*point_b.at<double>(1) - 
+		point_c.at<double>(2) = point_a.at<double>(0)*point_b.at<double>(1) -
 								point_a.at<double>(1)*point_b.at<double>(0);
 
 		cv::Mat point_r = pointRotation (point_c, angle);
-		XYZr = sqrt(point_r.at<double>(0)*point_r.at<double>(0) + 
-					point_r.at<double>(1)*point_r.at<double>(1) + 
+		XYZr = sqrt(point_r.at<double>(0)*point_r.at<double>(0) +
+					point_r.at<double>(1)*point_r.at<double>(1) +
 					point_r.at<double>(2)*point_r.at<double>(2));
 
 		hmod = fabs(point_r.at<double>(1)/XYZr);*/
@@ -229,7 +230,7 @@ int changeViewPerspective ( cv::Mat bgrImg, cv::Mat xyzCloud, pointOfViewParamet
 			{
 				cv::Mat point_r = pointRotation (getXYZPoint (xyzCloud, x, y), povParams.angle);
 
-				if (!isnan(point_r.at<double>(2)) && 
+				if (!isnan(point_r.at<double>(2)) &&
 					(point_r.at<double>(2) < povParams.areaLimits.maxZ) &&
 					(fabs(point_r.at<double>(0)) < povParams.areaLimits.maxX/2) &&
 					(point_r.at<double>(1) > povParams.areaLimits.minY) &&
@@ -318,7 +319,7 @@ cv::Mat frontPoint(pointOfViewParameters &povParams)
 	//Draw closest points
 	cv::Point pt1 = cv::Point(X1,Y1);
 	cv::Point pt2 = cv::Point(X2,Y2);
-	
+
 	cv::Scalar red = cv::Scalar(0,0,255);
 	int thickness = 2;
 	int connectivity = 8;
@@ -453,4 +454,3 @@ cv::Mat frontLine(pointOfViewParameters &povParams, bool dist3d = false)
 
 	return line;
 };
-

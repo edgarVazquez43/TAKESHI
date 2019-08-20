@@ -1,0 +1,11 @@
+<launch>
+	<group ns="vision">
+		<node name="face_recog_lib_node" pkg="face_recognition" type="face_recognition_node.py" output="screen">
+			<param name="train_dir" value="/home/takeshi/data_sets/facerecognition/"/>
+			<!-- Causes the node to continously recognize people from a message good for debugging! -->
+			<param name="stream" value="True"/>
+			<param name="debug" value="True"/>
+			<remap from="/usb_cam/image_raw" to="/hsrb/head_rgbd_sensor/rgb/image_raw/" />
+		</node>
+	</group>
+</launch>

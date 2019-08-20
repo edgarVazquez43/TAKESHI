@@ -1,0 +1,5 @@
+#JSGF V1.0;
+grammar receptionist_drinks;
+public <reception_drink> = (<prefix_drink><drink>);
+<drink> = (BEER | CHOCOLATE MILK | COKE | JUICE | LEMONADE | TEA BAG | WATER);
+<prefix_drink> = (I LIKE|MY FAVORITE DRINK IS|I WANT|<NULL>);

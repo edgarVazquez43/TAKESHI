@@ -55,20 +55,23 @@
 
 ;;;;;;;;;;;;;;;;; reglas para ir activando el plan simulado
 (defrule init-simul
-	?f <- (start cubes_simul first_stack)
-	?f1 <- (start cubes_simul second_stack)
-	?f2 <- (move ?block1 ?block2 ?stack 1)
+	;?f <- (start cubes_simul first_stack)
+	;?f1 <- (start cubes_simul second_stack)
+	?f <- (start simul)
+	;?f2 <- (move ?block1 ?block2 ?stack 1)
+	?f2 <- (move ?block1 ?block2 1)
 	=>
 	(printout t "Inicia la simulacion" crlf)
-	(retract ?f ?f1)
+	(retract ?f)
 	(assert (goal_simul (move ?block1) (on-top-of ?block2)))
 )
 
 (defrule next-plan-simul
 	?f <- (item (name ?block1) (attributes on-top ?block2))
-	?f1 <- (move ?block1 ?block2 ?stack ?num)
-	?f2 <- (pile (name simul)(number ?numsim&:(< ?num ?numsim)))
-	?f3 <- (move ?block3 ?block4 ?stack2 ?n&:(eq ?n (+ 1 ?num)))
+	?f1 <- (move ?block1 ?block2 ?num)
+	;?f2 <- (pile (name simul)(number ?numsim&:(< ?num ?numsim)))
+	(simul_moves ?numsim&:(< ?num ?numsim))
+	?f3 <- (move ?block3 ?block4 ?n&:(eq ?n (+ 1 ?num)))
 	=>
 	(retract ?f1)
 	(modify ?f (attributes nil))
@@ -78,17 +81,19 @@
 
 (defrule last-plan-simul
 	?f <- (item (name ?block1) (attributes on-top ?block2))
-	?f1 <- (move ?block1 ?block2 ?stack ?num)
-	?f2 <- (pile (name simul) (number ?numsim&:(eq ?num ?numsim)))
+	?f1 <- (move ?block1 ?block2 ?num)
+	;?f2 <- (pile (name simul) (number ?numsim&:(eq ?num ?numsim)))
+	?f2 <- (simul_moves ?numsim&:(eq ?num ?numsim))
 	?f3 <- (pile (name original))
 	?f4 <- (item (name stack))
 	?f5 <- (plan (name ?name) (number ?num-pln) (status active) (actions make-backtracking) (duration ?t))
 	=>
 	(printout t "Se finaliza ultima tarea del plan" crlf)
-	(retract ?f1)
+	(retract ?f1 ?f2)
 	(modify ?f (attributes nil))
 	(modify ?f4 (status review))
-	(modify ?f2 (status nil) (number 0))
+	;(modify ?f2 (status nil) (number 0))
+	(assert (simul_moves 0))
 	(modify ?f3 (status nil))
 	(modify ?f5 (status accomplished))
 )
@@ -103,8 +108,8 @@
 	(not (plan (name cubes_simul) (number ?num1&:( > ?num1 ?num))))
 	=>
 	(retract ?goal)
-	(printout t "" ?block1 " is already on top of " ?block2 "." crlf)
-	(bind ?speech (str-cat "" ?block1 " is already on top of " ?block2 ""))
+	(printout t "" ?block1 " remains on top of " ?block2 "." crlf)
+	(bind ?speech (str-cat "" ?block1 " remains on top of " ?block2 ""))
 	(assert (plan (name cubes_simul) (number 1)(actions speech-anything ?speech)(duration 6000)))
 	(assert (plan (name cubes_simul) (number 2)(actions pile_simul ?block1 ?block2 upgrade_state)(duration 6000)))
 	(assert (finish-planner cubes_simul 2))
@@ -119,8 +124,8 @@
 	
 	=>
 	(retract ?goal)
-	(printout t "" ?block1 " is already on top of the table." crlf )
-	(bind ?speech (str-cat "" ?block1 " is already on top of the table"))
+	(printout t "" ?block1 " remains on top of the table." crlf )
+	(bind ?speech (str-cat "" ?block1 " remains on top of the table"))
 	(assert (plan (name cubes_simul) (number 1) (actions speech-anything ?speech)(duration 6000)))
 	(assert (plan (name cubes_simul) (number 2) (actions pile_simul ?block1 cubestable upgrade_state)(duration 6000)))
 	(assert (finish-planner cubes_simul 2))
@@ -134,8 +139,8 @@
 	(not (plan (name cubes_simul) (number ?num1&:( > ?num1 ?num))))
         =>
         (retract ?goal)
-        (printout t ?block1 " will be moved on top of " ?block2 "." crlf)
-	(bind ?speech (str-cat "" ?block1 " will be moved on top of " ?block2 ""))
+        (printout t ?block1 " was moved on top of " ?block2 "." crlf)
+	(bind ?speech (str-cat "" ?block1 " was moved on top of " ?block2 ""))
 	(assert (plan (name cubes_simul) (number 1)(actions speech-anything ?speech)(duration 6000)))
 	(assert (plan (name cubes_simul) (number 2)(actions enable_arm ?block1)(duration 6000)))
         (assert (plan (name cubes_simul) (number 3)(actions move_simul manipulator ?block1 )(duration 6000)))
@@ -153,13 +158,13 @@
         (not (plan (name cubes_simul) (number ?num1&:( > ?num1 ?num))))
         =>
         (retract ?goal)
-        (printout t ?block1 " will be moved on top of the table." crlf)
-	(bind ?speech (str-cat "" ?block1 " will be moved on top of the table"))
+        (printout t ?block1 " was moved on top of the table." crlf)
+	(bind ?speech (str-cat "" ?block1 " was moved on top of the table"))
 	(assert (plan (name cubes_simul) (number 1)(actions speech-anything ?speech)(duration 6000)))
 	(assert (plan (name cubes_simul) (number 2)(actions enable_arm ?block1)(duration 6000)))
         (assert (plan (name cubes_simul) (number 3)(actions move_simul manipulator ?block1 )(duration 6000)))
-        (assert (plan (name cubes_simul) (number 4 )(actions grab manipulator ?block1 )(duration 6000)) )
-        (assert (plan (name cubes_simul) (number 5 )(actions place_block_simul ?block1 ?block1)(duration 6000)) )
+        (assert (plan (name cubes_simul) (number 4)(actions grab manipulator ?block1 )(duration 6000)) )
+        (assert (plan (name cubes_simul) (number 5)(actions place_block_simul ?block1 ?block1)(duration 6000)) )
 	(assert (plan (name cubes_simul) (number 6)(actions pile_simul ?block1)(duration 6000)))
 	(assert (finish-planner cubes_simul 6))
 	;(assert (attempt (move ?block1) (on-top-of cubestable)(number (+ 1 ?num)) ))

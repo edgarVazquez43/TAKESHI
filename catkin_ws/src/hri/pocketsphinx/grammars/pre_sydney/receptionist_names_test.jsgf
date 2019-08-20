@@ -1,0 +1,5 @@
+#JSGF V1.0;
+grammar receptionist_names;
+public <reception_name> = (<name>| <prefix_name><name>);
+<name> = ( ADRIAN | EDGAR | HUGO | JESUS | MARY | JOHN | JACK | OLIVER | MARCO  | ALEJANDRA | ROBERTO | DIEGO | ALEX | OSCAR);
+<prefix_name> = (MY NAME IS|I AM);

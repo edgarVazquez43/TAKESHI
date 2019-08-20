@@ -1,4 +1,0 @@
-interoperation/joystick_teleop
-/home/edgar/HSR_PUMAS/catkin_ws/devel/.private/joystick_teleop/share/joystick_teleop/cmake/joystick_teleopConfig.cmake /home/edgar/HSR_PUMAS/catkin_ws/devel/share/joystick_teleop/cmake/joystick_teleopConfig.cmake
-/home/edgar/HSR_PUMAS/catkin_ws/devel/.private/joystick_teleop/share/joystick_teleop/cmake/joystick_teleopConfig-version.cmake /home/edgar/HSR_PUMAS/catkin_ws/devel/share/joystick_teleop/cmake/joystick_teleopConfig-version.cmake
-/home/edgar/HSR_PUMAS/catkin_ws/devel/.private/joystick_teleop/lib/pkgconfig/joystick_teleop.pc /home/edgar/HSR_PUMAS/catkin_ws/devel/lib/pkgconfig/joystick_teleop.pc

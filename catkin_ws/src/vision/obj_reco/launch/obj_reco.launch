@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<launch>
+  <remap from="/hardware/mobile_base/cmd_vel" to="/hsrb/command_velocity"/>
+  <param name="robot_description_semantic" textfile="$(find knowledge)/manipulation/hsrb.srdf" />
+  <!-- <node name="rviz" pkg="rviz" type="rviz" args="-d $(find knowledge)/hri/config.rviz"/> -->
+
+  <group ns="hardware">
+    <!-- <node name="joy"  pkg="joy"  type="joy_node"  output="screen"/>
+    <node name="head" pkg="head" type="head_node" output="screen"/>
+    <node name="arm"  pkg="arm"  type="arm_node"  output="screen"/> -->
+    <node name="xtion"  pkg="xtion"  type="xtion_node"  output="screen"/>
+  </group>
+  <node name="obj_reco" pkg="obj_reco" type="obj_reco_node" output="screen" args="--db $(find obj_reco)/TrainingDir/ -d"/>
+
+</launch>

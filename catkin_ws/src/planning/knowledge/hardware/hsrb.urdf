@@ -1,0 +1,611 @@
+<!--
+      ===============================================================================
+      This file was created by hand by PUMAS_TEAM,
+      we are using the stl files provide by TMC pakages.
+      Author: Edd-2 
+      ===============================================================================
+  -->
+
+<robot name="hsrb_pumas">
+  <!-- Base links -->
+   <link name="base_link">
+    <visual>
+      <geometry>
+        <mesh filename="package://knowledge/hardware/robot_descrptions/hsrb/base_v2/base_light.dae"/>
+      </geometry>
+    </visual>
+    <visual>
+      <geometry>
+        <mesh filename="package://knowledge/hardware/robot_descrptions/hsrb/base_v2/body_light.dae"/>
+      </geometry>
+    </visual>
+    <visual>
+      <geometry>
+        <mesh filename="package://knowledge/hardware/robot_descrptions/hsrb/base_v2/torso_base.dae"/>
+      </geometry>
+    </visual>
+    <collision>
+      <geometry>
+        <mesh filename="package://knowledge/hardware/robot_descrptions/hsrb/base_v2/base.stl"/>
+      </geometry>
+    </collision>
+  </link>
+  <!--======================== -->
+  <!-- ===  Laser links  ===== -->
+  <link name="laser_link">
+    <visual>
+      <geometry>
+        <mesh filename="package://knowledge/hardware/robot_descrptions/hsrb/sensors/laser.dae"/>
+      </geometry>
+    </visual>
+    <collision>
+      <geometry>
+        <mesh filename="package://knowledge/hardware/robot_descrptions/hsrb/sensors/laser.stl"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="base_range_sensor_joint" type="fixed">
+    <origin rpy="0.0 0.0 0.0" xyz="0.1675 0.0 0.1844"/>
+    <parent link="base_link"/>
+    <child link="laser_link"/>
+  </joint>
+
+  <!--========================= -->
+  <!-- ===  Bumpper link  ===== -->
+
+  <link name="base_f_bumper_link">
+    <visual>
+      <geometry>
+        <mesh filename="package://knowledge/hardware/robot_descrptions/hsrb/base_v2/bumper.dae"/>
+      </geometry>
+    </visual>
+    <collision>
+      <geometry>
+        <mesh filename="package://knowledge/hardware/robot_descrptions/hsrb/base_v2/bumper.stl"/>
+      </geometry>
+    </collision>
+  </link>
+  <link name="base_b_bumper_link">
+    <visual>
+      <geometry>
+        <mesh filename="package://knowledge/hardware/robot_descrptions/hsrb/base_v2/bumper.dae"/>
+      </geometry>
+    </visual>
+    <collision>
+      <geometry>
+        <mesh filename="package://knowledge/hardware/robot_descrptions/hsrb/base_v2/bumper.stl"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <joint name="base_b_bumper_joint" type="fixed">
+    <origin rpy="0.0 0.0 3.14159265359" xyz="0.0 0.0013 0.0"/>
+    <parent link="base_link"/>
+    <child link="base_b_bumper_link"/>
+    <limit effort="0" lower="0" upper="0" velocity="0"/>
+  </joint>
+  
+  <joint name="base_f_bumper_joint" type="fixed">
+    <origin rpy="0.0 0.0 0.0" xyz="0.0 0.0 0.0"/>
+    <parent link="base_link"/>
+    <child link="base_f_bumper_link"/>
+    <limit effort="0" lower="0" upper="0" velocity="0"/>
+  </joint>
+
+  <!-- ======================  -->
+  <!-- ===   TORSO LINKS ====  -->
+  <link name="torso_lift_link">
+    <visual>
+      <geometry>
+        <mesh filename="package://knowledge/hardware/robot_descrptions/hsrb/torso_v0/torso_light.dae"/>
+      </geometry>
+    </visual>
+    <collision>
+      <geometry>
+        <mesh filename="package://knowledge/hardware/robot_descrptions/hsrb/torso_v0/torso.stl"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <joint name="torso_lift_joint" type="prismatic">
+    <origin rpy="0.0 0.0 0.0" xyz="0.0 0.0 0.752"/>
+    <axis xyz="0.0 0.0 1.0"/>
+    <limit effort="300.0" lower="0.0" upper="0.345" velocity="0.1"/>
+    <parent link="base_link"/>
+    <child link="torso_lift_link"/>
+    <mimic joint="arm_lift_joint" multiplier="0.5"/> 
+  </joint>
+
+  <link name="arm_lift_link">
+    <visual>
+      <geometry>
+        <mesh filename="package://knowledge/hardware/robot_descrptions/hsrb/arm_v0/shoulder.dae"/>
+      </geometry>
+    </visual>
+    <collision>
+      <geometry>
+        <mesh filename="package://knowledge/hardware/robot_descrptions/hsrb/arm_v0/shoulder.stl"/>
+      </geometry>
+    </collision>
+  </link>
+
+   <joint name="arm_lift_joint" type="prismatic">
+    <origin rpy="0.0 0.0 0.0" xyz="0.0 0.0 0.340"/>
+    <axis xyz="0.0 0.0 1.0"/>
+    <limit effort="300.0" lower="0.0" upper="0.69" velocity="0.2"/>
+    <parent link="base_link"/>
+    <child link="arm_lift_link"/>
+  </joint>
+
+  <!-- ======================  -->
+  <!-- ===   Head links  ====  -->
+  <link name="head_pan_link">
+     <visual>
+      <geometry>
+        <mesh filename="package://knowledge/hardware/robot_descrptions/hsrb/head_v1/head_pan.dae"/>
+      </geometry>
+    </visual>
+    <collision>
+      <geometry>
+        <mesh filename="package://knowledge/hardware/robot_descrptions/hsrb/head_v1/head_pan.stl"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <link name="head_tilt_link">
+    <visual>
+      <geometry>
+        <mesh filename="package://knowledge/hardware/robot_descrptions/hsrb/head_v1/head_upper.dae"/>
+      </geometry>
+    </visual>
+    <visual>
+      <geometry>
+        <mesh filename="package://knowledge/hardware/robot_descrptions/hsrb/head_v1/head_tilt.dae"/>
+      </geometry>
+    </visual>
+    <visual>
+      <geometry>
+        <mesh filename="package://knowledge/hardware/robot_descrptions/hsrb/head_v1/tablet_base.dae"/>
+      </geometry>
+    </visual>
+    <collision>
+      <geometry>
+        <mesh filename="package://knowledge/hardware/robot_descrptions/hsrb/head_v1/head.stl"/>
+      </geometry>
+    </collision>
+    <collision>
+      <geometry>
+        <mesh filename="package://knowledge/hardware/robot_descrptions/hsrb/head_v1/tablet.stl"/>
+      </geometry>
+    </collision>
+  </link>
+
+    <link name="head_l_stereo_camera_link">
+    <visual>
+      <origin rpy="0.0 0.0 0.0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://knowledge/hardware/robot_descrptions/hsrb/sensors/head_camera.dae"/>
+      </geometry>
+    </visual>
+  </link>
+
+  <link name="head_r_stereo_camera_link">
+    <visual>
+      <origin rpy="0.0 0.0 0.0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://knowledge/hardware/robot_descrptions/hsrb/sensors/head_camera.dae"/>
+      </geometry>
+    </visual>
+  </link>
+
+  <link name="kinect_link">
+    <visual>
+      <origin rpy="0.0 0.0 0.0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://knowledge/hardware/robot_descrptions/hsrb/sensors/xtion.dae"/>
+      </geometry>
+    </visual>
+    <collision>
+      <origin rpy="0.0 0.0 0.0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://knowledge/hardware/robot_descrptions/hsrb/sensors/xtion.stl"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <link name="head_rgbd_sensor_rgb_frame">
+  </link>		
+
+
+
+  <joint name="head_pan_joint" type="revolute">
+    <origin rpy="0.0 0.0 0.0" xyz="0.0 0.0 0.0"/>
+    <axis xyz="0.0 0.0 1.0"/>
+    <limit effort="100.0" lower="-3.84" upper="1.75" velocity="1.0"/>
+    <parent link="torso_lift_link"/>
+    <child link="head_pan_link"/>
+    <dynamics damping="1.0"/>
+  </joint>
+
+  <joint name="head_tilt_joint" type="revolute">
+    <origin rpy="0.0 0.0 0.0" xyz="0.02 0.0 0.0"/>
+    <axis xyz="0.0 -1.0 0.0"/>
+    <limit effort="100.0" lower="-1.57" upper="0.52" velocity="1.0"/>
+    <parent link="head_pan_link"/>
+    <child link="head_tilt_link"/>
+    <dynamics damping="10.0"/>
+  </joint>
+
+  <joint name="head_l_stereo_camera_joint" type="fixed">
+    <origin rpy="-1.57079632679 0.0 -1.57079632679" xyz="0.02 0.07 0.061"/>
+    <parent link="head_tilt_link"/>
+    <child link="head_l_stereo_camera_link"/>
+  </joint>
+
+  <joint name="head_r_stereo_camera_joint" type="fixed">
+    <origin rpy="-1.57079632679 0.0 -1.57079632679" xyz="0.02 -0.07 0.061"/>
+    <parent link="head_tilt_link"/>
+    <child link="head_r_stereo_camera_link"/>
+  </joint>
+
+  <joint name="head_rgbd_sensor_joint" type="fixed">
+    <origin rpy="-1.57079632679 0.0 -1.57079632679" xyz="-0.079796 0.022 0.215172"/>
+    <parent link="head_tilt_link"/>
+    <child link="kinect_link"/>
+  </joint>
+
+  <joint name="head_rgbd_sensor_joint2" type="fixed">
+    <origin rpy="0.0 0.0 0.0" xyz="0.0 0.0 0.0"/>
+    <parent link="kinect_link"/>
+    <child link="head_rgbd_sensor_rgb_frame"/>
+  </joint>
+
+  <!-- ======================  -->
+  <!-- ====   Arms links ====  -->
+  <link name="arm_flex_link">
+    <visual>
+      <geometry>
+        <mesh filename="package://knowledge/hardware/robot_descrptions/hsrb/arm_v0/arm_flex_light.dae"/>
+      </geometry>
+    </visual>
+    <collision>
+      <geometry>
+        <mesh filename="package://knowledge/hardware/robot_descrptions/hsrb/arm_v0/arm_flex.stl"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <link name="arm_roll_link">
+    <visual>
+      <geometry>
+        <mesh filename="package://knowledge/hardware/robot_descrptions/hsrb/arm_v0/arm_roll_light.dae"/>
+      </geometry>
+    </visual>
+    <collision>
+      <geometry>
+        <mesh filename="package://knowledge/hardware/robot_descrptions/hsrb/arm_v0/arm_roll.stl"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <link name="wrist_flex_link">
+    <visual>
+      <geometry>
+        <mesh filename="package://knowledge/hardware/robot_descrptions/hsrb/wrist_v0/wrist_flex.dae"/>
+      </geometry>
+      <material name="body_sub"/>
+    </visual>
+    <visual>
+      <origin rpy="0.0 0.0 0.0" xyz="0.0 0.0 0.04"/>
+      <geometry>
+        <cylinder length="0.02" radius="0.017"/>
+      </geometry>
+      <material name="body_sub"/>
+    </visual>
+    <collision>
+      <origin rpy="0.0 0.0 0.0" xyz="0.0 0.0 0.03"/>
+      <geometry>
+        <cylinder length="0.04" radius="0.017"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <link name="wrist_roll_link">
+    <visual>
+      <geometry>
+        <mesh filename="package://knowledge/hardware/robot_descrptions/hsrb/wrist_v0/wrist_roll.dae"/>
+      </geometry>
+    </visual>
+    <collision>
+      <geometry>
+        <mesh filename="package://knowledge/hardware/robot_descrptions/hsrb/wrist_v0/wrist_roll.stl"/>
+      </geometry>
+    </collision>
+  </link>
+
+   <!-- each link must have mass in URDF so we apply very small mass (10 gram) for this coupling link -->
+  <link name="wrist_ft_sensor_mount_link">
+    <inertial>
+      <mass value="0.01"/>
+      <inertia ixx="0.001" ixy="0.0" ixz="0.0" iyy="0.001" iyz="0.0" izz="0.001"/>
+    </inertial>
+  </link>
+
+  <link name="wrist_ft_sensor_frame">
+    <inertial>
+      <origin xyz="0 0 0"/>
+      <mass value="0.01"/>
+      <inertia ixx="0.001" ixy="0" ixz="0" iyy="0.001" iyz="0" izz="0.001"/>
+    </inertial>
+  </link>
+
+  <link name="hand_palm_link">
+    <visual>
+      <geometry>
+        <mesh filename="package://knowledge/hardware/robot_descrptions/hsrb/hand_v0/palm_light.dae"/>
+      </geometry>
+    </visual>
+    <collision>
+      <geometry>
+        <mesh filename="package://knowledge/hardware/robot_descrptions/hsrb/hand_v0/palm.stl"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <link name="hand_motor_dummy_link">
+    <inertial>
+      <mass value="0.01"/>
+      <inertia ixx="0.0015" ixy="0.0" ixz="0.0" iyy="0.0015" iyz="0.0" izz="0.0015"/>
+    </inertial>
+  </link>
+
+  <link name="hand_r_distal_link">
+    <visual>
+      <geometry>
+        <mesh filename="package://knowledge/hardware/robot_descrptions/hsrb/hand_v0/r_distal.dae"/>
+      </geometry>
+    </visual>
+    <collision>
+      <geometry>
+        <mesh filename="package://knowledge/hardware/robot_descrptions/hsrb/hand_v0/r_distal.stl"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <link name="hand_l_proximal_link">
+    <inertial>
+      <mass value="0.01"/>
+      <inertia ixx="0.0015" ixy="0.0" ixz="0.0" iyy="0.0015" iyz="0.0" izz="0.0015"/>
+    </inertial>
+  </link>
+
+  <link name="hand_l_spring_proximal_link">
+    <visual>
+      <geometry>
+        <mesh filename="package://knowledge/hardware/robot_descrptions/hsrb/hand_v0/l_proximal.dae"/>
+      </geometry>
+    </visual>
+    <collision>
+      <geometry>
+        <mesh filename="package://knowledge/hardware/robot_descrptions/hsrb/hand_v0/l_proximal.stl"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <link name="hand_l_mimic_distal_link">
+    <inertial>
+      <mass value="0.01"/>
+      <inertia ixx="0.0015" ixy="0.0" ixz="0.0" iyy="0.0015" iyz="0.0" izz="0.0015"/>
+    </inertial>
+  </link>
+
+  <link name="hand_l_distal_link">
+    <visual>
+      <geometry>
+        <mesh filename="package://knowledge/hardware/robot_descrptions/hsrb/hand_v0/l_distal.dae"/>
+      </geometry>
+    </visual>
+    <collision>
+      <geometry>
+        <mesh filename="package://knowledge/hardware/robot_descrptions/hsrb/hand_v0/l_distal.stl"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <link name="hand_l_finger_tip_frame">
+    <inertial>
+      <mass value="0.01"/>
+      <inertia ixx="0.0015" ixy="0.0" ixz="0.0" iyy="0.0015" iyz="0.0" izz="0.0015"/>
+    </inertial>
+  </link>
+
+  <link name="hand_l_finger_vacuum_frame">
+    <visual>
+      <origin rpy="0.0 0.0 0.0" xyz="0.0 0.0 -0.01"/>
+      <geometry>
+        <box size="0.008 0.008 0.02"/>
+      </geometry>
+      <material name="body_sub"/>
+    </visual>
+  </link>
+
+  <link name="hand_r_proximal_link">
+    <inertial>
+      <mass value="0.01"/>
+      <inertia ixx="0.0015" ixy="0.0" ixz="0.0" iyy="0.0015" iyz="0.0" izz="0.0015"/>
+    </inertial>
+  </link>
+
+<link name="hand_r_spring_proximal_link">
+    <visual>
+      <geometry>
+        <mesh filename="package://knowledge/hardware/robot_descrptions/hsrb/hand_v0/r_proximal.dae"/>
+      </geometry>
+    </visual>
+    <collision>
+      <geometry>
+        <mesh filename="package://knowledge/hardware/robot_descrptions/hsrb/hand_v0/r_proximal.stl"/>
+      </geometry>
+    </collision>
+  </link>
+
+<link name="hand_r_mimic_distal_link">
+    <inertial>
+      <mass value="0.01"/>
+      <inertia ixx="0.0015" ixy="0.0" ixz="0.0" iyy="0.0015" iyz="0.0" izz="0.0015"/>
+    </inertial>
+  </link>
+
+
+
+  <joint name="arm_flex_joint" type="revolute">
+    <origin rpy="0.0 0.0 0.0" xyz="0.141 0.078 0.0"/>
+    <axis xyz="0.0 -1.0 0.0"/>
+    <limit effort="100.0" lower="-2.62" upper="0.0" velocity="1.2"/>
+    <parent link="arm_lift_link"/>
+    <child link="arm_flex_link"/>
+    <dynamics damping="1.0"/>
+  </joint>
+
+  <joint name="arm_roll_joint" type="revolute">
+    <origin rpy="0.0 0.0 0.0" xyz="0.005 0.0 0.345"/>
+    <axis xyz="0.0 0.0 1.0"/>
+    <limit effort="100.0" lower="-2.09" upper="3.84" velocity="2.0"/>
+    <parent link="arm_flex_link"/>
+    <child link="arm_roll_link"/>
+    <dynamics damping="0.1"/>
+  </joint>
+
+  <joint name="wrist_flex_joint" type="revolute">
+    <origin rpy="0.0 0.0 0.0" xyz="0.0 0.0 0.0"/>
+    <axis xyz="0.0 -1.0 0.0"/>
+    <limit effort="100.0" lower="-1.92" upper="1.22" velocity="1.5"/>
+    <parent link="arm_roll_link"/>
+    <child link="wrist_flex_link"/>
+    <dynamics damping="1.0"/>
+  </joint>
+
+  <joint name="wrist_roll_joint" type="revolute">
+    <origin rpy="0.0 0.0 0.0" xyz="0.0 0.0 0.0"/>
+    <axis xyz="0.0 0.0 1.0"/>
+    <limit effort="100.0" lower="-1.92" upper="3.67" velocity="1.5"/>
+    <parent link="wrist_flex_link"/>
+    <child link="wrist_ft_sensor_mount_link"/>
+    <dynamics damping="1.0"/>
+  </joint>
+ 
+  <joint name="wrist_ft_sensor_frame_inverse_joint" type="fixed">
+    <origin rpy="-3.14159265359 0.0 0.0" xyz="0.0 0.0 0.0735"/>
+    <parent link="wrist_ft_sensor_frame"/>
+    <child link="wrist_roll_link"/>
+  </joint>
+
+  <joint name="wrist_ft_sensor_frame_joint" type="fixed">
+    <origin rpy="3.14159265359 0.0 0.0" xyz="0.0 0.0 0.0735"/>
+    <parent link="wrist_ft_sensor_mount_link"/>
+    <child link="wrist_ft_sensor_frame"/>
+    <limit effort="100.0" lower="0" upper="0" velocity="1.5"/>
+  </joint>
+
+  <joint name="hand_palm_joint" type="fixed">
+    <origin rpy="0.0 0.0 3.14159265359" xyz="0.012 0.0 0.1405"/>
+    <parent link="wrist_roll_link"/>
+    <child link="hand_palm_link"/>
+  </joint>
+  
+  <joint name="hand_motor_joint" type="fixed">
+    <axis xyz="1.0 0.0 0.0"/>
+    <limit effort="100.0" lower="-0.798" upper="1.24" velocity="1.0"/>
+    <parent link="hand_palm_link"/>
+    <child link="hand_motor_dummy_link"/>
+    <dynamics damping="0.0001"/>
+  </joint>
+
+  <joint name="hand_l_proximal_joint" type="fixed">
+    <origin rpy="0.0 0.0 0.0" xyz="-0.01675 -0.0245 -0.0175"/>
+    <axis xyz="1.0 0.0 0.0"/>
+    <limit effort="100.0" lower="-0.798" upper="1.24" velocity="1.0"/>
+    <parent link="hand_palm_link"/>
+    <child link="hand_l_proximal_link"/>
+    <mimic joint="hand_motor_joint"/>
+    <dynamics damping="0.0001"/>
+  </joint>
+  
+  <joint name="hand_l_spring_proximal_joint" type="fixed">
+    <axis xyz="1.0 0.0 0.0"/>
+    <limit effort="10.0" lower="0.0" upper="0.698" velocity="1.0"/>
+    <parent link="hand_l_proximal_link"/>
+    <child link="hand_l_spring_proximal_link"/>
+    <dynamics damping="0.0001"/>
+  </joint>
+  
+  <joint name="hand_l_mimic_distal_joint" type="fixed">
+    <origin xyz="0.0 0.0 0.07"/>
+    <axis xyz="1.0 0.0 0.0"/>
+    <limit effort="100.0" lower="-0.698" upper="-0.0" velocity="1.0"/>
+    <parent link="hand_l_spring_proximal_link"/>
+    <child link="hand_l_mimic_distal_link"/>
+    <mimic joint="hand_l_spring_proximal_joint" multiplier="-1.0"/>
+    <dynamics damping="0.0001"/>
+  </joint>
+ 
+  <joint name="hand_l_distal_joint" type="fixed">
+    <axis xyz="1.0 0.0 0.0"/>
+    <limit effort="100.0" lower="-1.24" upper="0.798" velocity="1.0"/>
+    <parent link="hand_l_mimic_distal_link"/>
+    <child link="hand_l_distal_link"/>
+    <mimic joint="hand_motor_joint" multiplier="-1.0" offset="-0.087"/>
+    <dynamics damping="0.0001"/>
+  </joint>
+ 
+   <joint name="hand_l_finger_tip_frame_joint" type="fixed">
+    <origin rpy="-1.57079632679 0.0 0.0" xyz="0.01675 0.01865 0.04289"/>
+    <parent link="hand_l_distal_link"/>
+    <child link="hand_l_finger_tip_frame"/>
+    <dynamics damping="0.0001"/>
+  </joint>
+
+  <joint name="hand_l_finger_vacuum_frame_joint" type="fixed">
+    <origin rpy="0.785398163397 0.0 0.0" xyz="0.00475 -0.011539 0.03322"/>
+    <parent link="hand_l_distal_link"/>
+    <child link="hand_l_finger_vacuum_frame"/>
+  </joint>
+
+  <joint name="hand_r_proximal_joint" type="fixed">
+    <origin rpy="0.0 0.0 0.0" xyz="-0.01675 0.0245 -0.0175"/>
+    <axis xyz="-1.0 0.0 0.0"/>
+    <limit effort="100.0" lower="-0.798" upper="1.24" velocity="1.0"/>
+    <parent link="hand_palm_link"/>
+    <child link="hand_r_proximal_link"/>
+    <mimic joint="hand_motor_joint"/>
+    <dynamics damping="0.0001"/>
+  </joint>
+ 
+  <joint name="hand_r_spring_proximal_joint" type="fixed">
+    <axis xyz="-1.0 0.0 0.0"/>
+    <limit effort="10.0" lower="0.0" upper="0.698" velocity="1.0"/>
+    <parent link="hand_r_proximal_link"/>
+    <child link="hand_r_spring_proximal_link"/>
+    <dynamics damping="0.0001"/>
+  </joint>
+  
+  <joint name="hand_r_mimic_distal_joint" type="fixed">
+    <origin xyz="0.0 0.0 0.07"/>
+    <axis xyz="-1.0 0.0 0.0"/>
+    <limit effort="100.0" lower="-0.698" upper="-0.0" velocity="1.0"/>
+    <parent link="hand_r_spring_proximal_link"/>
+    <child link="hand_r_mimic_distal_link"/>
+    <mimic joint="hand_r_spring_proximal_joint" multiplier="-1.0"/>
+    <dynamics damping="0.0001"/>
+  </joint>
+  
+  <joint name="hand_r_distal_joint" type="fixed">
+    <axis xyz="-1.0 0.0 0.0"/>
+    <limit effort="100.0" lower="-1.24" upper="0.798" velocity="1.0"/>
+    <parent link="hand_r_mimic_distal_link"/>
+    <child link="hand_r_distal_link"/>
+    <mimic joint="hand_motor_joint" multiplier="-1.0" offset="-0.087"/>
+    <dynamics damping="0.0001"/>
+  </joint>
+
+</robot>

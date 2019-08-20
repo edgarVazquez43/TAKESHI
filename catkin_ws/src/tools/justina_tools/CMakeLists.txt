@@ -23,10 +23,21 @@ find_package(catkin REQUIRED COMPONENTS
   sound_play
   knowledge_msgs
   std_srvs
+  message_generation
 )
 
 find_package(PCL 1.2 REQUIRED)
 find_package(OpenCV REQUIRED)
+
+add_message_files(
+   FILES
+   Pdf.msg
+)
+
+generate_messages(
+   DEPENDENCIES
+   std_msgs
+)
 
 catkin_package(
   INCLUDE_DIRS include

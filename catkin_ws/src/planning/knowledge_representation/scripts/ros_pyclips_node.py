@@ -75,6 +75,7 @@ def callbackCommandSendAndRunClips(data):
 def callbackCommandLoadCLIPS(data):
     print 'LOAD FILE'
     filePath = data.data
+    print "FilePath: " + filePath
     if not filePath:
         print 'OPEN FILE, Click on the botton and select a file to be loaded.'
         return
@@ -221,6 +222,12 @@ def Initialize():
     
     filePath = os.path.dirname(os.path.abspath(__file__))
     clips.BatchStar(filePath + os.sep + 'CLIPS' + os.sep + 'BB_interface.clp')
+    clips.BatchStar(filePath + os.sep + 'CLIPS' + os.sep + 'objects_deftemplates.clp')
+    clips.BatchStar(filePath + os.sep + 'CLIPS' + os.sep + 'cds_deftemplates.clp')
+    clips.BatchStar(filePath + os.sep + 'CLIPS' + os.sep + 'scheduled_templates.clp')
+    clips.BatchStar(filePath + os.sep + 'CLIPS' + os.sep + 'functions.clp')
+    clips.BatchStar(filePath + os.sep + 'CLIPS' + os.sep + 'monitor.clp')
+    clips.BatchStar(filePath + os.sep + 'CLIPS' + os.sep + 'virbot_blackboard.clp')
     
     file_gpsr = filePath + '/virbot_gpsr/speechTest.dat'
     print file_gpsr
@@ -448,6 +455,141 @@ def update_stack(cmd):
     pubUpdateStack.publish(request)
     return cmd._id
 
+def reset_cube_pos(cmd):
+    global pubResetCubePos
+    print "Executing Function: " + cmd.name
+    request = PlanningCmdClips(cmd.name, cmd.params, cmd._id, False)
+    pubResetCubePos.publish(request)
+    return cmd._id
+
+def cmd_task_conf(cmd):
+    global pubCmdTaskConfirmation
+    print "Executing Function: " + cmd.name
+    request = PlanningCmdClips(cmd.name, cmd.params, cmd._id, False)
+    pubCmdTaskConfirmation.publish(request)
+    return cmd._id
+
+def cmd_align_point(cmd):
+    global pubCmdAlignWithPoint
+    print "Executing Function: " + cmd.name
+    request = PlanningCmdClips(cmd.name, cmd.params, cmd._id, False)
+    pubCmdAlignWithPoint.publish(request)
+    return cmd._id
+
+##############################################################################
+#### EEGPSR category II
+def find_many_people(cmd):
+    global pubCmdManyPeople
+    print "Executing Function: " + cmd.name
+    request = PlanningCmdClips(cmd.name, cmd.params, cmd._id, False)
+    pubCmdManyPeople.publish(request)
+    return cmd._id
+
+def amount_people(cmd):
+    global pubCmdAmountPeople
+    print "Executing Function: " + cmd.name
+    request = PlanningCmdClips(cmd.name, cmd.params, cmd._id, False)
+    pubCmdAmountPeople.publish(request)
+    return cmd._id
+
+def ask_and_offer(cmd):
+    global pubCmdAskAndOffer
+    print "Executing Function: " + cmd.name
+    request = PlanningCmdClips(cmd.name, cmd.params, cmd._id, False)
+    pubCmdAskAndOffer.publish(request)
+    return cmd._id
+
+def find_e_person(cmd):
+    global pubFindEPerson
+    print "Executing Function: " + cmd.name
+    request = PlanningCmdClips(cmd.name, cmd.params, cmd._id, False)
+    pubFindEPerson.publish(request)
+    return cmd._id
+
+def scan_person(cmd):
+    global pubScanPerson
+    print "Executing Function: " + cmd.name
+    request = PlanningCmdClips(cmd.name, cmd.params, cmd._id, False)
+    pubScanPerson.publish(request)
+    return cmd._id
+
+def remind_person(cmd):
+    global pubRemindPerson
+    print "Executing Function: " + cmd.name
+    request = PlanningCmdClips(cmd.name, cmd.params, cmd._id, False)
+    pubRemindPerson.publish(request)
+    return cmd._id
+
+def find_reminded_person(cmd):
+    global pubFindRemindedPerson
+    print "Executing Function: " + cmd.name
+    request = PlanningCmdClips(cmd.name, cmd.params, cmd._id, False)
+    pubFindRemindedPerson.publish(request)
+    return cmd._id
+
+def ask_inc(cmd):
+    global pubAskInc
+    print "Executing Function: " + cmd.name
+    request = PlanningCmdClips(cmd.name, cmd.params, cmd._id, False)
+    pubAskInc.publish(request)
+    return cmd._id
+
+def get_person_description(cmd):
+    global pubGetPersonDescription
+    print "Executing Function: " + cmd.name
+    request = PlanningCmdClips(cmd.name, cmd.params, cmd._id, False)
+    pubGetPersonDescription.publish(request)
+    return cmd._id
+
+def update_know_location(cmd):
+    global pubCmdUpdateKnowLocation 
+    print "Executing Function: " + cmd.name
+    request = PlanningCmdClips(cmd.name, cmd.params, cmd._id, False)
+    pubCmdUpdateKnowLocation.publish(request)
+    return cmd._id
+
+def cmd_clips_signal(cmd):
+    global pubCmdClipsSignal 
+    print "Executing Function: " + cmd.name
+    request = PlanningCmdClips(cmd.name, cmd.params, cmd._id, False)
+    pubCmdClipsSignal.publish(request)
+    return cmd._id
+
+def offer_drink(cmd):
+    global pubCmdOfferDrink 
+    print "Executing Function: " + cmd.name
+    request = PlanningCmdClips(cmd.name, cmd.params, cmd._id, False)
+    pubCmdOfferDrink.publish(request)
+    return cmd._id
+
+def train_person(cmd):
+    global pubCmdTrainPerson 
+    print "Executing Function: " + cmd.name
+    request = PlanningCmdClips(cmd.name, cmd.params, cmd._id, False)
+    pubCmdTrainPerson.publish(request)
+    return cmd._id
+
+def get_order(cmd):
+    global pubCmdGetOrder 
+    print "Executing Function: " + cmd.name
+    request = PlanningCmdClips(cmd.name, cmd.params, cmd._id, False)
+    pubCmdGetOrder.publish(request)
+    return cmd._id
+
+def deliver_order(cmd):
+    global pubCmdDeliverOrder 
+    print "Executing Function: " + cmd.name
+    request = PlanningCmdClips(cmd.name, cmd.params, cmd._id, False)
+    pubCmdDeliverOrder.publish(request)
+    return cmd._id
+
+def objects_on_location(cmd):
+    global pubCmdObjectsOnLocation 
+    print "Executing Function: " + cmd.name
+    request = PlanningCmdClips(cmd.name, cmd.params, cmd._id, False)
+    pubCmdObjectsOnLocation.publish(request)
+    return cmd._id
+
 #Define the function map, this function are the functions that represent of task in the clips rules.
 fmap = {
     'cmd_speech': cmd_speech,
@@ -483,7 +625,26 @@ fmap = {
     'cmd_rstack':cmd_rstack,
     'cmd_make_backtraking':cmd_mbt,
     'cmd_enable_simul':cmd_enable_simul,
-    'update_stack':update_stack
+    'update_stack':update_stack,
+    'reset_cube_pos':reset_cube_pos,
+    'cmd_task_conf':cmd_task_conf,
+    'cmd_align_point':cmd_align_point,
+    'find_many_people':find_many_people,
+    'amount_people':amount_people,
+    'ask_and_offer':ask_and_offer,
+    'find_e_person':find_e_person,
+    'scan_person':scan_person,
+    'remind_person':remind_person,
+    'find_reminded_person':find_reminded_person,
+    'ask_inc':ask_inc,
+    'get_person_description':get_person_description,
+    'cmd_update_loc_coords':update_know_location,
+    'cmd_clips_signal':cmd_clips_signal,
+    'offer_drink':offer_drink,
+    'train_person':train_person,
+    'get_order':get_order,
+    'deliver_order':deliver_order,
+    'objects_on_location':objects_on_location
 }
 
 def quit():
@@ -496,7 +657,9 @@ def main():
     global pubCmdGoto, pubCmdAnswer, pubCmdFindObject, pubCmdAskFor, pubCmdStatusObject, pubCmdMoveActuator, pubDrop, pubCmdAskPerson
     global pubCmdFindCategory, pubCmdManyObjects, pubCmdPropObj, pubCmdGesturePerson, pubCmdGPPerson, pubCmdGPCrowd, pubCmdSpeechGenerator, pubCmdAskIncomplete
     global pubCmdWorld, pubCmdDescribe, pubCmdTakeOrder, pubCmdExplain, pubCmdWhere, pubCmdDisp, pubCmdHappen, pubCmdReviewStack, pubCmdMakeBacktraking
-    global pubEnableSimulated, pubUpdateStack
+    global pubEnableSimulated, pubUpdateStack, pubResetCubePos, pubCmdTaskConfirmation, pubCmdAlignWithPoint, pubCmdUpdateKnowLocation 
+    global pubCmdManyPeople, pubCmdAmountPeople, pubCmdAskAndOffer, pubFindEPerson, pubScanPerson, pubRemindPerson, pubFindRemindedPerson, pubCmdOfferDrink 
+    global pubAskInc, pubGetPersonDescription, pubCmdClipsSignal, pubCmdTrainPerson, pubCmdGetOrder, pubCmdDeliverOrder, pubCmdObjectsOnLocation  
     global file_gpsr
 
     rospy.init_node('knowledge_representation')
@@ -535,6 +698,17 @@ def main():
     pubCmdGPCrowd = rospy.Publisher('/planning_clips/cmd_gender_pose_crowd', PlanningCmdClips, queue_size=1)
     pubCmdSpeechGenerator = rospy.Publisher('/planning_clips/cmd_speech_generator', PlanningCmdClips, queue_size=1)
     pubCmdAskIncomplete = rospy.Publisher('/planning_clips/cmd_ask_incomplete', PlanningCmdClips, queue_size=1)
+    pubCmdTaskConfirmation = rospy.Publisher('/planning_clips/cmd_task_conf', PlanningCmdClips, queue_size=1)
+    pubCmdAlignWithPoint = rospy.Publisher('/planning_clips/cmd_align_point', PlanningCmdClips, queue_size=1)
+    pubCmdUpdateKnowLocation = rospy.Publisher('/planning_clips/cmd_update_know_location', PlanningCmdClips, queue_size=1)
+    pubCmdClipsSignal = rospy.Publisher('/planning_clips/cmd_clips_signal', PlanningCmdClips, queue_size=1)
+    
+    ##topicos de serving drinks
+    pubCmdOfferDrink = rospy.Publisher('/planning_clips/cmd_offer_drink', PlanningCmdClips, queue_size=1)
+    pubCmdTrainPerson = rospy.Publisher('/planning_clips/cmd_train_person', PlanningCmdClips, queue_size=1)
+    pubCmdGetOrder = rospy.Publisher('/planning_clips/cmd_get_order_object', PlanningCmdClips, queue_size=1)
+    pubCmdDeliverOrder = rospy.Publisher('/planning_clips/cmd_deliver_order', PlanningCmdClips, queue_size=1)
+    pubCmdObjectsOnLocation = rospy.Publisher('/planning_clips/cmd_objects_on_location', PlanningCmdClips, queue_size=1)
     
     ###Topicos para el open challenge
     pubCmdWorld = rospy.Publisher('/planning_clips/cmd_world', PlanningCmdClips, queue_size=1)
@@ -549,6 +723,18 @@ def main():
     pubCmdMakeBacktraking = rospy.Publisher('/planning_clips/cmd_mbt', PlanningCmdClips, queue_size=1)
     pubEnableSimulated = rospy.Publisher('/planning_clips/cmd_enable_simul', PlanningCmdClips, queue_size=1)
     pubUpdateStack = rospy.Publisher('/planning_clips/cmd_up_stack', PlanningCmdClips, queue_size=1)
+    pubResetCubePos = rospy.Publisher('/planning_clips/cmd_reset_cube_pos', PlanningCmdClips, queue_size=1)
+
+    ###Topicos para el eegpsr (category II find people)
+    pubCmdManyPeople = rospy.Publisher('/planning_clips/cmd_many_people', PlanningCmdClips, queue_size=1)
+    pubCmdAmountPeople = rospy.Publisher('/planning_clips/cmd_amount_people', PlanningCmdClips, queue_size=1)
+    pubCmdAskAndOffer = rospy.Publisher('/planning_clips/cmd_ask_and_offer', PlanningCmdClips, queue_size=1)
+    pubFindEPerson = rospy.Publisher('/planning_clips/cmd_find_e_person', PlanningCmdClips, queue_size=1)
+    pubScanPerson = rospy.Publisher('/planning_clips/cmd_scan_person', PlanningCmdClips, queue_size=1)
+    pubRemindPerson = rospy.Publisher('/planning_clips/cmd_remind_person', PlanningCmdClips, queue_size=1)
+    pubFindRemindedPerson = rospy.Publisher('/planning_clips/cmd_find_reminded_person', PlanningCmdClips, queue_size=1)
+    pubAskInc = rospy.Publisher('/planning_clips/cmd_ask_inc', PlanningCmdClips, queue_size=1)
+    pubGetPersonDescription = rospy.Publisher('/planning_clips/cmd_get_person_description', PlanningCmdClips, queue_size=1)
 
     Initialize()
     

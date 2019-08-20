@@ -31,14 +31,14 @@ include_directories(
 )
 
 add_executable(
-  roi_tracker_node 
+  roi_tracker_node
   src/roi_tracker_node.cpp
   src/RoiTracker.cpp
 )
 
 add_dependencies(
-  roi_tracker_node 
-  ${${PROJECT_NAME}_EXPORTED_TARGETS} 
+  roi_tracker_node
+  ${${PROJECT_NAME}_EXPORTED_TARGETS}
   ${catkin_EXPORTED_TARGETS}
 )
 
@@ -47,5 +47,5 @@ target_link_libraries(
   ${PCL_LIBRARIES}
   ${OpenCV_LIBS}
   ${catkin_LIBRARIES}
-  /usr/local/lib/libopencv_tracking.so.3.3.1
+#  /usr/local/lib/libopencv_tracking.so.3.3.1
 )

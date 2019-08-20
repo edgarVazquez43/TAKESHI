@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<launch>
+  <group ns="knowledge">
+    <node
+      name="ltm"
+      pkg="knowledge"
+      type="ltm_node"
+      args="-f $(find knowledge)/navigation/known_locations_montreal.txt -d $(find knowledge)/navigation/known_delimitation_canada.txt -o $(find knowledge)/navigation/known_object_locations.txt"/>
+  </group>
+
+  <group ns="test">
+      <node name="ltm_obj_test" pkg="test" type="ltm_obj_test" args="$(find knowledge)/navigation/known_object_locations.txt alien" output="screen">
+      </node>
+  </group>
+</launch>

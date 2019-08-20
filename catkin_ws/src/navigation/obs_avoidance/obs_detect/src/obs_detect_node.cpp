@@ -1,5 +1,6 @@
 #include <iostream>
 #include <cmath>
+#include <string>
 #include "opencv2/core/core.hpp"
 #include "opencv2/highgui/highgui.hpp"
 #include "ros/ros.h"
@@ -11,7 +12,7 @@
 #include "geometry_msgs/PointStamped.h"
 #include "geometry_msgs/Twist.h"
 #include "tf/transform_listener.h"
-#include "justina_tools/JustinaTools.h"
+#include "takeshi_tools/TakeshiTools.h"
 
 sensor_msgs::LaserScan laserScan;
 nav_msgs::Path lastPath;
@@ -19,17 +20,26 @@ cv::Mat bgrImg;
 cv::Mat xyzCloud;
 int currentPathIdx = 0;
 bool enable = false;
+bool debug=false;
 float current_speed_linear = 0;
 float current_speed_angular = 0;
 
 ros::NodeHandle* nh;
 ros::Subscriber subPointCloud;
 
-float minX = 0.3;
-float maxX = 0.9;
+float minX = 0.40;
+float maxX = 0.95;
 float minY = -0.25;
 float maxY = 0.25;
 float z_threshold = 0.05;
+
+void printMessage(std::string message){
+    std::cout << "\033[1;35m     Obstacle Detector Node.->" << message << "\033[0m" << std::endl;
+}
+
+void printErrorMessage(std::string message){
+    std::cout << "\033[1;31m     Obstacle Detector Node Error!.->" << message << "\033[0m" << std::endl;
+}
 
 void callbackLaserScan(const sensor_msgs::LaserScan::ConstPtr& msg)
 {
@@ -44,7 +54,8 @@ void callbackPath(const nav_msgs::Path::ConstPtr& msg)
 
 void callbackPointCloud(const sensor_msgs::PointCloud2::ConstPtr& msg)
 {
-    JustinaTools::PointCloud2Msg_ToCvMat(msg, bgrImg, xyzCloud);
+
+    TakeshiTools::PointCloud2Msg_ToCvMat(msg, bgrImg, xyzCloud);
     //std::cout << "ObsDetector.->Received: width: " << bgrImg.cols << " height: " << bgrImg.rows << std::endl;
     //cv::imshow("OBSTACLE DETECTOR BY MARCOSOFT", bgrImg);
 }
@@ -53,26 +64,26 @@ void callbackEnable(const std_msgs::Bool::ConstPtr& msg)
 {
     if(msg->data)
     {
-        std::cout << "ObsDetector.->Starting obstacle detection using point cloud..." << std::endl;
+        printMessage("Starting obstacle detection using point cloud...");
         subPointCloud = nh->subscribe("/hardware/point_cloud_man/rgbd_wrt_robot", 1, callbackPointCloud);
         cv::namedWindow("OBSTACLE DETECTOR BY MARCOSOFT", cv::WINDOW_AUTOSIZE);
     }
     else
     {
-        std::cout << "ObsDetector.->Stopping obstacle detection using point cloud..." << std::endl;
+        printMessage("Stopping obstacle detection using point cloud...");
         subPointCloud.shutdown();
-	try
-	{
-        	cv::destroyWindow("OBSTACLE DETECTOR BY MARCOSOFT");
-	}
-	catch(cv::Exception e)
-	{
-		std::cerr << e.what() << std::endl;
-	}
-	catch(...)
-	{
-		std::cerr << "ObsDetector.->I dont know what is the fucking problem." << std::endl;
-	}
+    	try
+    	{
+            cv::destroyWindow("OBSTACLE DETECTOR BY MARCOSOFT");
+    	}
+    	catch(cv::Exception e)
+    	{
+            printErrorMessage(e.what());
+    	}
+    	catch(...)
+    	{
+            printErrorMessage("I dont know what is the fucking problem.");
+    	}
     }
     enable = msg->data;
 }
@@ -137,8 +148,8 @@ bool collisionRiskWithLaser(int pointAheadIdx, float robotX, float robotY, float
     }
     //std::cout << "ObsDetect.->: " << minSearchAngle << "  " << maxSearchAngle << "  " << dist << "  " << minCounter << std::endl;
     if(counter >= minCounter)
-      std::cout << "ObsDetect.->Collision risk detected with láser: min-max-counting: " << minSearchAngle << "  "
-                << maxSearchAngle << "  " << counter << std::endl;
+        printMessage("Collision risk detected with láser: min-max-counting: " + std::to_string(minSearchAngle) + "  "
+                + std::to_string(maxSearchAngle) + "  " + std::to_string(counter));
     return counter >= minCounter;
 }
 
@@ -241,7 +252,7 @@ int main(int argc, char** argv)
         }
     }
     
-    std::cout << "INITIALIZING OBSTACLE DETECTOR (ONLY LASER) NODE BY MARCOSOFT... " << std::endl;
+    printMessage("INITIALIZING OBSTACLE DETECTOR (ONLY LASER) NODE BY MARCOSOFT...");
     ros::init(argc, argv, "obs_detect");
     ros::NodeHandle n;
     nh = &n;
@@ -255,7 +266,7 @@ int main(int argc, char** argv)
     tf::TransformListener tf_listener;
     ros::Rate loop(30);
 
-    std::cout << "ObsDetect.->Using parameters: min_x=" << minX << "\tmax_x=" << maxX << "\tmin_y=" << minY << "\tmax_y" << maxY << "\tz_threshold" << z_threshold << std::endl;
+    printMessage("Using parameters: min_x=" + std::to_string(minX) + " max_x=" + std::to_string(maxX) + " min_y=" + std::to_string(minY) + " max_y=" + std::to_string(maxY) + " z_threshold=" + std::to_string(z_threshold));
 
     std_msgs::Bool msgObsInFront;
     std_msgs::Bool msgCollisionRisk;
@@ -287,7 +298,6 @@ int main(int argc, char** argv)
         //Calculating position 20 path-steps ahead the robot
         int aheadIdx = getLookAheadPathIdx(robotX, robotY);
         //std::cout << "ObstacleDetector.->Next path index: " << getLookAheadPathIdx(robotX, robotY) << std::endl;
-
         if(enable)
         {
 	    msgCollisionRisk.data = collisionRiskWithKinect(aheadIdx, robotX, robotY, robotTheta, collisionX, collisionY);
@@ -298,10 +308,12 @@ int main(int argc, char** argv)
         else
             msgCollisionRisk.data = false;
         pubCollisionRisk.publish(msgCollisionRisk);
-	pubCollisionPoint.publish(msgCollisionPoint);
+	    pubCollisionPoint.publish(msgCollisionPoint);
 
         //Check if there is an obstacle in front
         msgObsInFront.data = isThereAnObstacleInFront();
+        if(msgObsInFront.data && debug)
+            printMessage("Laser Scan: Obstacle in front");
         pubObstacleInFront.publish(msgObsInFront);
 
         ros::spinOnce();

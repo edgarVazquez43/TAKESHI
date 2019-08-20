@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<launch>
+  <remap from="/hardware/mobile_base/cmd_vel" to="/hsrb/command_velocity"/>
+  <param name="robot_description_semantic" textfile="$(find knowledge)/manipulation/hsrb.srdf" />
+  <!-- <node name="rviz" pkg="rviz" type="rviz" args="-d $(find knowledge)/hri/config.rviz"/> -->
+  <!-- <node name="cloudPub" pkg="pcl_ros" type="pcd_to_pointcloud" output="screen" args="/home/jesus/maestria/hsrbClouds/caja1.pcd 1">
+    <param name="frame_id" value="head_rgbd_sensor_link" />
+    <remap from="cloud_pcd" to="/hsrb/head_rgbd_sensor/depth_registered/rectified_points"/>
+  </node> -->
+
+  <node pkg="tf" type="static_transform_publisher" name="link1_broadcaster" args="1 0 0 0 0 0 1 base_link head_rgbd_sensor_link 100" />
+
+  <group ns="hardware">
+    <!-- <node name="joy"  pkg="joy"  type="joy_node"  output="screen"/>
+    <node name="head" pkg="head" type="head_node" output="screen"/>
+    <node name="arm"  pkg="arm"  type="arm_node"  output="screen"/> -->
+    <node name="xtion"  pkg="xtion"  type="xtion_node"  output="screen"/>
+  </group>
+  <node name="obj_reco" pkg="obj_reco" type="obj_reco_node" output="screen" args="--db $(find obj_reco)/TrainingDir/ -d"/>
+
+</launch>

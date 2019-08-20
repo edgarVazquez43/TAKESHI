@@ -131,7 +131,7 @@ public:
     static void callbackRightArmCurrentGripper(const std_msgs::Float32::ConstPtr& msg);
     static void callbackRightArmCurrentPose(const std_msgs::Float32MultiArray::ConstPtr& msg);
     //callbacks for torso
-    static void callbackTorsoCurrentPose(const std_msgs::Float32MultiArray::ConstPtr& msg);
+    static void callbackTorsoCurrentPose(const std_msgs::Float32::ConstPtr& msg);
     //callbacks for robot state
     static void callbackBaseBattery(const std_msgs::Float32::ConstPtr& msg);
     static void callbackLeftArmBattery(const std_msgs::Float32::ConstPtr& msg);

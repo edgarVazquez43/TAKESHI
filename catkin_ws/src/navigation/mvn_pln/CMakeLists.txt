@@ -17,6 +17,7 @@ find_package(catkin REQUIRED COMPONENTS
   message_generation
   point_cloud_manager
   pcl_ros
+  takeshi_tools
 )
 
 ## System dependencies are found with CMake's conventions

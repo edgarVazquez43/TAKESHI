@@ -13,6 +13,7 @@
 #include "nav_msgs/Path.h"
 #include "hri_msgs/RecognizedSpeech.h"
 #include "navig_msgs/PathFromMap.h"
+
 #include "justina_tools/JustinaHardware.h"
 #include "justina_tools/JustinaNavigation.h"
 #include "justina_tools/JustinaHRI.h"
@@ -21,6 +22,16 @@
 #include "justina_tools/JustinaTools.h"
 #include "justina_tools/JustinaKnowledge.h"
 #include "justina_tools/JustinaRepresentation.h"
+
+#include "takeshi_tools/TakeshiHardware.h"
+#include "takeshi_tools/TakeshiNavigation.h"
+#include "takeshi_tools/TakeshiHRI.h"
+#include "takeshi_tools/TakeshiManip.h"
+#include "takeshi_tools/TakeshiVision.h"
+#include "takeshi_tools/TakeshiTools.h"
+#include "takeshi_tools/TakeshiKnowledge.h"
+#include "takeshi_tools/TakeshiRepresentation.h"
+
 
 class QtRosNode : public QThread
 {
@@ -31,12 +42,12 @@ public:
 
     ros::NodeHandle* n;
     bool gui_closed;
-    
+
     void run();
     void setNodeHandle(ros::NodeHandle* nh);
 
 signals:
     void updateGraphics();
     void onRosNodeFinished();
-    
+
 };

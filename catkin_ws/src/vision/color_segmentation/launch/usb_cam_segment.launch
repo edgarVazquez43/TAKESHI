@@ -1,0 +1,15 @@
+<launch>
+
+  <node pkg="usb_cam" type="usb_cam_node" name="usb_cam" output="screen">
+    <param name="pixel_format" value="yuyv"/>
+    </node>
+
+ <node pkg="color_segmentation" type="color_segmentation_node" name="color_segmentation_node" output="screen">
+   <remap from="/image" to="/usb_cam/image_raw" />
+   <param name="term_distance" value="1000"/>
+   <param name="epsilon" value="1.1"/>
+   <param name="codebookSize" value="4"/>
+   <param name="maxIter" value="10"/>
+
+   </node>
+</launch>

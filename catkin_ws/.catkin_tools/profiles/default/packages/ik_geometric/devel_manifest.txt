@@ -1,5 +1,0 @@
-manipulation/ik_geometric
-/home/edgar/HSR_PUMAS/catkin_ws/devel/.private/ik_geometric/share/ik_geometric/cmake/ik_geometricConfig.cmake /home/edgar/HSR_PUMAS/catkin_ws/devel/share/ik_geometric/cmake/ik_geometricConfig.cmake
-/home/edgar/HSR_PUMAS/catkin_ws/devel/.private/ik_geometric/share/ik_geometric/cmake/ik_geometricConfig-version.cmake /home/edgar/HSR_PUMAS/catkin_ws/devel/share/ik_geometric/cmake/ik_geometricConfig-version.cmake
-/home/edgar/HSR_PUMAS/catkin_ws/devel/.private/ik_geometric/lib/pkgconfig/ik_geometric.pc /home/edgar/HSR_PUMAS/catkin_ws/devel/lib/pkgconfig/ik_geometric.pc
-/home/edgar/HSR_PUMAS/catkin_ws/devel/.private/ik_geometric/lib/ik_geometric/ik_geometric_node /home/edgar/HSR_PUMAS/catkin_ws/devel/lib/ik_geometric/ik_geometric_node

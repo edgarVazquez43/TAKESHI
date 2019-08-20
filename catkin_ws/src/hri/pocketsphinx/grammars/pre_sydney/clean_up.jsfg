@@ -1,0 +1,4 @@
+#JSGF V1.0;
+grammar clean_up;
+public <clean_up> = (<cleanCommand>);
+<cleanCommand> = TIDY UP THE (LIVING ROOM | OFFICE | BEDROOM | KITCHEN);

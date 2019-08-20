@@ -1,0 +1,10 @@
+<launch>
+
+
+ <node pkg="surf_recog" type="surf_trainer_node" name="surf_trainer" output="screen">
+   <remap from="/image" to="/hsrb/hand_camera/image_raw" />
+   <!-- <param name="image_transport" value="compressed"/> -->
+   <param name="outFile" value="coke.xml"/>
+   <param name="minHessian" value="500"/>
+   </node>
+</launch>

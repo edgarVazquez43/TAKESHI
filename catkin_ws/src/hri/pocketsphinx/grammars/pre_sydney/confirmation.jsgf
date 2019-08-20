@@ -1,0 +1,4 @@
+#JSGF V1.0;
+grammar confirmation_g;
+public <confirmation_g> = (<confirmation>);
+<confirmation> = TAKESHI (YES|NO);

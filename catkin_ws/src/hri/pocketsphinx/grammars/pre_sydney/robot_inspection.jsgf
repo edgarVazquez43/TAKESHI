@@ -1,0 +1,3 @@
+#JSGF V1.0;
+grammar robot_inspection;
+public <robot_inspection> = FINISH | CONTINUE | JESUS | ADRIAN | OK | CANCEL;

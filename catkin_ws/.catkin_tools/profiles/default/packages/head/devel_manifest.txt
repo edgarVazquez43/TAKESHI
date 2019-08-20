@@ -1,5 +1,0 @@
-hardware/head
-/home/edgar/HSR_PUMAS/catkin_ws/devel/.private/head/share/head/cmake/headConfig.cmake /home/edgar/HSR_PUMAS/catkin_ws/devel/share/head/cmake/headConfig.cmake
-/home/edgar/HSR_PUMAS/catkin_ws/devel/.private/head/share/head/cmake/headConfig-version.cmake /home/edgar/HSR_PUMAS/catkin_ws/devel/share/head/cmake/headConfig-version.cmake
-/home/edgar/HSR_PUMAS/catkin_ws/devel/.private/head/lib/pkgconfig/head.pc /home/edgar/HSR_PUMAS/catkin_ws/devel/lib/pkgconfig/head.pc
-/home/edgar/HSR_PUMAS/catkin_ws/devel/.private/head/lib/head/head_node /home/edgar/HSR_PUMAS/catkin_ws/devel/lib/head/head_node

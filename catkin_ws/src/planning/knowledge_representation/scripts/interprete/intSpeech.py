@@ -37,6 +37,7 @@ def separaTask(cadena):
 	update_location = False
 	find_person = False
 	deliver_object = False
+        no_get_object_many_room = True
 	fpush = True
 	tu = 2
 	tempStep = 1
@@ -57,6 +58,9 @@ def separaTask(cadena):
 			if paramTam > 1:
 				if firstparam[1] == 'get_object':
 					get_object = True
+                                elif firstparam[1] == 'get_object_many_rooms':
+                                        get_object = True
+                                        no_get_object_many_room = False
 				elif firstparam[1] == 'update_object_location':
 					update_location = True
 				elif firstparam[1] == 'handover_object':
@@ -94,8 +98,10 @@ def separaTask(cadena):
 				task_object = firstparam[1]
 				get_object = False
 				if len(firstparam) < 3:
-					if no_man_guide:
+					if no_man_guide and no_get_object_many_room:
 						temp2 = temp2 + " " + location
+                                        elif no_man_guide and not no_get_object_many_room:
+                                            no_get_object_many_room = True 
 					else:
 						no_man_guide = True
 			elif firstparam[0] == 'params' and update_location:
@@ -160,10 +166,19 @@ def cmd_int(c):
 	temp = content[0]
 	tempx = temp.lstrip("[('")
 
+        print "Temporal x: " + tempx
+
 	x = tempx.find("Robot ")
-	tempy = tempx.lstrip("Robot")
-	temp1 = tempy.lstrip("robot")
-	
+        y = tempx.find("robot ")
+        if x != -1:
+	    temp1 = tempx.lstrip("Robot")
+        elif y != -1:
+            temp1 = tempx.lstrip("robot")
+        else:
+	    temp1 = tempx
+
+        print "Temporal 1: " + temp1
+
 	##### you(may | can | will) find
 	f = temp1.find("you may find")
 	f1 = temp1.find("you can find")
@@ -207,8 +222,18 @@ def cmd_int(c):
 		return (0, args)
 	else:
 		q.empty()
+                instruction = 'false'
+                if result.find('(inst') != -1:
+                    if result.find('(task') != -1:
+                        instruction = 'false'
+                    result = result.replace('(inst', '(task')
+                    instruction = 'true'
 		separaTask(result)
 		args = temp1.replace(' ','_')
+                if instruction == 'true':
+		    steps = q.lenC()
+		    plan_name_id = randrange(10000)
+		    args = "plan-" + str(plan_name_id) + " " + str(steps) + " " + temp1.replace(' ', '_')
 		#return Response.FromCommandObject(c, True, args)
 		return (1, args)
 
@@ -428,95 +453,95 @@ def cmd_ask_name(c):
 	print 'Resp ' + temp1
 	question = temp1.lower()
 	
-	if question == 'my name is emma':
-		args = 'emma'
+	if question == 'my name is mary':
+		args = 'mary'
 		print '<-------------->'
 		print args
 		print '<-------------->'
 		return (1, args)
-	elif question == 'my name is olivia':
-		args = 'olivia'
+	elif question == 'my name is patricia':
+		args = 'patricia'
 		print '<-------------->'
 		print args
 		print '<-------------->'
 		return (1, args)
-	elif question == 'my name is sophia':
-		args = 'sophia'
+	elif question == 'my name is linda':
+		args = 'linda'
 		print '<-------------->'
 		print args
 		print '<-------------->'
 		return (1, args)
-	elif question == 'my name is ava':
-		args = 'ava'
-		print '<-------------->'
-		print args
-		print '<-------------->'
-		return (1, args)
-
-	elif question == 'my name is isabella':
-		args = 'isabella'
-		print '<-------------->'
-		print args
-		print '<-------------->'
-		return (1, args)
-	elif question == 'my name is mia':
-		args = 'mia'
+	elif question == 'my name is barbara':
+		args = 'barbara'
 		print '<-------------->'
 		print args
 		print '<-------------->'
 		return (1, args)
 
-	elif question == 'my name is abigail':
-		args = 'abigail'
+	elif question == 'my name is elizabeth':
+		args = 'elizabeth'
+		print '<-------------->'
+		print args
+		print '<-------------->'
+		return (1, args)
+	elif question == 'my name is jennifer':
+		args = 'jennifer'
 		print '<-------------->'
 		print args
 		print '<-------------->'
 		return (1, args)
 
-	elif question == 'my name is emily':
-		args = 'emily'
+	elif question == 'my name is maria':
+		args = 'maria'
 		print '<-------------->'
 		print args
 		print '<-------------->'
 		return (1, args)
 
-	elif question  == 'my name is charlotte':
-		args = 'charlotte'
+	elif question == 'my name is susan':
+		args = 'susan'
 		print '<-------------->'
 		print args
 		print '<-------------->'
 		return (1, args)
 
-	elif question  == 'my name is harper':
-		args = 'harper'
+	elif question  == 'my name is margaret':
+		args = 'margaret'
 		print '<-------------->'
 		print args
 		print '<-------------->'
 		return (1, args)
 
-	elif question  == 'my name is noah':
-		args = 'noah'
+	elif question  == 'my name is dorothy':
+		args = 'dorothy'
 		print '<-------------->'
 		print args
 		print '<-------------->'
 		return (1, args)
 
-	elif question  == 'my name is liam':
-		args = 'liam'
+	elif question  == 'my name is james':
+		args = 'james'
 		print '<-------------->'
 		print args
 		print '<-------------->'
 		return (1, args)
 
-	elif question  == 'my name is mason':
-		args = 'mason'
+	elif question  == 'my name is john':
+		args = 'john'
+		print '<-------------->'
+		print args
+		print '<-------------->'
+		return (1, args)
+
+	elif question  == 'my name is robert':
+		args = 'robert'
 		print '<-------------->'
 		print args
 		print '<-------------->'
 		return (1, args)
 	
-	elif question  == 'my name is jacob':
-		args = 'jacob'
+	elif question  == 'my name is michael':
+		args = 'michael'
 		print '<-------------->'
 		print args
 		print '<-------------->'
@@ -529,37 +554,37 @@ def cmd_ask_name(c):
 		print args
 		print '<-------------->'
 		return (1, args)
-	elif question == 'my name is ethan':
+	elif question == 'my name is david':
 		#q.empty()
-		args = 'ethan'
+		args = 'david'
 		print '<-------------->'
 		print args
 		print '<-------------->'
 		return (1, args)
-	elif question == 'my name is james':
+	elif question == 'my name is richard':
 		#q.empty()
-		args = 'james'
+		args = 'richard'
 		print '<-------------->'
 		print args
 		print '<-------------->'
 		return (1, args)
-	elif question == 'my name is alexander':
+	elif question == 'my name is charles':
 		#q.empty()
-		args = 'alexander'
+		args = 'charles'
 		print '<-------------->'
 		print args
 		print '<-------------->'
 		return (1, args)
-	elif question == 'my name is michael':
+	elif question == 'my name is joseph':
 		#q.empty()
-		args = 'michael'
+		args = 'joseph'
 		print '<-------------->'
 		print args
 		print '<-------------->'
 		return (1, args)
-	elif question == 'my name is benjamin':
+	elif question == 'my name is thomas':
 		#q.empty()
-		args = 'benjamin'
+		args = 'thomas'
 		print '<-------------->'
 		print args
 		print '<-------------->'
@@ -1012,7 +1037,7 @@ def cmd_world(c):
 		print args
 		print '<-------------->'
 		return (1, args)
-	elif question == 'find objects on the table' or question == "find stacks on the table":
+	elif question == 'find objects on the table' or question == "look at the cubes configuration":
 		args = 'what_see_obj'
 		print '<-------------->'
 		print args

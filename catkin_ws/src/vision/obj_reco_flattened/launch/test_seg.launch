@@ -1,0 +1,9 @@
+<launch>
+  <group ns="hardware">
+    <node name="head" pkg="head" type="head_node" output="screen"/>
+    <node name="arm"  pkg="arm"  type="arm_node"  output="screen"/>
+    <node name="xtion"  pkg="xtion"  type="xtion_node"  output="screen"/>
+  </group>
+
+  <node name="obj_reco_flattened" pkg="obj_reco_flattened" type="obj_reco_flattened" output="screen"/>
+</launch>

@@ -48,8 +48,10 @@ find_package(catkin REQUIRED COMPONENTS
 ## Generate messages in the 'msg' folder
 add_message_files(
   FILES
-  RecognizedSpeech.msg
   RecognitionResult.msg
+  RecognizedSpeech.msg
+  SphinxSetFile.msg
+  SphinxSetSearch.msg
 )
 
 ## Generate services in the 'srv' folder

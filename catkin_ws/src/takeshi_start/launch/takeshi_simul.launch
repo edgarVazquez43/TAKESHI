@@ -1,0 +1,149 @@
+<launch>
+  <param name="robot_description" command="cat $(find knowledge)/hardware/hsrb.urdf" />
+  <!-- <param name="robot_description_semantic" textfile="$(find arms_config)/config/7DOF_manipulator.srdf" /> -->
+
+  <remap from="/hardware/mobile_base/odometry" to="/navigation/localization/base_pose_ground_truth"/> 
+  <remap from="/navigation/localization/amcl_pose" to="/navigation/localization/current_pose"/>
+  <node name="robot_state_publisher" pkg="robot_state_publisher" type="state_publisher"/>
+  <node name="gmapping_link_publisher" pkg="tf" type="static_transform_publisher" args="0 0 0.0 0 0 0 map odom 100"/>
+
+  <!-- ####################################################### -->
+  <!-- ##################       HARDWARE      ################ -->
+  <group ns="hardware">
+    <node name="mobile_base" pkg="mobile_base" type="omni_base.py" output="screen">
+      <param name="simul" value="true"/>
+    </node>
+    <node name="arm" pkg="arm" type="arm_simul_node.py" output="screen"/>
+    <node name="head" pkg="head" type="head_simul_node.py" output="screen"/>
+    <node name="torso" pkg="torso" type="torso_simul_node.py" output="screen"/>
+    <node name="joy" pkg="joy" type="joy_node" output="screen"/>
+    <!-- laser  simul -->
+    <node name="laser_manager" pkg="laser_manager" type="laser_manager_node" output="screen">
+      <param name="simul" value="true"/>
+      <param name="dynamic_map" value="false"/>
+      <param name="dynamic_map" value="false"/>
+    </node> 
+    <!-- This can be induce problems with Obstacle Avoidance -->
+    <!-- ##################   This is for real kinect   ################ -->
+    <node name="point_cloud_man" pkg="kinect_man" type="kinect_man_node" output="screen" args=" __ defpath $(find knowledge)/hardware/point_clouds/"/>
+
+    <!-- ##################   This is for load //bag// files   ################ -->
+    <!--node name="kinect_man" pkg="kinect_man" type="kinect_man_node" output="screen" args=" -\-bag /home/adrian/rosbags_Robocup2019/cuttleryTable_lateral[0].bag"/-->
+  </group>
+  
+
+  <!-- ########################################################## -->
+  <!-- ########    HUMAN-ROBOT  INTERACTION      ################ -->
+  <group ns="hri">
+    <node name="justina_gui" pkg="justina_gui" type="justina_gui_node" output="screen"/>
+    <!-- <node name="takeshi_gui" pkg="takeshi_gui" type="takeshi_gui_node" output="screen"/> -->
+    <node name="rviz" pkg="rviz" type="rviz" args="-d $(find knowledge)/hri/rviz_config.rviz">
+      <remap from="/initialpose" to="/navigation/localization/initialpose"/>
+    </node>
+  </group>
+
+  <node name="bbros_bridge" pkg="bbros_bridge" type="bbros_bridge_all.py" args="-f $(find bbros_bridge)/src/files/topics_inclusion_list.json"/>
+  
+
+
+
+    <!-- ####################################################### -->
+    <!-- ##################     NAVIGATION      ################ -->
+  <group ns="navigation">
+    <group ns="localization">
+      <node name="map_server" pkg="map_server" type="map_server" output="screen"
+	    args="$(find knowledge)/navigation/occupancy_grids/biorobotica2020-1.yaml"/>
+      <node name="fake_localization" pkg="fake_localization" type="fake_localization"/>
+
+      <!--
+      <node name="loc_amcl" pkg="amcl" type="amcl" output="screen" args="scan:=/hardware/scan">
+        <param name="odom_alpha1" value="0.1"/>
+        <param name="odom_alpha2" value="0.1"/>
+        <param name="odom_alpha3" value="0.1"/>
+        <param name="odom_alpha4" value="0.1"/>
+        <param name="odom_alpha5" value="0.1"/>
+        <param name="initial_pose_x" value="0.0"/>
+        <param name="initial_pose_y" value="0.0"/>
+        <param name="initial_pose_a" value="0.0"/>
+        <param name="update_min_a" value="0.1"/>
+        <param name="laser_min_range" value="0.3"/>
+        <param name="odom_model_type" value="omni-corrected"/>
+      </node>
+    -->
+
+      
+    </group>
+    
+    <group ns="path_planning">
+      <node name="simple_move" pkg="simple_move" type="simple_move_node" output="screen" args="--move_head"/>
+      <node name="path_calculator" pkg="path_calculator" type="path_calculator_node" output="screen"/>
+      
+    </group>
+      <group ns="obs_avoid">
+	       <node name="obstacle_detector" pkg="obs_detect" type="obs_detect_node" output="screen"/>
+	  </group>
+      <node name="mvn_pln" pkg="mvn_pln" type="mvn_pln_node" output="screen" args="-f $(find knowledge)/navigation/known_locations.txt" />
+    </group>     
+
+
+
+  
+
+  <!-- ################################################### -->
+  <!-- ##################     VISION      ################ -->
+  <group ns="vision">
+    <!-- <node name="obj_angle_calc" pkg="obj_angle_calc" type="obj_angle_calc_node" output="screen"/> -->
+    <node name="obj_reco" pkg="obj_reco" type="obj_reco_node" output="screen">
+      <param name="object_categories_file" value="$(find knowledge)/object_categories/"/>
+      </node> 
+
+    <!--node name="openpose_node" pkg="openpose" type="open_pose_node" output="screen">
+      <param name="debug_mode" value="false"/>
+      <param name="file_links_config" value="$(find openpose)/OpenPoseConfig.xml"/>
+      <param name="model_folder" value="$(env OPENPOSE_HOME)/models/"/>
+      <param name="net_resolution" value="480x320"/>
+      <remap from="/vision/openpose/enable_estimate_pose" to="/vision/skeleton_finder/enable_tracking"/>
+    </node-->
+
+     <node name="gesture_recog_skeleton" pkg="gesture_recog_skeleton" type="gesture_recog_node" output="screen">                                                                                
+       <param name="gesture_method" value="2"/>                                      
+       <!-- This params are to waving detect -->                                     
+       <param name="num_frames" value="10"/>                                         
+       <!-- TODO This need adjust this param because the recog waving doing with 2D \
+	    for speech and person recog, must be bigger 0.3 -->                                                   
+       <param name="thr_waving_motion" value="0.3"/>                                 
+       <param name="thr_to_person" value="0.3"/>                                     
+       <param name="time_elapsed_remove" value="10.0"/>
+     </node> 
+
+       <node name="obj_reco_flattened" pkg="obj_reco_flattened" type="obj_reco_flattened" output="screen"/>
+
+
+  </group>
+  
+  <group ns="manipulation">
+    <rosparam command="load" file="$(find knowledge)/manipulation/kinematics.yaml"/>
+    <!-- <node name="ik_moveit" pkg="ik_moveit" type="ik_moveit_node" output="screen"/> -->
+    <node name="ik_geometric" pkg="ik_geometric" type="ik_geometric_node" output="screen"/>
+    <node name="manip_pln" pkg="manip_pln" type="manip_pln_node" output="screen" args="-f $(find knowledge)/manipulation/predef_poses/"/>
+  </group>
+
+  
+  <group ns="knowledge">
+    <node name="ltm" pkg="knowledge" type="ltm_node" output="screen"
+      args="-f $(find knowledge)/navigation/robocup_sydney.txt
+		-d $(find knowledge)/navigation/known_delimitation_canada.txt
+		-o $(find knowledge)/navigation/robocup_sydney.txt"/>
+    <node name="pred_ques" pkg="knowledge" type="pred_ques_node" output="screen" args="-f $(find knowledge)/speech_recognition/Questions.xml"/>
+    <node name="pred_arms_poses" pkg="knowledge" type="pred_poses_mani_node" output="screen" args="-f $(find knowledge)/manipulation/predef_poses/"/>
+    <node name="time_monitor" pkg="act_pln" type="time_monitor" output="screen"/>
+  </group>
+
+  <!-- ROS CLISP -->
+  <node name="ros_pyclips_services" pkg="knowledge_representation" type="ros_pyclips_services.py" output="screen" args="--mapping gpsr" />
+  <node name="ros_pyclips_node" pkg="knowledge_representation" type="ros_pyclips_node.py" output="screen" />
+
+  
+
+  
+</launch>

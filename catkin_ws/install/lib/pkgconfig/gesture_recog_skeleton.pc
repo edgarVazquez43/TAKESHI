@@ -1,8 +1,0 @@
-prefix=/home/hsr_pumas/HSR_PUMAS/catkin_ws/install
-
-Name: gesture_recog_skeleton
-Description: Description of gesture_recog_skeleton
-Version: 0.0.0
-Cflags: 
-Libs: -L/home/hsr_pumas/HSR_PUMAS/catkin_ws/install/lib 
-Requires: 

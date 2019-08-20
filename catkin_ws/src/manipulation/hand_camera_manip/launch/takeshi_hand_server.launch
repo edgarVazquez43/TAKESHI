@@ -1,0 +1,31 @@
+<launch>
+
+  <node pkg="hand_camera_manip" type="hand_grasp_srv" name="hand_grasp_server" output="screen">
+
+  </node>
+  <node pkg="hand_camera_manip" type="camera_manip_node" name="camera_manip_node" output="screen">
+    <param name="kp_arm_lift" value="0.005"/>
+    <param name="kp_arm_flex" value="0.08"/>
+    <param name="kp_arm_roll" value="0.05"/>
+    <param name="kp_wrist_flex" value="0.5"/>
+    <param name="kp_wrist_roll" value="0.002"/>
+    <param name="y_center" value="240"/>
+    <param name="x_center" value="240"/>
+    <param name="area_setpoint" value="50000"/>
+    <param name="kp_base_x" value="0.01"/>
+    <param name="kp_base_y" value="0.1"/>
+    <param name="routine" value="0"/>
+  </node>
+
+
+
+  <node pkg="surf_recog" type="surf_detector_node" name="surf_detector" output="screen">
+    <remap from="/image" to="/hsrb/hand_camera/image_raw" />
+    <!-- <param name="image_transport" value="compressed"/> -->
+    <param name="inFile" value="/tin.xml"/>
+    <param name="calib_file" value="/ost.yaml"/>
+    <param name="minHessian" value="600"/>
+    <param name="good_ratio" value="0.6"/>
+    <param name="ransacTHR" value="5"/>
+  </node>
+</launch>
