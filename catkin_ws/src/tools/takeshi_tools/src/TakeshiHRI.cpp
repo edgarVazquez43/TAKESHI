@@ -95,6 +95,10 @@ bool TakeshiHRI::waitAfterSay(std::string strToSay, int timeout) {
   return true;
 }
 */
+bool TakeshiHRI::waitAfterSay(std::string strToSay) {
+    TakeshiHRI::waitAfterSay(strToSay, 4000);
+}
+
 bool TakeshiHRI::waitAfterSay(std::string strToSay, int timeout) {
   timeout=strToSay.size()*90;
   talkRequestActionFinished=false;
@@ -373,9 +377,9 @@ void TakeshiHRI::enableSphinxMic(bool enable){
   pubEnSphinxMic.publish(msg);
   
   if(enable)
-    cout << "\033[1;32m     TakeshiHRI.->Enable Mic" << endl;
+    cout << "\033[1;32m     TakeshiHRI.->Enable Mic" << "\033[0m"<< endl;
   else
-    cout << "\033[1;32m     TakeshiHRI.->Disable Mic" << endl; 
+    cout << "\033[1;32m     TakeshiHRI.->Disable Mic"<< "\033[0m"<< endl;
 
 }
 

@@ -137,28 +137,38 @@ static bool isGraspeable(float object_x, float object_y, float object_z,vision_m
 
 static std::string getObjectCategory(std::string object);
 static std::string getJesusObjectCategory(std::string object);
+
 //Methods for pano maker
 static void takePano();
 static void clearPano();
 static void makePano();
 static bool isPanoImageRecived();
 static sensor_msgs::Image getLastPanoImage();
+
 //Methods for operating face recognizer
 static void stopFaceRecognition();
 static void facRecognize();
 static void facRecognize(std::string id);
 static bool getLastRecognizedFaces(std::vector<vision_msgs::VisionFaceObject>& faces);
+//Methods for operating face recognizer
+static void startFaceRecognition();
+static void startFaceRecognitionOld();
 static vision_msgs::VisionFaceObjects getRecogFromPano(sensor_msgs::Image image);
+// this is justina implementation.
+// Is strongly recommend replace it whit FaceNet function
+static void facTrain(std::string id);
+static void facTrain(std::string id, int numOfFrames);
+static void facClearByID(std::string id);
+static void facClearAll();
 
+  
 //Methods for operating skeleton finder
 static void startSkeletonFinding();
 static void getLastGesturesRecognize(std::vector<vision_msgs::GestureSkeleton> &gestures);
 static void stopSkeletonFinding();
 
 static vision_msgs::VisionFaceObjects getFaces(std::string id);
-//Methods for operating face recognizer
-static void startFaceRecognition();
-static void startFaceRecognitionOld();
+
 //Methods for the qr reader
 static void startQRReader();
 static void stopQRReader();
@@ -175,7 +185,9 @@ static bool findVacantPlaneAtHeight(std::vector<float>& vacantPlane,
                                     double minHeight, double maxHeight);
 
 //Methods for calculating inverse kinematics
-static bool inverseKinematicsGeometric(std::vector<float>& cartesian, std::vector<float>& articular, float& torso, geometry_msgs::Pose2D& base_correction);      // Takeshi
+//static bool inverseKinematicsGeometric(std::vector<float>& cartesian, std::vector<float>& articular, float& torso, geometry_msgs::Pose2D& base_correction);      // Takeshi
+
+
 //Methods for object detector and Recognizer
 static bool detectObjects(std::vector<vision_msgs::VisionObject>& recoObjList, bool saveFiles = false);
 static bool detectAllObjects(std::vector<vision_msgs::VisionObject>& recoObjList, bool saveFiles = false);

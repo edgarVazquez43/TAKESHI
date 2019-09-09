@@ -4,6 +4,7 @@
 #include "takeshi_tools/TakeshiNavigation.h"
 
 enum state {
+        SM_INIT_STATE,
         SM_START,
         SM_FIND_OBJ,
         SM_GRASP_OBJ_FLOOR,
@@ -46,16 +47,13 @@ int main(int argc, char **argv) {
 
         string lastRecoSpeech;
         std::vector<std::string> validCommandsStop;
-        validCommandsStop.push_back("pick up the object");
         validCommandsStop.push_back("follow me");
-        validCommandsStop.push_back("this is the dining table");
-        validCommandsStop.push_back("deliver object to the living room");
-        validCommandsStop.push_back("take it to the dining table");
+        validCommandsStop.push_back("stop follow me");
         
         int nextState=0;
 
         ros::Rate rate(10);
-        nextState = SM_INIT_FOLLOW;
+        nextState = SM_INIT_STATE;
 
         std::vector<vision_msgs::VisionObject> recognizedObjects;
         vision_msgs::VisionObject objToGrasp;
@@ -65,24 +63,34 @@ int main(int argc, char **argv) {
         bool success = false;
         TakeshiHRI::enableSpeechRecognized(true);
         TakeshiVision::startQRReader();
-        TakeshiHRI::loadGrammarSpeechRecognized("demo_noviembre.xml");
-        TakeshiHRI::waitAfterSay("Hello, my name is takeshi", 4000);
+        TakeshiHRI::loadJSGFGrammar("grammars/pre_sydney/final_tmr.jsgf", "final_tmr");
+        TakeshiHRI::enableSphinxMic(true);
         //TakeshiVision::loadSpecificTrainingDir("dining");
         
                         
 
         while (ros::ok() && !success) {
                 switch (nextState) {
+
+                case SM_INIT_STATE:
+                        printState("SM_INIT_STATE");
+                        if(TakeshiManip::isTheHandPressed()){
+                            TakeshiManip::hdGoTo(0,0.7,3000);
+                            TakeshiHRI::waitAfterSay("Hello, my name is Takeshi, i'm going to start the test, follow me demo, tell me what you want me to do");
+                            TakeshiHRI::enableSphinxMic(true);
+                            nextState=SM_INIT_FOLLOW;
+                        }  
+                break;
                 
                 case SM_INIT_FOLLOW:
                         cout << "State machine: SM_INIT_FOLLOW" << endl;
                         TakeshiManip::navigationPose(4000);
-                        TakeshiHRI::enableSpeechRecognized(true);
-                        ros::Duration(2.0).sleep();
+                        TakeshiHRI::enableSphinxMic(true);
                         if(TakeshiHRI::waitForSpecificSentence(validCommandsStop, lastRecoSpeech, 4000))
                         {
                                 if(lastRecoSpeech.find("follow me") != std::string::npos) {
-                                        TakeshiHRI::enableSpeechRecognized(false);
+                                        TakeshiHRI::enableSphinxMic(false);
+                                        TakeshiManip::hdGoTo(0,0.0,3000);
                                         nextState=SM_NAVIGATE_FOLLOW;
                                 }
                         }
@@ -99,12 +107,12 @@ int main(int argc, char **argv) {
                         cout << "SM: SM_FOLLOW_ME" << endl;
                         if(TakeshiHRI::frontalLegsFound()) {
                                 cout << "Frontal legs found!" << std::endl;
-                                TakeshiHRI::waitAfterSay("I found you", 4000);
+                                TakeshiHRI::waitAfterSay("I found you, I will start to follow you human, please walk.", 4000);
                                 TakeshiHRI::startFollowHuman();
                                 ros::spinOnce();
                                 rate.sleep();
                                 TakeshiHRI::startFollowHuman();
-                                TakeshiHRI::enableSpeechRecognized(true);
+                                 TakeshiHRI::enableSphinxMic(true);
                                 nextState = SM_FOLLOWING_PHASE;
                         }
 
@@ -113,39 +121,37 @@ int main(int argc, char **argv) {
                 case SM_FOLLOWING_PHASE:
                         cout << "SM: SM_FOLLOWING_PHASE" <<  endl;
                         if(TakeshiHRI::waitForSpecificSentence(validCommandsStop, lastRecoSpeech, 4000))
-                                if(lastRecoSpeech.find("this is the dining table") != std::string::npos) {
-                                        TakeshiHRI::enableSpeechRecognized(false);
-                                        rate.sleep();
+                                if(lastRecoSpeech.find("stop follow me") != std::string::npos) {
+                                         TakeshiHRI::enableSphinxMic(false);
                                         ros::spinOnce();
                                         TakeshiHRI::waitAfterSay("Ok", 2500);
                                         rate.sleep();
                                         ros::spinOnce();
-                                        TakeshiHRI::enableSpeechRecognized(true);
                                         TakeshiHRI::stopFollowHuman();
                                         TakeshiHRI::enableLegFinder(false);
-                                        nextState= SM_FOLLOW_CONFIRMATION;
+                                        nextState= SM_RELEASE_OBJECT;
+                                        break;
                                 }
+                        if(!TakeshiHRI::frontalLegsFound()){
+                            cout << "State machine: SM_FOLLOWING_PHASE -> Lost human!" << std::endl;
+                            TakeshiHRI::waitAfterSay("I lost you, please stand in front of me again", 3500);
+                            TakeshiHRI::stopFollowHuman();
+                            TakeshiHRI::enableLegFinder(false);
+                            nextState=SM_NAVIGATE_FOLLOW;
+                        } 
 
                         break;
 
-                case SM_FOLLOW_CONFIRMATION:
-                        TakeshiHRI::waitForUserConfirmation(userConfirmation, 7000);
-                        rate.sleep();
-                        ros::spinOnce();
-                        if(userConfirmation) {
-                                TakeshiHRI::stopFollowHuman();
-                                TakeshiHRI::enableLegFinder(false);
-                                TakeshiHRI::waitAfterSay("Ok", 1000);
-                                userConfirmation=false;
-                                TakeshiManip::hdGoTo(0.0, 0.0,2000);
-                                nextState=SM_PLACE_OBJ;
-                        }
-                        else{
-                                TakeshiHRI::waitAfterSay("Ok, continue", 4000);
-                                TakeshiHRI::loadGrammarSpeechRecognized("demo_noviembre.xml");
-                                nextState=SM_FOLLOWING_PHASE;
-                        }
+               
+
+                case SM_RELEASE_OBJECT:
+                        TakeshiHRI::say("I finished my demostration, thank you for your attention");
+                        TakeshiManip::navigationPose(5000);
+                        TakeshiVision::stopQRReader();
+                        success=true;
+                        
                         break;
+                
 
                 }
 

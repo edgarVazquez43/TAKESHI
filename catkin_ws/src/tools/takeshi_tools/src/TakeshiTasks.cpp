@@ -185,11 +185,11 @@ bool TakeshiTasks::placeObject(float objectHeight, float planeHeight, bool inFro
         TakeshiTasks::printTakeshiTaskMessage("X[diff]:  " + to_string(x_correction));
         TakeshiManip::startHdGoTo(0.0, 0.0);
         if(inFront)
-                TakeshiNavigation::moveLateral(YtoPlace-0.08, 4000);
+                TakeshiNavigation::moveLateral(YtoPlace-0.08, 6000);
         else
         {
-                TakeshiNavigation::moveDistAngle(0.0, 1.563,  4000);
-                TakeshiNavigation::moveLateral(-x_correction, 4000);
+                TakeshiNavigation::moveDistAngle(0.0, 1.563,  6000);
+                TakeshiNavigation::moveLateral(-x_correction, 6000);
         }
 
         if(!inFront) {
@@ -640,7 +640,7 @@ bool TakeshiTasks::alignWithTable(float distToTable, bool inFront)
                 TakeshiTasks::printTakeshiTaskMessage("Low table: " + to_string(inFront));
         }
         else{
-                TakeshiNavigation::moveDistAngle(0.0, -1.5707, 3000);
+                TakeshiNavigation::moveDistAngle(0.0, -1.5707, 6000);
                 TakeshiTasks::printTakeshiTaskMessage("Aligning with table [LEF_SIDE]: ");
             }
         TakeshiTasks::printTakeshiTaskMessage("Distance to table: " + to_string(distToTable));
@@ -1001,9 +1001,8 @@ bool TakeshiTasks::findPersonFacenet(std::string name, float anghd, bool get_clo
             if(get_close){
                 TakeshiHRI::say("I am getting close to you");
                 TakeshiManip::torsoGoTo(0,1000);
-                    if(!TakeshiNavigation::getClose(name, 10000))
-                       if(!TakeshiNavigation::getClose(name, 10000))
-                            TakeshiNavigation::getClose(name, 10000);
+                    if(!TakeshiNavigation::getClose(name, 20000))
+                        TakeshiNavigation::getClose(name, 20000);
 
 
                 TakeshiManip::hdGoTo(0,0,3000);        
@@ -2292,7 +2291,7 @@ bool TakeshiTasks::graspObjectOnFloor(float x, float y, float z, bool verify)
         TakeshiManip::openGripper(1.0);
         TakeshiManip::torsoGoTo(torso, 3000);
         ros::Duration(0.5).sleep();
-        TakeshiManip::armGoToArticular(articular, 4000);
+        TakeshiManip::armGoToArticular(articular, 1000);
         ros::Duration(0.5).sleep();
 
 
@@ -2324,10 +2323,10 @@ bool TakeshiTasks::graspObjectOnFloor(float x, float y, float z, bool verify)
         std::cout << "\033[1;43m Torso correction: " << torso << "\033[0m" << std::endl;
 
         articular[2]=articular[2]-0.15;
-        TakeshiManip::armGoToArticular(articular, 6000);
+        TakeshiManip::armGoToArticular(articular, 2000);
         ros::Duration(0.5).sleep();
 
-        TakeshiManip::torsoGoTo(torso, 6000);
+        TakeshiManip::torsoGoTo(torso, 2000);
         ros::Duration(0.5).sleep();
 
         TakeshiNavigation::moveLateral(y_correction, 5000);

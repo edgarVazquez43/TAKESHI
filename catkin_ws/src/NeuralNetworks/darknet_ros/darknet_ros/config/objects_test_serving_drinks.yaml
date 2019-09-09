@@ -10,8 +10,8 @@ yolo_model:
     names:
         - blue_mug
         - beer
-        - whiskey
-        - tequila
+        - juice
+        - coke
         - bill
         - blue_Lego
         - red_Lego

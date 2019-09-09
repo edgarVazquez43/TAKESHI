@@ -370,15 +370,17 @@ class face_reco_node(object):
         #     print("Showing detections")
         #     self.showDetections(
         #         frame, labels, face_locations)
-        serDs= pd.Series(Dstoface)
-       
-        serDs.sort_values(inplace=True)
         
+
+        #if (req.id ==''):
+
+        serDs= pd.Series(Dstoface)
+        serDs.sort_values(inplace=True)
         serrecog= pd.Series(recog_faces)
         serlocations= pd.Series(face_locations)
         serrecogsorted=serrecog.reindex(serDs.index)
         serlocationssorted= serlocations.reindex(serDs.index)
-        recog_faces=serrecogsorted.values
+        recog_faces=serrecogsorted.tolist()
 
 
         if("train_" in req.id):

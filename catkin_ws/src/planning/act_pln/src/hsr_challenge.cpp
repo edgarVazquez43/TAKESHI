@@ -109,7 +109,6 @@ int main(int argc, char *argv[]) {
         trayObjects.push_back("blue_lego");
         trayObjects.push_back("yellow_lego");
         trayObjects.push_back("bill");
-        trayObjects.push_back("rope");
         trayObjects.push_back("red_towel");
 
 
@@ -121,12 +120,13 @@ int main(int argc, char *argv[]) {
         std::vector<std::string> trashObjects;
         trashObjects.push_back("apple_juice");
         //trashObjects.push_back("cube_block");
-        trashObjects.push_back("cajeta_cokkies");
-        trashObjects.push_back("chocolate_cokkies");
+        //trashObjects.push_back("cajeta_cokkies");
+        trashObjects.push_back("chocolate_cookies");
         trashObjects.push_back("gansito_envelop");
         trashObjects.push_back("pineapple_cookies");
         trashObjects.push_back("soap");
         trashObjects.push_back("strawberry_cookies");
+        trashObjects.push_back("rope");
         TakeshiHRI::enableSphinxMic(false);
 
         vision_msgs::ObjectCoordinatesForDetection objectsCoordinates;
@@ -165,18 +165,28 @@ int main(int argc, char *argv[]) {
                     if(TakeshiHRI::find_in_sentence(lastRecoSpeech,"pick up")||TakeshiHRI::find_in_sentence(lastRecoSpeech,"grasp")){
                         //TakeshiHRI::find_in_sentence(lastRecoSpeech,"clean");
                         TakeshiHRI::waitAfterSay("you havent implement that, ask for a area",3000);
+                        TakeshiHRI::enableSphinxMic(true);
                         nextState=SM_WAIT_FOR_COMMAND;
 
                     }else if(TakeshiHRI::find_in_sentence(lastRecoSpeech,"clean")){
                         if(TakeshiHRI::find_in_sentence(lastRecoSpeech,"mug")){
                             TakeshiHRI::waitAfterSay("I'm goig to "+lastRecoSpeech, 3000);
+                            detectTrash=false;
+                            detectMugs=true;
+                            detectInTray=false;
                             nextState=SM_GOTO_MUG;
                         }else if(TakeshiHRI::find_in_sentence(lastRecoSpeech,"trash")){
                             TakeshiHRI::waitAfterSay("I'm going to "+lastRecoSpeech, 3000);
+                            detectTrash=true;
+                            detectMugs=false;
+                            detectInTray=false;
                             nextState=SM_GOTO_TRASH;
                         }
                         else if(TakeshiHRI::find_in_sentence(lastRecoSpeech,"tray")){
                             TakeshiHRI::waitAfterSay("I'm going to "+lastRecoSpeech, 3000);
+                            detectTrash=false;
+                            detectMugs=false;
+                            detectInTray=true;
                             nextState=SM_GOTO_TRAY;
                         }
                     }
@@ -219,6 +229,12 @@ int main(int argc, char *argv[]) {
                         TakeshiHRI::waitAfterSay( takeshi_say.str(),1000);
                         TakeshiManip::hdGoTo(0,0.0,5000);
 
+                        if(objToGrasp.id.compare("rope") == 0 )
+                        {
+                            std::cout << "The object is a Rope" << std::endl;
+                            objToGrasp.pose.position.y -= 0.08;
+                        }
+
                         if(TakeshiTasks::graspObjectOnFloorFromAbove(
                         //if(TakeshiTasks::graspObjectOnFloor(
                                    objToGrasp.pose.position.x,
@@ -248,7 +264,7 @@ int main(int argc, char *argv[]) {
                         
                         else{
                             TakeshiHRI::say( "I could not take the object");
-                            TakeshiNavigation::moveDist(-0.2, 3000);
+                            TakeshiNavigation::moveDist(-0.3, 3000);
                             if(detectTrash)
                                 nextState=SM_FIND_TRASH;
                             else

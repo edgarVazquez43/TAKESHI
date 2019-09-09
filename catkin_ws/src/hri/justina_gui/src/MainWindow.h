@@ -9,13 +9,6 @@
 #include <boost/algorithm/string/classification.hpp>
 #include <boost/filesystem/operations.hpp>
 #include <boost/filesystem/path.hpp>
-#include "justina_tools/JustinaHardware.h"
-#include "justina_tools/JustinaNavigation.h"
-#include "justina_tools/JustinaHRI.h"
-//#include "justina_tools/JustinaManip.h"
-#include "justina_tools/JustinaVision.h"
-#include "justina_tools/JustinaTools.h"
-#include "justina_tools/JustinaRepresentation.h"
 
 #include "takeshi_tools/TakeshiHardware.h"
 #include "takeshi_tools/TakeshiNavigation.h"
@@ -46,6 +39,11 @@ public:
     float headPan;
     float headTilt;
     float trsCurrentPos;
+
+    std::vector<float> ikResponse_articular;
+    float ikResponse_torso;
+    geometry_msgs::Pose2D ikResponse_base_correction;
+
     std::vector<float> leftArmPoses;
     std::vector<float> leftArmTorques;
     std::vector<float> rightArmPoses;
@@ -86,7 +84,7 @@ public slots:
     void navObsDetectionEnableClicked();
     //Hardware
     void hdPanTiltChanged(double d);
-    void laAnglesChanged(double);
+    //void laAnglesChanged(double);
     void laValuesChanged();
     void laOpenGripperChanged(double d);
     void raOpenGripperChanged(double d);
@@ -97,6 +95,7 @@ public slots:
     void torsoLocChanged();
     void ikBtnCalc_pressed();
     void ikBtnExecute_pressed();
+
     //Takeshi Arm
     void armAnglesChanged(double);
 
@@ -104,8 +103,6 @@ public slots:
     void spgSayChanged();
     void sprFakeRecognizedChanged();
     //Vision
-    void recSaveVideoChanged();
-    void recSaveImageChanged();
     void sktBtnStartClicked();
     void facBtnStartClicked();
     void facRecogPressed();
@@ -155,13 +152,7 @@ private slots:
 
     void on_objCLIPStab_itemSelectionChanged();
 
-    void on_rotateButton_clicked();
-
     void on_trainObjButton_clicked();
-
-    void on_pushButtonDownTorso_clicked();
-
-    void on_pushButtonUpTorso_clicked();
 
 private:
     Ui::MainWindow *ui;

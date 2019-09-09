@@ -93,7 +93,7 @@ int main(int argc, char **argv) {
 
 
 
-    int nextState = SM_INIT;
+    int nextState =SM_INIT;
     
     int number_of_guest=0;
     int counter=0;
@@ -146,6 +146,9 @@ int main(int argc, char **argv) {
      specificGestures.push_back("hand_left_extended");
      specificGestures.push_back("both_hands_down");
 
+     AvailableDrinks.push_back("beer");
+     AvailableDrinks.push_back("coke");
+     AvailableDrinks.push_back("juice");
    
 
     std::vector<vision_msgs::VisionObject> detectedObjs;
@@ -165,145 +168,30 @@ int main(int argc, char **argv) {
                 printState("wait for the door");
                 TakeshiHRI::waitAfterSay("I'm waiting for the door to be open",1000);
                 if(!TakeshiNavigation::obstacleInFront())
-                    nextState = SM_GO_TO_BAR;
+                    nextState = SM_GO_TO_LIVINGROOM;
                 break;
 
-            case SM_GO_TO_BAR:
-                printState("going to the bar");
-                TakeshiHRI::say("I will go to the bar");
-                if(!TakeshiNavigation::getClose("bar", 30000))
-                    if(!TakeshiNavigation::getClose("bar", 30000))
-                        TakeshiNavigation::getClose("bar", 30000);
-                    nextState=SM_CHECK_DRINKS;
-                break;
-
-            case SM_CHECK_DRINKS:
-                printState("Checking for available drinks");
-                TakeshiTasks::alignWithFrontTable();
-                objectsCoordinates.z_max=0.9;
-                for(size_t i=0;i<5;i++){
-                    TakeshiVision::detectSpecificYoloObject(validCommandsDrinks,detectedObjs,5000,objectsCoordinates);
-                    for(size_t j=0;j<detectedObjs.size();j++){
-                        add_drink=true;
-                        for(size_t k=0; k<AvailableDrinks.size();k++){
-                            if(AvailableDrinks[k].compare(detectedObjs[j].id)==0){
-                                add_drink=false;
-                                break;
-                            }
-                        }
-                        if(add_drink) AvailableDrinks.push_back(detectedObjs[j].id);
-                    }
-                }
-                std::cout<<"------------------list of drinks watched -----------"<<std::endl;
-                for(size_t i=0;i<AvailableDrinks.size();i++)
-                    std::cout<<AvailableDrinks[i]<<std::endl;
-
-                nextState=SM_GO_TO_LIVINGROOM;
-                break;
-
+            
             case SM_GO_TO_LIVINGROOM:
                 printState("going to the livingroom");
                 TakeshiHRI::say("I will go to the livingroom");
                 if(!TakeshiNavigation::getClose("living_room", 30000))
                     if(!TakeshiNavigation::getClose("living_room", 30000))
                         TakeshiNavigation::getClose("living_room", 30000);
-                nextState= SM_FIND_PERSON_WITHOUT_DRINK;
+                nextState= SM_RECOGNIZING_FACE;
                 break;
 
-            case SM_FIND_PERSON_WITHOUT_DRINK:    //Raising HAND
-            TakeshiHRI::say("I am looking for people with no drinks");
-            printState("matching person with drink (BOTH HANDS DOWN)");
-            std::cout<<"find people with both hands down"<<std::endl;
-            TakeshiVision::startSkeletonFinding();
-            TakeshiManip::torsoGoTo(.2,1000);
-            ros::Duration(1.0).sleep();
-            if(TakeshiTasks::waitForSpecificGesture(gesture, specificGestures, 14000)) 
-                            {
-                               if(gesture.gesture.compare("both_hands_down")==0 )
-                                   {
-                                    TakeshiKnowledge::getRobotPose(currx, curry, currtheta);
-                                    cx=gesture.gesture_centroid.x;
-                                    cy=gesture.gesture_centroid.y;
-                                    cz=atan (cy/cx);
-                                    std::cout << gesture.gesture_centroid.x<<std::endl;
-                                    std::cout << gesture.gesture_centroid.y<<std::endl;
-                                    std::cout << gesture.gesture_centroid.z<<std::endl;
-                                    std::cout << cz <<std::endl;
-                                    std::cout << currtheta   <<std::endl;
-                                    TakeshiTools::transformPoint("/base_link", cx, cy, cz, "/map", cx, cy, cz);
-                                    tf::Vector3 worldGestureCentroid(cx-1, cy, cz + currtheta);
-                                    TakeshiKnowledge::addUpdateKnownLoc("gesture", worldGestureCentroid.x(), worldGestureCentroid.y(),worldGestureCentroid.z());
-                                    TakeshiVision::stopSkeletonFinding();
-                                    ros::Duration(1.0).sleep();
-                                    ros::spinOnce();
-                                    if(!TakeshiNavigation::getClose("gesture", 10000))
-                                       if(!TakeshiNavigation::getClose("gesture", 10000))
-                                            TakeshiHRI::say("Found person with no drink... Aproaching, please wait");
-                                        nextState=SM_RECOGNIZING_FACE;
-                                        break;
-                                    }
-
-                             }
-            
-
-            else            {
-                TakeshiHRI::say("I couldnt determine who hasnt a drink ... please raise your  hand If you need a drink ");
-                nextState=SM_FIND_PERSON_WITHOUT_DRINK_RISING_HAND;
-                break;
-
-                            }
-            
-
-
-          
-
-            
-            case SM_FIND_PERSON_WITHOUT_DRINK_RISING_HAND:    //Raising HAND
-            TakeshiHRI::say("I am looking for people raising hands");
-            printState("matching person with drink (RAISE HAND)");
-            std::cout<<"find people raising hand"<<std::endl;
-            TakeshiVision::startSkeletonFinding();
-            TakeshiManip::torsoGoTo(.2,1000);
-            ros::Duration(1.0).sleep();
-            if(TakeshiTasks::waitForSpecificGesture(gesture, specificGestures, 14000)) 
-                            {
-                               if(gesture.gesture.compare("right_hand_rised")==0 or gesture.gesture.compare("left_hand_rised")==0 
-                                    or gesture.gesture.compare("hand_left_extended")==0 or gesture.gesture.compare("hand_right_extended")==0)
-                                   {
-                                    TakeshiKnowledge::getRobotPose(currx, curry, currtheta);
-                                    cx=gesture.gesture_centroid.x;
-                                    cy=gesture.gesture_centroid.y;
-                                    cz=atan (cy/cx);
-                                    std::cout << gesture.gesture_centroid.x<<std::endl;
-                                    std::cout << gesture.gesture_centroid.y<<std::endl;
-                                    std::cout << gesture.gesture_centroid.z<<std::endl;
-                                    std::cout << cz <<std::endl;
-                                    std::cout << currtheta   <<std::endl;
-                                    TakeshiTools::transformPoint("/base_link", cx, cy, cz, "/map", cx, cy, cz);
-                                    tf::Vector3 worldGestureCentroid(cx-1, cy, cz + currtheta);
-                                    TakeshiKnowledge::addUpdateKnownLoc("gesture", worldGestureCentroid.x(), worldGestureCentroid.y(),worldGestureCentroid.z());
-                                    }
-                             }
-                        TakeshiVision::stopSkeletonFinding();
-                        ros::Duration(1.0).sleep();
-                        ros::spinOnce();
-                        if(!TakeshiNavigation::getClose("gesture", 10000))
-                           if(!TakeshiNavigation::getClose("gesture", 10000))
-                                TakeshiHRI::say("Found");
-            nextState=SM_RECOGNIZING_FACE;
-            break;
-
+           
             case SM_RECOGNIZING_FACE:
             printState("recognizing face");
             TakeshiHRI::waitAfterSay("Scanning the room for guests, please look at me",3000);
-            if(TakeshiTasks::turnAndRecognizeFacenet("oscar"))
+            if(TakeshiTasks::turnAndRecognizeFacenet(""))
                 {
                     TakeshiHRI::waitAfterSay("Ok, I see you",1500);
                     TakeshiHRI::waitAfterSay("hello, my name is takeshi",1500);
                     TakeshiHRI::waitAfterSay("when confirmation is needed say Takeshi yes, or takeshi no",1500);
                     //TakeshiVision::stopFaceRecognition();
                     nextState=SM_ASK_FOR_NAME;
-                    success=true;
                  }
             break;
 
@@ -471,131 +359,32 @@ int main(int argc, char **argv) {
 
 
             case SM_FIND_PERSON_TO_DELIVER:
-                name="oscar";
-                beverage="beer";
-                printState("finding person to deliver drink");
-                TakeshiHRI::waitAfterSay(name,1000);
-                TakeshiHRI::waitAfterSay("I Have your",1000);
-                TakeshiHRI::waitAfterSay(beverage,1000);
-                std::cout << "Scanning the room for "<<name<<std::endl;
+                std::cout << "SM FIND PERSON TO DELIVER"<< std::endl;
+                std::cout << "name: "<<name<< std::endl;
+                while (!TakeshiTasks::turnAndRecognizeFacenet(name, true) ) //BUSCAR NAME!
+                //while(lastRecognizedFaces.size() < 1)
+                {
+                        ros::spinOnce();
+                        TakeshiHRI::waitAfterSay("I am looking for you",3000);
+                        std::cout << "Looking ......."<< std::endl;
+                }        
+                std::cout << "I FOUND YA"<< std::endl;
+                nextState=  SM_RELEASE_OBJECT;
                 
-                switch (hdposestate)   
-                {
-                    case 1:
-                    anghd=0;
-                    TakeshiManip::hdGoTo(anghd, 0, 3000);
-                    std::cout << "hdposestat "<<hdposestate<<std::endl;
-                    icount=0;
-                    break;
-                    case 2:
-                    anghd= -0.70;
-                    TakeshiManip::hdGoTo(anghd, 0, 3000);                   
-                    std::cout << "hdposestat "<<hdposestate<<std::endl;
-                    icount=0;
-                    break;
-                    case 3:
-                    anghd= 0.70;
-                    TakeshiManip::hdGoTo(anghd, 0, 3000);                   
-                    std::cout << "hdposestat "<<hdposestate<<std::endl;
-                    icount=0;
-                    break;
-                    case 4:
-                    anghd= 0.0;
-                    TakeshiManip::hdGoTo(anghd, 0, 3000);          
-                    TakeshiNavigation::moveDistAngle(0,.78,5000);                  
-                    std::cout << "hdposestat "<<hdposestate<<std::endl;
-                    icount=0;
-                    hdposestate=0;
-                    break;
-                }
-                while  (icount<3)
-                {
-                icount++;
-                std::cout <<"hdposestate"<< hdposestate <<  "icount"<<icount<<std::endl;
-                vfo = TakeshiVision::facenetRecognize(name);
-                if(vfo.recog_faces.size()>0)
-                        {  
-                //////////////////////////////////TRANSFORM COORDS INTO LOCATION
-                TakeshiHRI::say("I found you");
-                drinks_delivered++ ;
-                            for (icount=0;icount<vfo.recog_faces.size();icount++)
-                                {
-                            std::cout << name <<  "FOUND "<<std::endl;
-                            std::cout << vfo.recog_faces[icount].id << '\n';
-                            std::cout << vfo.recog_faces[icount].face_centroid << '\n';
-                            std::cout <<  vfo.recog_faces[icount].confidence<<'\n';  ///// ANG SAVED IN CONFINDENCE
-                                }
-                TakeshiManip::torsoGoTo(0.0,2000);
-                TakeshiHRI::say("I am getting close to you, please wait");
-        float cx, cy, cz,cxr,cyr;   
-        cx = .7*(vfo.recog_faces[0].face_centroid.x-.4)-.4;
-        cy = -vfo.recog_faces[0].face_centroid.y;
-        cz = 1;
-        cxr= cos(anghd)*cx   -   cy* sin(anghd);
-        cyr= sin(anghd)*cx   +   cy* cos(anghd);
-        cx=cxr;
-        cy=cyr;
-        float dis = sqrt( pow(cx, 2) + pow(cy, 2) );
-        TakeshiTools::transformPoint("/base_link", cx, cy, cz, "/map", cx, cy, cz);
-        tf::Vector3 worldFaceCentroid(cx, cy, cz);
-        switch (drinks_delivered)   
-                {
-                    case 1:
-                     TakeshiKnowledge::addUpdateKnownLoc("person_to_deliver_1", worldFaceCentroid.x(), worldFaceCentroid.y(),vfo.recog_faces[icount].confidence - anghd );
-                       TakeshiHRI::say("I will get close to you");
-                if(!TakeshiNavigation::getClose("person_to_deliver_1", 30000))
-                   if(!TakeshiNavigation::getClose("person_to_deliver_1", 30000))
-                        TakeshiNavigation::getClose("person_to_deliver_1", 30000);
-       
-                    break;
-                    case 2:
-                    TakeshiKnowledge::addUpdateKnownLoc("person_to_deliver_2", worldFaceCentroid.x(), worldFaceCentroid.y(),vfo.recog_faces[icount].confidence - anghd );
-                       TakeshiHRI::say("I will get close to you");
-                if(!TakeshiNavigation::getClose("person_to_deliver_2", 30000))
-                   if(!TakeshiNavigation::getClose("person_to_deliver_2", 30000))
-                        TakeshiNavigation::getClose("person_to_deliver_2", 30000);
-       
-                    break;
-                    case 3:
-                    TakeshiKnowledge::addUpdateKnownLoc("person_to_deliver_3", worldFaceCentroid.x(), worldFaceCentroid.y(),vfo.recog_faces[icount].confidence - anghd );
-                       TakeshiHRI::say("I will get close to you");
-                if(!TakeshiNavigation::getClose("person_to_deliver_3", 30000))
-                   if(!TakeshiNavigation::getClose("person_to_deliver_3", 30000))
-                        TakeshiNavigation::getClose("person_to_deliver_3", 30000);
-       
-                    break;
-                    
-                }
-                           
-                            nextState=SM_RELEASE_OBJECT;       
-                            break;                 
-                        }
-                }
-                    hdposestate++;
-                    icount=0;                  
-                    if (counter>3)
-                                    {
-                        std::cout << name <<  "person not FOUND ASK FOR WAVING "<<std::endl;
-                        counter=0;
-                        icount=0;
-                        nextState=SM_RELEASE_OBJECT;
-                        break;
-                                    }
-                    break;
+                break;     
 
             case SM_RELEASE_OBJECT:
                 printState("giving drink to a human");
                 if(TakeshiTasks::giveObjectToHuman())
-                    if(drinks_delivered < 3)
+                    /*if(drinks_delivered < 3)
                         nextState=SM_FIND_PERSON_WITHOUT_DRINK;
-                    else
+                    else*/
                         nextState=SM_FINAL_STATE;
-                success=true;
                 break;
 
             case SM_FINAL_STATE:
                 printState("final state");
-                TakeshiHRI::say("I have finished the test");
+                TakeshiHRI::say("I finished my demostration, thank ypou for you attention");
                 success=true;
                 TakeshiManip::navigationPose(4000);
         }

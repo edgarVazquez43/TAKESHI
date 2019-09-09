@@ -89,7 +89,8 @@ vision_msgs::VisionFaceObjects vfo;
                 switch(nextState) {
 
                 case SM_START:
-                TakeshiVision::detectAllYoloObjects(recognizedYoloObjects, 1000);
+                //TakeshiVision::detectAllYoloObjects(recognizedYoloObjects, 1000);
+                TakeshiVision::detectObjectByColor("green", recognizedYoloObject,false);
                 
                 /*vfo = TakeshiVision::facenetRecognize("train_charlie");
                 vfo = TakeshiVision::facenetRecognize("train_charlie");

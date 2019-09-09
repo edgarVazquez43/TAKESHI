@@ -12,7 +12,7 @@ find_package(catkin REQUIRED COMPONENTS
   visualization_msgs
   map_server
   hri_msgs
-  justina_tools
+  #justina_tools
   takeshi_tools
 )
 

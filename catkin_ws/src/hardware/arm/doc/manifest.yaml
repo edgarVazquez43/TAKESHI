@@ -1,0 +1,19 @@
+actions: []
+authors: ''
+brief: ''
+bugtracker: ''
+depends:
+- catkin
+- roscpp
+- std_msgs
+- python-catkin-pkg
+- rospy
+- geometry_msgs
+description: The arm package
+license: TODO
+maintainers: edgar <edgar@todo.todo>
+msgs: []
+package_type: package
+repo_url: ''
+srvs: []
+url: ''

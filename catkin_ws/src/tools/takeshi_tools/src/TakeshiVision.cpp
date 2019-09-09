@@ -9,7 +9,7 @@ bool callbackObjectTrained =false;
 std::vector<int> HSV_blueBin = {101,87,60,116,255,255};
 std::vector<int> HSV_yellowBin = {12,115,98,23,255,251};
 std::vector<int> HSV_redBin = {165,140,91,181,255,230};
-std::vector<int> HSV_greenBin = {39,104,92,64,255,198};
+std::vector<int> HSV_greenBin = {39,104,92,64,255,255};
 std::vector<int> HSV_yellowBag = {22,205,155,32,255,255};
 std::vector<int> HSV_blueBag = {110,135,78,142,255,197};
 std::vector<int> HSV_brownBag = {10,70,100,27,140,162};
@@ -207,6 +207,77 @@ void trackbar_sh( int, void* ){}
 void trackbar_sl( int, void* ){}
 void trackbar_vh( int, void* ){}
 void trackbar_vl( int, void* ){}
+
+//##################################################################//
+// Please, for software good practices put the callbacks functions  //
+//                       HERE                                       //
+//              callbacks  functions                                //
+void TakeshiVision::callbackYoloBoundigsBoxes(const darknet_ros_msgs::BoundingBoxes::ConstPtr& msg){
+
+        lastBounding_boxes.header = msg->header;
+        lastBounding_boxes.image_header = msg->image_header;
+        lastBounding_boxes.bounding_boxes = msg->bounding_boxes;
+
+        if(lastBounding_boxes.bounding_boxes.size() > 0) {
+                cout << "\033[1;34m     TakeshiVision.->Yolo Objects detected: " << msg->bounding_boxes.size() << "\033[0m" << endl;
+                TakeshiVision::yoloBoundingBoxesRecived=true;
+        }
+
+}
+
+void TakeshiVision::callbackGestures(const vision_msgs::GestureSkeletons::ConstPtr& msg){
+        TakeshiVision::lastGestureRecog.clear();
+        for(int i = 0; i < msg->recog_gestures.size(); i++)
+                TakeshiVision::lastGestureRecog.push_back(msg->recog_gestures[i]);
+}
+
+//callbacks for pano maker
+void TakeshiVision::callbackPanoRecived(const sensor_msgs::Image msg){
+        TakeshiVision::panoImageRecived = true;
+        TakeshiVision::lastImage = msg;
+}
+
+//calbacks for the skeletons and gestures
+void TakeshiVision::callbackSkeletons(const vision_msgs::Skeletons::ConstPtr& msg){
+        TakeshiVision::lastSkeletons.clear();
+        for(int i = 0; i < msg->skeletons.size(); i++)
+                TakeshiVision::lastSkeletons.push_back(msg->skeletons[i]);
+}
+
+void TakeshiVision::callbackLeftHandPositions(const vision_msgs::HandSkeletonPos leftHandPositions){
+        TakeshiVision::lastLeftHandPos.clear();
+        for(int i = 0; i < leftHandPositions.hands_position.size(); i++)
+                TakeshiVision::lastLeftHandPos.push_back(leftHandPositions.hands_position[i]);
+}
+
+void TakeshiVision::callbackRightHandPositions(const vision_msgs::HandSkeletonPos rightHandPositions){
+        TakeshiVision::lastRightHandPos.clear();
+        for(int i = 0; i < rightHandPositions.hands_position.size(); i++)
+                TakeshiVision::lastRightHandPos.push_back(rightHandPositions.hands_position[i]);
+}
+
+void TakeshiVision::callbackFaces(const vision_msgs::VisionFaceObjects::ConstPtr& msg)
+{
+        TakeshiVision::lastRecognizedFaces = msg->recog_faces;
+}
+
+void TakeshiVision::callbackRead_QR(const std_msgs::String::ConstPtr &msg)
+{
+        TakeshiVision::QRString=msg->data;
+}
+
+void TakeshiVision::callbackIsObjectTrained(const std_msgs::Bool::ConstPtr& msg)
+{
+        TakeshiVision::_isObjectTrained=msg->data;
+        callbackObjectTrained=true;
+}
+//#####################  END  CALLBACKS ZONE    ######################//
+
+
+
+
+
+
 
 
 bool TakeshiVision::readObjectsCategories(std::string obj_file){
@@ -502,19 +573,6 @@ bool TakeshiVision::isGraspeable(float object_x,float object_y,float object_z, v
                 return false;
 }
 
-void TakeshiVision::callbackYoloBoundigsBoxes(const darknet_ros_msgs::BoundingBoxes::ConstPtr& msg){
-
-        lastBounding_boxes.header = msg->header;
-        lastBounding_boxes.image_header = msg->image_header;
-        lastBounding_boxes.bounding_boxes = msg->bounding_boxes;
-
-        if(lastBounding_boxes.bounding_boxes.size() > 0) {
-                cout << "\033[1;34m     TakeshiVision.->Yolo Objects detected: " << msg->bounding_boxes.size() << "\033[0m" << endl;
-                TakeshiVision::yoloBoundingBoxesRecived=true;
-        }
-
-}
-
 bool TakeshiVision::getImagesFromTakeshi( cv::Mat& imaBGR, cv::Mat& imaPCL)
 {
         point_cloud_manager::GetRgbd srv;
@@ -649,6 +707,9 @@ bool TakeshiVision::detectObjectByColor(string color, vision_msgs::VisionObject&
         return true;
 }
 
+/////////////////////////////////////////////////////////////////
+//#############################################################//
+//                METHODS  FOR  FACE RECOGNITION               //
 vision_msgs::VisionFaceObjects TakeshiVision::getFaces(std::string id){
         vision_msgs::VisionFaceObjects faces;
         vision_msgs::FaceRecognition srv;
@@ -661,7 +722,6 @@ vision_msgs::VisionFaceObjects TakeshiVision::getFaces(std::string id){
                 cout << "\033[1;34m     TakeshiVision.->Failed in call service FaceRecognition\033[0m" << endl;
 
         return faces;
-
 }
 
 void TakeshiVision::stopFaceRecognition()
@@ -669,28 +729,6 @@ void TakeshiVision::stopFaceRecognition()
         cout << "\033[1;34m     TakeshiVision.->Stopping face recognition.\033[0m" << endl;
         std_msgs::Empty msg;
         TakeshiVision::pubFacStopRecog.publish(msg);
-}
-
-//Methods for operating skeleton finder
-void TakeshiVision::startSkeletonFinding(){
-        TakeshiVision::lastSkeletons.clear();
-        TakeshiVision::lastGestureRecog.clear();
-        TakeshiVision::lastLeftHandPos.clear();
-        TakeshiVision::lastRightHandPos.clear();
-        std_msgs::Bool msg;
-        msg.data = true;
-        TakeshiVision::pubSktEnableRecog.publish(msg);
-}
-
-void TakeshiVision::getLastGesturesRecognize(std::vector<vision_msgs::GestureSkeleton> &gestures){
-        gestures = TakeshiVision::lastGestureRecog;
-        //TakeshiVision::lastGestureRecog.clear();
-}
-
-void TakeshiVision::callbackGestures(const vision_msgs::GestureSkeletons::ConstPtr& msg){
-        TakeshiVision::lastGestureRecog.clear();
-        for(int i = 0; i < msg->recog_gestures.size(); i++)
-                TakeshiVision::lastGestureRecog.push_back(msg->recog_gestures[i]);
 }
 
 void TakeshiVision::facRecognize()
@@ -720,8 +758,7 @@ bool TakeshiVision::getLastRecognizedFaces(std::vector<vision_msgs::VisionFaceOb
         return true;
 }
 
-vision_msgs::VisionFaceObjects
-TakeshiVision::facenetRecognize(std::string id)
+vision_msgs::VisionFaceObjects TakeshiVision::facenetRecognize(std::string id)
 {
         //Calls facenet and returns recognized faces
         vision_msgs::VisionFaceObjects faces;
@@ -754,73 +791,6 @@ bool TakeshiVision::facenetTrain(std::string id)
         return true;
 }
 
-void TakeshiVision::stopSkeletonFinding()
-{
-        TakeshiVision::lastSkeletons.clear();
-        TakeshiVision::lastGestureRecog.clear();
-        TakeshiVision::lastLeftHandPos.clear();
-        TakeshiVision::lastRightHandPos.clear();
-        std_msgs::Bool msg;
-        msg.data = false;
-        TakeshiVision::pubSktEnableRecog.publish(msg);
-}
-
-//Methods for pano maker
-void TakeshiVision::takePano(){
-        std_msgs::Empty msg;
-        TakeshiVision::pubTakePanoMaker.publish(msg);
-}
-
-void TakeshiVision::clearPano(){
-        std_msgs::Empty msg;
-        TakeshiVision::panoImageRecived = false;
-        TakeshiVision::pubClearPanoMaker.publish(msg);
-}
-
-void TakeshiVision::makePano(){
-        std_msgs::Empty msg;
-        TakeshiVision::pubMakePanoMaker.publish(msg);
-}
-
-bool TakeshiVision::isPanoImageRecived(){
-        return TakeshiVision::panoImageRecived;
-}
-
-sensor_msgs::Image TakeshiVision::getLastPanoImage(){
-        TakeshiVision::panoImageRecived = false;
-        return TakeshiVision::lastImage;
-}
-
-//callbacks for pano maker
-void TakeshiVision::callbackPanoRecived(const sensor_msgs::Image msg){
-        TakeshiVision::panoImageRecived = true;
-        TakeshiVision::lastImage = msg;
-}
-
-//calbacks for the skeletons and gestures
-void TakeshiVision::callbackSkeletons(const vision_msgs::Skeletons::ConstPtr& msg){
-        TakeshiVision::lastSkeletons.clear();
-        for(int i = 0; i < msg->skeletons.size(); i++)
-                TakeshiVision::lastSkeletons.push_back(msg->skeletons[i]);
-}
-
-void TakeshiVision::callbackLeftHandPositions(const vision_msgs::HandSkeletonPos leftHandPositions){
-        TakeshiVision::lastLeftHandPos.clear();
-        for(int i = 0; i < leftHandPositions.hands_position.size(); i++)
-                TakeshiVision::lastLeftHandPos.push_back(leftHandPositions.hands_position[i]);
-}
-
-void TakeshiVision::callbackRightHandPositions(const vision_msgs::HandSkeletonPos rightHandPositions){
-        TakeshiVision::lastRightHandPos.clear();
-        for(int i = 0; i < rightHandPositions.hands_position.size(); i++)
-                TakeshiVision::lastRightHandPos.push_back(rightHandPositions.hands_position[i]);
-}
-
-void TakeshiVision::callbackFaces(const vision_msgs::VisionFaceObjects::ConstPtr& msg)
-{
-        TakeshiVision::lastRecognizedFaces = msg->recog_faces;
-}
-
 //Methods for operating face recognizer
 void TakeshiVision::startFaceRecognition()
 {
@@ -849,6 +819,101 @@ vision_msgs::VisionFaceObjects TakeshiVision::getRecogFromPano(sensor_msgs::Imag
         return faces;
 }
 
+// this is justina implementation.
+// Is strongly recommend replace it whit FaceNet function
+void TakeshiVision::facTrain(std::string id)
+{
+    std::cout << "TakeshiVision::facTrain[Do nothing] face with id: " << id << std::endl;
+    std::cout << "This is a justina implementation. It should be replaced..." << std::endl;
+}
+
+// this is justina implementation.
+// Is strongly recommend replace it whit FaceNet function
+void TakeshiVision::facTrain(std::string id, int numOfFrames)
+{
+    std::cout << "TakeshiVision::facTrain[Do nothing] face with id: " << id << std::endl;
+    std::cout << "This is a justina implementation. It should be replaced..." << std::endl;
+}
+
+// this is justina implementation.
+// Is strongly recommend replace it whit FaceNet function
+void TakeshiVision::facClearByID(std::string id)
+{
+        std::cout << "TakeshiVision::facTrain[Do nothing] face with id: " << id << std::endl;
+    std::cout << "This is a justina implementation. It should be replaced..." << std::endl;
+}
+
+// this is justina implementation.
+// Is strongly recommend replace it whit FaceNet function
+void TakeshiVision::facClearAll()
+{
+    std::cout << "TakeshiVision::facTrain[Do nothing] face with id: " << std::endl;
+    std::cout << "This is a justina implementation. It should be replaced..." << std::endl;
+}
+
+
+
+/////////////////////////////////////////////////////////////////
+//#############################################################//
+//            METHODS   FOR   SKELETON  RECOGNITION            //
+void TakeshiVision::startSkeletonFinding(){
+        TakeshiVision::lastSkeletons.clear();
+        TakeshiVision::lastGestureRecog.clear();
+        TakeshiVision::lastLeftHandPos.clear();
+        TakeshiVision::lastRightHandPos.clear();
+        std_msgs::Bool msg;
+        msg.data = true;
+        TakeshiVision::pubSktEnableRecog.publish(msg);
+}
+
+void TakeshiVision::getLastGesturesRecognize(std::vector<vision_msgs::GestureSkeleton> &gestures){
+        gestures = TakeshiVision::lastGestureRecog;
+        //TakeshiVision::lastGestureRecog.clear();
+}
+
+
+void TakeshiVision::stopSkeletonFinding()
+{
+        TakeshiVision::lastSkeletons.clear();
+        TakeshiVision::lastGestureRecog.clear();
+        TakeshiVision::lastLeftHandPos.clear();
+        TakeshiVision::lastRightHandPos.clear();
+        std_msgs::Bool msg;
+        msg.data = false;
+        TakeshiVision::pubSktEnableRecog.publish(msg);
+}
+
+/////////////////////////////////////////////////////////////////
+//#############################################################//
+//            METHODS   FOR  PANO-MAKER                        //
+void TakeshiVision::takePano(){
+        std_msgs::Empty msg;
+        TakeshiVision::pubTakePanoMaker.publish(msg);
+}
+
+void TakeshiVision::clearPano(){
+        std_msgs::Empty msg;
+        TakeshiVision::panoImageRecived = false;
+        TakeshiVision::pubClearPanoMaker.publish(msg);
+}
+
+void TakeshiVision::makePano(){
+        std_msgs::Empty msg;
+        TakeshiVision::pubMakePanoMaker.publish(msg);
+}
+
+bool TakeshiVision::isPanoImageRecived(){
+        return TakeshiVision::panoImageRecived;
+}
+
+sensor_msgs::Image TakeshiVision::getLastPanoImage(){
+        TakeshiVision::panoImageRecived = false;
+        return TakeshiVision::lastImage;
+}
+
+
+
+
 //Methods for the qr reader
 void TakeshiVision::startQRReader(){
         cout << "\033[1;34m     TakeshiVision.->Start QR reader\033[0m" << endl;
@@ -864,10 +929,6 @@ void TakeshiVision::stopQRReader(){
         pubQRReaderStart.publish(msg);
 }
 
-void TakeshiVision::callbackRead_QR(const std_msgs::String::ConstPtr &msg)
-{
-        TakeshiVision::QRString=msg->data;
-}
 
 bool TakeshiVision::read_QR(std::string &out_string)
 {
@@ -1042,23 +1103,24 @@ bool TakeshiVision::detectAllObjects(std::vector<vision_msgs::VisionObject>& rec
 //Methods for move the train object and move the tranining base
 void TakeshiVision::trainObject(const std::string name)
 {
+        int attempts = 0;
         cout << "\033[1;34m     TakeshiVision.->trainObject\033[0m" << endl;
         vision_msgs::TrainObject srv;
         ros::Rate loop(10);
         srv.request.name = name;
         TakeshiVision::_isObjectTrained=false;
         srvTrainObject.call(srv);
-        while(!callbackObjectTrained) {
+        while(!callbackObjectTrained && attempts < 10) {
                 ros::spinOnce();
                 loop.sleep();
+		++attempts;
+	        if(attempts == 9)
+		{
+		  std::cout << "\033[1;34m    TakeshiVision.->trainObject: Attempts have been exceeded \033[0m" << std::endl;
+		  return;
+		}
         }
         callbackObjectTrained=false;
-}
-
-void TakeshiVision::callbackIsObjectTrained(const std_msgs::Bool::ConstPtr& msg)
-{
-        TakeshiVision::_isObjectTrained=msg->data;
-        callbackObjectTrained=true;
 }
 
 bool TakeshiVision::isObjectTrained(){

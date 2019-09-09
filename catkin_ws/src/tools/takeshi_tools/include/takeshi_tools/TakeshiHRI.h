@@ -49,6 +49,7 @@ class TakeshiHRI{
   static bool setNodeHandle(ros::NodeHandle* nh);
   static void enableDoorIsOpen(ros::NodeHandle* nh, bool enable);
   static bool waitAfterSay(std::string strToSay, int timeout);
+  static bool waitAfterSay(std::string strToSay);
   static void enableSpeechRecognized(bool enable);
   static bool waitForSpecificSentence(std::string expectedSentence, int timeOut_ms);
   static bool waitForSpecificSentence(std::vector<std::string>& options, std::string& recognized, int timeOut_ms);

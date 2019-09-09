@@ -43,8 +43,8 @@ MainWindow::MainWindow(QWidget *parent) :
     QObject::connect(ui->sprTxtFakeRecog, SIGNAL(returnPressed()), this, SLOT(sprFakeRecognizedChanged()));
     //Vision
     //QObject::connect(ui->recBtnSaveVideo, SIGNAL(clicked()), this, SLOT(recSaveVideoChanged()));
-    QObject::connect(ui->recTxtImgFile, SIGNAL(returnPressed()), this, SLOT(recSaveImageChanged()));
-    QObject::connect(ui->recBtnSaveImg, SIGNAL(clicked()), this, SLOT(recSaveImageChanged()));
+    //QObject::connect(ui->recTxtImgFile, SIGNAL(returnPressed()), this, SLOT(recSaveImageChanged()));
+    //QObject::connect(ui->recBtnSaveImg, SIGNAL(clicked()), this, SLOT(recSaveImageChanged()));
     QObject::connect(ui->sktBtnStartRecog, SIGNAL(clicked()), this, SLOT(sktBtnStartClicked()));
     QObject::connect(ui->facBtnStartRecog, SIGNAL(clicked()), this, SLOT(facBtnStartClicked()));
     QObject::connect(ui->facTxtRecog, SIGNAL(returnPressed()), this, SLOT(facRecogPressed()));
@@ -71,6 +71,13 @@ MainWindow::MainWindow(QWidget *parent) :
     this->initKnownLoacations = false                                                                   ;
     this->defInitKnownLoacations = true;
     this->updateKnownLoacations = false;
+
+    this->ikResponse_articular.resize(4);
+    this->ikResponse_torso = 0;
+    this->ikResponse_base_correction.x = 0;
+    this->ikResponse_base_correction.y = 0;
+    this->ikResponse_base_correction.theta = 0;
+
 
     QStringList titles;
     titles << "Name" << "X" << "Y" << "A";
@@ -311,19 +318,6 @@ void MainWindow::hdPanTiltChanged(double)
     TakeshiManip::startHdGoTo(goalPan, goalTilt);
 }
 
-void MainWindow::laAnglesChanged(double d)
-{
-//    if(this->laIgnoreValueChanged)
-//        return;
-
-//    std::vector<float> goalAngles;
-//    goalAngles.push_back(this->ui->laTxtAngles0->value());
-//    goalAngles.push_back(this->ui->laTxtAngles1->value());
-//    goalAngles.push_back(this->ui->laTxtAngles2->value());
-//    goalAngles.push_back(this->ui->laTxtAngles3->value());
-//    TakeshiManip::startLaGoToArticular(goalAngles);
-}
-
 void MainWindow::armAnglesChanged(double d)
 {
     if(this->laIgnoreValueChanged)
@@ -416,36 +410,36 @@ void MainWindow::spgSayChanged()
 {
     std::string strToSay = this->ui->spgTxtSay->text().toStdString();
     std::cout << "QMainWindow.->Saying: " << strToSay << std::endl;
-    JustinaHRI::say(strToSay);
+    TakeshiHRI::say(strToSay);
 }
 
 void MainWindow::sprFakeRecognizedChanged()
 {
     std::string strToFake = this->ui->sprTxtFakeRecog->text().toStdString();
     std::cout << "QMainWindow.->Faking recog speech: " << strToFake << std::endl;
-    JustinaHRI::fakeSpeechRecognized(strToFake);
+    TakeshiHRI::fakeSpeechRecognized(strToFake);
 }
 
 void MainWindow::ikBtnCalc_pressed()
 {
     std::cout << "QMainWindow.->Calculating Inverse Kinematics...."<< std::endl;
     std::vector<float> cartesian;
-    std::vector<float> articular;
-    float torso;
-    geometry_msgs::Pose2D base_correction;
+    cartesian.push_back(this->ui->ikTxtCoordX->value());
+    cartesian.push_back(this->ui->ikTxtCoordY->value());
+    cartesian.push_back(this->ui->ikTxtCoordZ->value());
 
-    if(TakeshiManip::inverseKinematicsGeometric(cartesian, articular, torso, base_correction) )
+    if(TakeshiManip::inverseKinematicsGeometric(cartesian, ikResponse_articular, ikResponse_torso, ikResponse_base_correction) )
     {
         std::cout << "Inverse Kinematics (articular): "
-                  << articular[0] << "  " <<
-                     articular[1] << "  " <<
-                     articular[2] << "  " <<
-                     articular[3] << "  " <<std::endl;
-        std::cout << "Inverse Kinematics (Torso):  "<< torso << std::endl;
+                  << ikResponse_articular[0] << "  " <<
+                     ikResponse_articular[1] << "  " <<
+                     ikResponse_articular[2] << "  " <<
+                     ikResponse_articular[3] << "  " <<std::endl;
+        std::cout << "Inverse Kinematics (Torso):  "<< ikResponse_torso << std::endl;
         std::cout << "Inverse Kinematics (Base Correction):  "<<
-                     base_correction.x << " - " <<
-                     base_correction.y << " - " <<
-                     base_correction.theta << " - " <<std::endl;
+                     ikResponse_base_correction.x << " - " <<
+                     ikResponse_base_correction.y << " - " <<
+                     ikResponse_base_correction.theta << " - " <<std::endl;
     }
     else
         std::cout << "QMainWindow.->Cannot calculate inverse kinematics... :´( "<< std::endl;
@@ -456,49 +450,17 @@ void MainWindow::ikBtnExecute_pressed()
     std::cout << "QMainWindow.->Executing Inverse Kinematics...."<< std::endl;
 }
 
-
-//This function is not used for now
-void MainWindow::recSaveVideoChanged()
-{
-    if(this->recSavingVideo)
-    {
-        std::cout << "QMainWindow.->Stop saving video." << std::endl;
-        this->ui->recBtnSaveVideo->setText("Start saving video");
-        this->ui->recLblStatus->setText("Status: Stand by");
-        this->recSavingVideo = false;
-    }
-    else
-    {
-        std::string fileName = this->ui->recTxtVideoFile->text().toStdString();
-        if(!boost::filesystem::portable_posix_name(fileName))
-        {
-            std::cout << "QMainWindow.->File name for video is not a valid name :'(" << std::endl;
-            this->ui->recLblStatus->setText("Status: Invalid file name...");
-            return;
-        }
-        std::cout << "QMainWindow.->Starting to save video at: " << fileName << std::endl;
-        //TakeshiHardware::startSavingCloud(fileName);
-        this->ui->recBtnSaveVideo->setText("Stop saving video");
-        this->ui->recLblStatus->setText("Status: saving video...");
-        this->recSavingVideo = true;
-    }
-}
-
-void MainWindow::recSaveImageChanged()
-{
-}
-
 void MainWindow::sktBtnStartClicked()
 {
     if(this->sktRecognizing)
     {
-        JustinaVision::stopSkeletonFinding();
+        TakeshiVision::stopSkeletonFinding();
         this->sktRecognizing = false;
         this->ui->sktBtnStartRecog->setText("Start Skeletons");
     }
     else
     {
-        JustinaVision::startSkeletonFinding();
+        TakeshiVision::startSkeletonFinding();
         this->sktRecognizing = true;
         this->ui->sktBtnStartRecog->setText("Stop Skeletons");
     }
@@ -508,13 +470,13 @@ void MainWindow::facBtnStartClicked()
 {
     if(this->facRecognizing)
     {
-        JustinaVision::stopFaceRecognition();
+        TakeshiVision::stopFaceRecognition();
         this->facRecognizing = false;
         this->ui->facBtnStartRecog->setText("Start Recognizer");
     }
     else
     {
-        JustinaVision::startFaceRecognition();
+        TakeshiVision::startFaceRecognition();
         this->facRecognizing = true;
         this->ui->facBtnStartRecog->setText("Stop Recognizing");
     }
@@ -526,7 +488,7 @@ void MainWindow::facRecogPressed()
     if(id.compare("") == 0)
     {
         //std::cout << "QMainWindow.->Starting recognition without id" << std::endl;
-        JustinaVision::facRecognize();
+        TakeshiVision::facRecognize();
         return;
     }
     if(!boost::filesystem::portable_posix_name(id))
@@ -534,7 +496,7 @@ void MainWindow::facRecogPressed()
         //std::cout << "QMainWindow.->Invalid ID for face recognition. " << std::endl;
         return;
     }
-    JustinaVision::facRecognize(id);
+    TakeshiVision::facRecognize(id);
 }
 
 void MainWindow::facTrainPressed()
@@ -565,11 +527,11 @@ void MainWindow::facTrainPressed()
     if(numOfFrames <= 0)
     {
         std::cout << "QMainWindow.->Sending face training without number of frames. " << std::endl;
-        JustinaVision::facTrain(parts[0]);
+        TakeshiVision::facTrain(parts[0]);
         return;
     }
     std::cout << "QMainWindow.->Sending face training with " << numOfFrames << " number of frames. " << std::endl;
-    JustinaVision::facTrain(parts[0], numOfFrames);
+    TakeshiVision::facTrain(parts[0], numOfFrames);
     return;
 }
 
@@ -579,7 +541,7 @@ void MainWindow::facClearPressed()
     if(str.compare("ALL") == 0)
     {
         std::cout << "QMainWindow.->Clearing all face recognition database" << std::endl;
-        JustinaVision::facClearAll();
+        TakeshiVision::facClearAll();
         return;
     }
     if(!boost::filesystem::portable_posix_name(str))
@@ -587,14 +549,14 @@ void MainWindow::facClearPressed()
         std::cout << "QMainWindow.->Invalid ID for clearing face database. " << std::endl;
         return;
     }
-    JustinaVision::facClearByID(str);
+    TakeshiVision::facClearByID(str);
 }
 
 void MainWindow::objRecogObjectChanged()
 {
     std::vector<vision_msgs::VisionObject> recoObjList;
-    JustinaRepresentation::initKDB("", true, 0);
-    if(!JustinaVision::detectObjects(recoObjList))
+    TakeshiRepresentation::initKDB("", true, 0);
+    if(!TakeshiVision::detectObjects(recoObjList))
     {
         std::cout << "MainWindow.->Cannot dectect objects :'( " << std::endl;
         return;
@@ -618,7 +580,7 @@ void MainWindow::objRecogObjectChanged()
 void MainWindow::vsnFindLinesClicked()
 {
     float x1, y1, z1, x2, y2, z2;
-    JustinaVision::findLine(x1, y1, z1, x2, y2, z2);
+    TakeshiVision::findLine(x1, y1, z1, x2, y2, z2);
 }
 
 //HRI
@@ -627,13 +589,13 @@ void MainWindow::hriBtnFollowClicked()
     if(this->hriFollowing)
     {
         this->ui->hriBtnStartFollow->setText("Start Follow");
-        JustinaHRI::stopFollowHuman();
+        TakeshiHRI::stopFollowHuman();
         this->hriFollowing = false;
     }
     else
     {
         this->ui->hriBtnStartFollow->setText("Stop Follow");
-        JustinaHRI::startFollowHuman();
+        TakeshiHRI::startFollowHuman();
         this->hriFollowing = true;
     }
 }
@@ -642,13 +604,13 @@ void MainWindow::hriBtnLegsClicked()
 {
     if(this->hriFindingLegs)
     {
-        JustinaHRI::enableLegFinder(false);
+        TakeshiHRI::enableLegFinder(false);
         this->ui->hriBtnStartLegs->setText("Start Leg Finder");
         this->hriFindingLegs = false;
     }
     else
     {
-        JustinaHRI::enableLegFinder(true);
+        TakeshiHRI::enableLegFinder(true);
         this->ui->hriBtnStartLegs->setText("Stop Leg Finder");
         this->hriFindingLegs = true;
     }
@@ -679,6 +641,19 @@ void MainWindow::updateGraphicsReceived()
     this->robotY = rY;
     this->robotTheta = rT;
 
+    /////////////////////////////////////////////////////////////////////
+    ///           Inverse Kinematic Display Result                    ///
+    QString txtIkResult_a0 = QString::number(ikResponse_articular[0], 'f', 3);
+    QString txtIkResult_a1 = QString::number(ikResponse_articular[1], 'f', 3);
+    QString txtIkResult_a2 = QString::number(ikResponse_articular[2], 'f', 3);
+    QString txtIkResult_a3 = QString::number(ikResponse_articular[3], 'f', 3);
+    QString txtIkResult_torso = QString::number(ikResponse_torso, 'f', 3);
+    this->ui->ikTxtResult0->setText(txtIkResult_a0);
+    this->ui->ikTxtResult1->setText(txtIkResult_a1);
+    this->ui->ikTxtResult2->setText(txtIkResult_a2);
+    this->ui->ikTxtResult3->setText(txtIkResult_a3);
+    this->ui->ikTxtResultTorso->setText(txtIkResult_torso);
+
     float pan;
     float tilt;
     TakeshiHardware::getHeadCurrentPose(pan, tilt);
@@ -692,11 +667,6 @@ void MainWindow::updateGraphicsReceived()
     else
         this->ui->navLblStatus->setText("Base Status: Moving to goal pose...");
 
-//    if(TakeshiManip::isLaGoalReached())
-//        this->ui->laLblStatus->setText("LA: Goal Reached (Y)");
-//    else
-//        this->ui->laLblStatus->setText("LA: Moving to goal...");
-
     if(TakeshiManip::isHdGoalReached())
         this->ui->hdLblStatus->setText("Status: Goal Pose reached (Y)");
     else
@@ -707,10 +677,11 @@ void MainWindow::updateGraphicsReceived()
 
     std::string faceId = "";
     float facePosX = 0, facePosY = 0, facePosZ = 0;
+    std::vector<vision_msgs::VisionFaceObject> faces;
     float faceConfidence = -1;
     int faceGender = -1;
     bool faceSmiling = false;
-    if(JustinaVision::getMostConfidentFace(faceId, facePosX, facePosY, facePosZ, faceConfidence, faceGender, faceSmiling))
+    if(TakeshiVision::getLastRecognizedFaces(faces))
     {
         QString faceIdQ = QString::fromStdString("ResultID: " + faceId);
         this->ui->facLblResultID->setText(faceIdQ);
@@ -738,7 +709,7 @@ void MainWindow::updateGraphicsReceived()
     else
         this->ui->navLblRiskOfCollision->setText("Risk of Collision: False");
 
-    this->ui->sprLblLastRecog->setText(QString::fromStdString("Recog: " + JustinaHRI::lastRecogSpeech()));
+    this->ui->sprLblLastRecog->setText(QString::fromStdString("Recog: " + TakeshiHRI::lastRecogSpeech()));
 
     //This should be replaced when we can read battery level from the real robot
     //this->ui->pgbBatt1->setValue((TakeshiHardware::leftArmBatteryPerc() + TakeshiHardware::rightArmBatteryPerc())/2);
@@ -746,7 +717,7 @@ void MainWindow::updateGraphicsReceived()
     //QString batt2Txt = QString::number((TakeshiHardware::headBattery() + TakeshiHardware::baseBattery())/2, 'f', 2) + " V";
     //this->ui->lblBatt1Level->setText(batt1Txt);
 
-    JustinaKnowledge::getInitKnownLoc(initKnownLoacations);
+    TakeshiKnowledge::getInitKnownLoc(initKnownLoacations);
     if(defInitKnownLoacations || initKnownLoacations){
       std::cout << "QMainWindow.->Init know location" << std::endl;
       std::cout << "QMainWindow.->defInitKnownLoacations:" << defInitKnownLoacations << std::endl;
@@ -754,7 +725,7 @@ void MainWindow::updateGraphicsReceived()
       this->ui->locTableWidget->setRowCount(0);
 
       std::map<std::string, std::vector<float> > loc;
-      JustinaKnowledge::getKnownLocations(loc);
+      TakeshiKnowledge::getKnownLocations(loc);
 
       for(std::map<std::string, std::vector<float> >::iterator it = loc.begin(); it != loc.end(); ++it){
         this->ui->locTableWidget->insertRow(this->ui->locTableWidget->rowCount());
@@ -776,11 +747,11 @@ void MainWindow::updateGraphicsReceived()
       initKnownLoacations = false;
     }
     else{
-      JustinaKnowledge::getUpdateKnownLoc(updateKnownLoacations);
+      TakeshiKnowledge::getUpdateKnownLoc(updateKnownLoacations);
       //std::cout << "QMainWindow.->updateKnownLoacations:" << updateKnownLoacations << std::endl;
       if(updateKnownLoacations){
         std::map<std::string, std::vector<float> > loc;
-        JustinaKnowledge::getKnownLocations(loc);
+        TakeshiKnowledge::getKnownLocations(loc);
         //std::cout << "QMainWindow.->loc size:" << loc.size() << std::endl;
         int row = 0;
         for(std::map<std::string, std::vector<float> >::iterator it = loc.begin(); it != loc.end(); ++it){
@@ -803,12 +774,12 @@ void MainWindow::updateGraphicsReceived()
 void MainWindow::on_enInteractiveEdit_clicked()
 {
   if(!enableInteractiveEdit){
-    JustinaKnowledge::enableInteractiveUpdate(true);
+    TakeshiKnowledge::enableInteractiveUpdate(true);
     this->ui->enInteractiveEdit->setText("Disable Interactive");
     enableInteractiveEdit = true;
   }
   else{
-    JustinaKnowledge::enableInteractiveUpdate(false);
+    TakeshiKnowledge::enableInteractiveUpdate(false);
     this->ui->enInteractiveEdit->setText("Enable Interactive");
     enableInteractiveEdit = false;
   }
@@ -818,7 +789,7 @@ void MainWindow::on_removeLoc_clicked()
 {
   std::cout << "QMainWindow.->on_removeLoc_clicked:" << std::endl;
   std::string name = this->ui->addNameLoc->text().toStdString();
-  JustinaKnowledge::deleteKnownLoc(name);
+  TakeshiKnowledge::deleteKnownLoc(name);
 }
 
 void MainWindow::on_locTableWidget_itemSelectionChanged()
@@ -848,7 +819,7 @@ void MainWindow::on_addLoc_clicked()
     values.push_back(this->ui->addYLoc->text().toFloat());
     if(this->ui->addALoc->text().compare("") != 0)
       values.push_back(this->ui->addALoc->text().toFloat());
-    JustinaKnowledge::addUpdateKnownLoc(name, values);
+    TakeshiKnowledge::addUpdateKnownLoc(name, values);
 }
 
 void MainWindow::on_GetRobotPose_clicked()
@@ -869,7 +840,7 @@ void MainWindow::on_loadFromFile_clicked()
         "Text File (*.txt)"
         );
   std::cout << "QMainWindow.->pathFile:" << pathFile.toStdString() << std::endl;
-  JustinaKnowledge::loadFromFile(pathFile.toStdString());
+  TakeshiKnowledge::loadFromFile(pathFile.toStdString());
 }
 
 void MainWindow::on_SaveInFile_clicked()
@@ -881,21 +852,21 @@ void MainWindow::on_SaveInFile_clicked()
         "Text File (*.txt)"
         );
   std::cout << "QMainWindow.->pathFile:" << pathFile.toStdString() << std::endl;
-  JustinaKnowledge::saveInFile(pathFile.toStdString());
+  TakeshiKnowledge::saveInFile(pathFile.toStdString());
 }
 
 void MainWindow::quesReqChanged(){
   std::cout << "QMainWindow.->quesReq:" << this->ui->quesReq->text().toStdString() << std::endl;
   std::string answer;
-  bool found = JustinaKnowledge::comparePredQuestion(
+  bool found = TakeshiKnowledge::comparePredQuestion(
           this->ui->quesReq->text().toStdString(), answer);
   if(found)
     this->ui->browserAnswerResp->setText(QString::fromStdString(answer));
   else{
     std::string answer;
     std::string question = this->ui->quesReq->text().toStdString();
-    JustinaRepresentation::initKDB("", true, 0);
-    bool success = JustinaRepresentation::answerQuestionFromKDB(question, answer, 1000);
+    TakeshiRepresentation::initKDB("", true, 0);
+    bool success = TakeshiRepresentation::answerQuestionFromKDB(question, answer, 1000);
     if(success)
         this->ui->browserAnswerResp->setText(QString::fromStdString(answer));
     else
@@ -906,32 +877,32 @@ void MainWindow::quesReqChanged(){
 
 void MainWindow::on_runCLIPS_clicked()
 {
-    JustinaRepresentation::runCLIPS(true);
+    TakeshiRepresentation::runCLIPS(true);
 }
 
 void MainWindow::on_resetCLIPS_clicked()
 {
-    JustinaRepresentation::resetCLIPS(true);
+    TakeshiRepresentation::resetCLIPS(true);
 }
 
 void MainWindow::on_factsCLIPS_clicked()
 {
-    JustinaRepresentation::factCLIPS(true);
+    TakeshiRepresentation::factCLIPS(true);
 }
 
 void MainWindow::on_rulesCLIPS_clicked()
 {
-    JustinaRepresentation::ruleCLIPS(true);
+    TakeshiRepresentation::ruleCLIPS(true);
 }
 
 void MainWindow::on_agendaCLIPS_clicked()
 {
-    JustinaRepresentation::agendaCLIPS(true);
+    TakeshiRepresentation::agendaCLIPS(true);
 }
 
 void MainWindow::enterCommandChanged(){
     std::cout << "QMainWindow.->enterCommand:" << this->ui->enterCommand->text().toStdString() << std::endl;
-    JustinaRepresentation::sendCLIPS(this->ui->enterCommand->text().toStdString());
+    TakeshiRepresentation::sendCLIPS(this->ui->enterCommand->text().toStdString());
 }
 
 
@@ -963,7 +934,7 @@ void MainWindow::setPathKR()
 void MainWindow::loadCommandChanged()
 {
     std::cout << "QMainWindow.->loadCommand:" << this->ui->loadCommand->text().toStdString() << std::endl;
-    JustinaRepresentation::loadCLIPS(this->ui->loadCommand->text().toStdString());
+    TakeshiRepresentation::loadCLIPS(this->ui->loadCommand->text().toStdString());
 }
 
 void MainWindow::setlocClips()
@@ -977,7 +948,7 @@ void MainWindow::setlocClips()
     this->ui->locCLIPStab->setRowCount(0);
     //obtain the information of the file Locations.txt
     //std::map<std::string, std::vector<std::string> > loc;
-    JustinaRepresentation::getLocations(ss.str(), locations);
+    TakeshiRepresentation::getLocations(ss.str(), locations);
     //objects = loc;
     int row = 0;
     std::map<std::string, std::vector<std::string> >::iterator it = locations.begin();
@@ -1001,7 +972,7 @@ void MainWindow::setlocClips()
     ss.str("");
     ss << path << "/scripts/base_data/Objects.txt";
 
-    JustinaRepresentation::getObjects(ss.str(), objects);
+    TakeshiRepresentation::getObjects(ss.str(), objects);
     objects = objects;
 
     row=0;
@@ -1042,7 +1013,7 @@ void MainWindow::on_addCLIPSloc_clicked()
     values.push_back(this->ui->quantCLIPSloc->text().toStdString());
     values.push_back(this->ui->roomCLIPSloc->text().toStdString());
 
-    JustinaRepresentation::addLocations(locations,name,values);
+    TakeshiRepresentation::addLocations(locations,name,values);
 
     //for(std::map<std::string, std::vector<std::string> >::iterator it2 = locations.begin(); it2 != locations.end(); it2++){
     //    std::cout << "SECOND:" << it2->first << std::endl;
@@ -1090,7 +1061,7 @@ void MainWindow::on_addCLIPSobj_clicked()
     values.push_back(this->ui->colorCLIPSobj->text().toStdString());
     values.push_back(this->ui->quantCLIPSobj->text().toStdString());
 
-    JustinaRepresentation::addObjects(objects,name,values);
+    TakeshiRepresentation::addObjects(objects,name,values);
 
 
 
@@ -1154,19 +1125,10 @@ void MainWindow::on_objCLIPStab_itemSelectionChanged()
     }
 }
 
-void MainWindow::on_rotateButton_clicked()
-{
-    std_msgs::String msg;
-    std::stringstream ss;
-    ss << "rotate" << std::endl;
-    msg.data = ss.str();
-    JustinaVision::moveBaseTrainVision(msg);
-}
-
 void MainWindow::on_trainObjButton_clicked()
 {
     std::vector<vision_msgs::VisionObject> recoObjList;
-    if(false) //!JustinaVision::detectObjects(recoObjList))
+    if(false) //!TakeshiVision::detectObjects(recoObjList))
     {
         std::cout << "MainWindow.->Cannot dectect objects :'( " << std::endl;
     }else if (false){ //(recoObjList.size() > 1){
@@ -1174,25 +1136,7 @@ void MainWindow::on_trainObjButton_clicked()
     }else{
         std::cout << "MainWindow.->One object detected. Ready to Train" << std::endl;
         std::string obj_name = this->ui->objTxtGoalObject_2->text().toStdString();
-        JustinaVision::trainObjectByHeight(obj_name);
+        TakeshiVision::trainObject(obj_name);
     }
 
-}
-
-void MainWindow::on_pushButtonDownTorso_clicked()
-{
-//    std_msgs::String msg;
-//    std::stringstream ss;
-//    ss << "moveDown" << std::endl;
-//    msg.data = ss.str();
-//    TakeshiManip::moveTorsoDown(msg);
-}
-
-void MainWindow::on_pushButtonUpTorso_clicked()
-{
-//    std_msgs::String msg;
-//    std::stringstream ss;
-//    ss << "moveUp" << std::endl;
-//    msg.data = ss.str();
-//    TakeshiManip::moveTorsoUp(msg);
 }

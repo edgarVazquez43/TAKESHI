@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>640</width>
-    <height>529</height>
+    <height>534</height>
    </rect>
   </property>
   <property name="mouseTracking">
@@ -47,7 +47,7 @@ QRadioButton::indicator{
       <x>0</x>
       <y>0</y>
       <width>640</width>
-      <height>491</height>
+      <height>501</height>
      </rect>
     </property>
     <property name="currentIndex">
@@ -61,7 +61,7 @@ QRadioButton::indicator{
       <property name="geometry">
        <rect>
         <x>320</x>
-        <y>220</y>
+        <y>230</y>
         <width>301</width>
         <height>151</height>
        </rect>
@@ -637,7 +637,7 @@ QRadioButton::indicator{
         <string>- - -</string>
        </property>
       </widget>
-      <widget class="QLabel" name="ikTxtResult">
+      <widget class="QLabel" name="ikTxtResult3">
        <property name="geometry">
         <rect>
          <x>180</x>
@@ -837,7 +837,7 @@ QRadioButton::indicator{
         <x>320</x>
         <y>110</y>
         <width>301</width>
-        <height>101</height>
+        <height>111</height>
        </rect>
       </property>
       <property name="title">
@@ -883,7 +883,7 @@ QRadioButton::indicator{
        <property name="geometry">
         <rect>
          <x>10</x>
-         <y>70</y>
+         <y>90</y>
          <width>281</width>
          <height>16</height>
         </rect>
@@ -902,12 +902,25 @@ QRadioButton::indicator{
         </rect>
        </property>
       </widget>
+      <widget class="QLabel" name="sprLblGrammar">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>70</y>
+         <width>281</width>
+         <height>16</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Grammar: </string>
+       </property>
+      </widget>
      </widget>
      <widget class="QGroupBox" name="gbGeneralStatus">
       <property name="geometry">
        <rect>
         <x>320</x>
-        <y>380</y>
+        <y>390</y>
         <width>301</width>
         <height>71</height>
        </rect>
@@ -964,8 +977,8 @@ QRadioButton::indicator{
      <widget class="QGroupBox" name="gbTorso">
       <property name="geometry">
        <rect>
-        <x>40</x>
-        <y>360</y>
+        <x>20</x>
+        <y>370</y>
         <width>261</width>
         <height>91</height>
        </rect>
@@ -976,9 +989,9 @@ QRadioButton::indicator{
       <widget class="QLabel" name="trsLblSpine">
        <property name="geometry">
         <rect>
-         <x>120</x>
+         <x>130</x>
          <y>40</y>
-         <width>101</width>
+         <width>91</width>
          <height>20</height>
         </rect>
        </property>
@@ -1037,10 +1050,10 @@ QRadioButton::indicator{
       <widget class="QLabel" name="trsLblCurrPos">
        <property name="geometry">
         <rect>
-         <x>130</x>
+         <x>110</x>
          <y>20</y>
-         <width>101</width>
-         <height>17</height>
+         <width>121</width>
+         <height>20</height>
         </rect>
        </property>
        <property name="text">
@@ -1058,7 +1071,7 @@ QRadioButton::indicator{
        <rect>
         <x>5</x>
         <y>0</y>
-        <width>421</width>
+        <width>381</width>
         <height>201</height>
        </rect>
       </property>
@@ -1084,17 +1097,7 @@ QRadioButton::indicator{
          <x>95</x>
          <y>20</y>
          <width>101</width>
-         <height>27</height>
-        </rect>
-       </property>
-      </widget>
-      <widget class="QGraphicsView" name="objGraResult">
-       <property name="geometry">
-        <rect>
-         <x>250</x>
-         <y>70</y>
-         <width>160</width>
-         <height>120</height>
+         <height>21</height>
         </rect>
        </property>
       </widget>
@@ -1116,7 +1119,7 @@ QRadioButton::indicator{
         <rect>
          <x>10</x>
          <y>70</y>
-         <width>231</width>
+         <width>221</width>
          <height>121</height>
         </rect>
        </property>
@@ -1135,9 +1138,9 @@ Size: 0.00 0.00 0.00</string>
       <widget class="QPushButton" name="trainObjButton">
        <property name="geometry">
         <rect>
-         <x>360</x>
-         <y>40</y>
-         <width>51</width>
+         <x>270</x>
+         <y>100</y>
+         <width>71</width>
          <height>22</height>
         </rect>
        </property>
@@ -1145,99 +1148,46 @@ Size: 0.00 0.00 0.00</string>
         <string>Train</string>
        </property>
       </widget>
-      <widget class="QPushButton" name="rotateButton">
-       <property name="geometry">
-        <rect>
-         <x>230</x>
-         <y>10</y>
-         <width>121</width>
-         <height>22</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>Rotate object</string>
-       </property>
-      </widget>
       <widget class="QLineEdit" name="objTxtGoalObject_2">
        <property name="geometry">
         <rect>
-         <x>230</x>
-         <y>40</y>
-         <width>121</width>
+         <x>250</x>
+         <y>70</y>
+         <width>111</width>
          <height>21</height>
         </rect>
        </property>
       </widget>
-     </widget>
-     <widget class="QGroupBox" name="gbCapture">
-      <property name="geometry">
-       <rect>
-        <x>430</x>
-        <y>0</y>
-        <width>201</width>
-        <height>201</height>
-       </rect>
-      </property>
-      <property name="title">
-       <string>Capture video/images</string>
-      </property>
-      <widget class="QLineEdit" name="recTxtVideoFile">
+      <widget class="QLabel" name="objLblObjTrainName">
        <property name="geometry">
         <rect>
-         <x>5</x>
-         <y>20</y>
-         <width>191</width>
-         <height>27</height>
-        </rect>
-       </property>
-      </widget>
-      <widget class="QLabel" name="recLblStatus">
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>145</y>
-         <width>171</width>
+         <x>240</x>
+         <y>50</y>
+         <width>111</width>
          <height>17</height>
         </rect>
        </property>
        <property name="text">
-        <string>Status: Stand by</string>
+        <string>Object Name:</string>
        </property>
       </widget>
-      <widget class="QLineEdit" name="recTxtImgFile">
+      <widget class="QLabel" name="objLblObjTrain">
        <property name="geometry">
         <rect>
-         <x>5</x>
-         <y>80</y>
-         <width>191</width>
-         <height>27</height>
+         <x>240</x>
+         <y>10</y>
+         <width>111</width>
+         <height>20</height>
         </rect>
        </property>
-      </widget>
-      <widget class="QPushButton" name="recBtnSaveVideo">
-       <property name="geometry">
-        <rect>
-         <x>5</x>
-         <y>50</y>
-         <width>191</width>
-         <height>27</height>
-        </rect>
+       <property name="font">
+        <font>
+         <weight>75</weight>
+         <bold>true</bold>
+        </font>
        </property>
        <property name="text">
-        <string>Start Saving Video</string>
-       </property>
-      </widget>
-      <widget class="QPushButton" name="recBtnSaveImg">
-       <property name="geometry">
-        <rect>
-         <x>5</x>
-         <y>110</y>
-         <width>191</width>
-         <height>27</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>Save Image and Cloud</string>
+        <string>Object Training</string>
        </property>
       </widget>
      </widget>
@@ -1414,10 +1364,10 @@ Size: 0.00 0.00 0.00</string>
      <widget class="QGroupBox" name="gbSkeletons">
       <property name="geometry">
        <rect>
-        <x>390</x>
-        <y>280</y>
-        <width>211</width>
-        <height>141</height>
+        <x>400</x>
+        <y>10</y>
+        <width>221</width>
+        <height>301</height>
        </rect>
       </property>
       <property name="title">
@@ -1453,7 +1403,7 @@ Size: 0.00 0.00 0.00</string>
        <property name="geometry">
         <rect>
          <x>10</x>
-         <y>50</y>
+         <y>80</y>
          <width>131</width>
          <height>27</height>
         </rect>
@@ -1466,7 +1416,7 @@ Size: 0.00 0.00 0.00</string>
        <property name="geometry">
         <rect>
          <x>10</x>
-         <y>80</y>
+         <y>50</y>
          <width>131</width>
          <height>27</height>
         </rect>
@@ -1475,57 +1425,83 @@ Size: 0.00 0.00 0.00</string>
         <string>Start Leg Finder</string>
        </property>
       </widget>
-     </widget>
-     <widget class="QGroupBox" name="gbObsDetection">
-      <property name="geometry">
-       <rect>
-        <x>390</x>
-        <y>200</y>
-        <width>241</width>
-        <height>80</height>
-       </rect>
-      </property>
-      <property name="title">
-       <string>Obstacle detection</string>
-      </property>
-      <widget class="QPushButton" name="navBtnStartObsDetection">
+      <widget class="QPushButton" name="vsnBtnFindPlanes">
        <property name="geometry">
         <rect>
          <x>10</x>
-         <y>20</y>
-         <width>71</width>
+         <y>140</y>
+         <width>131</width>
          <height>27</height>
         </rect>
        </property>
        <property name="text">
-        <string>Enable</string>
+        <string>Find Planes</string>
        </property>
       </widget>
-      <widget class="QLabel" name="navLblObstacleInFront">
+      <widget class="QPushButton" name="vsnBtnStartYolo">
        <property name="geometry">
         <rect>
-         <x>90</x>
-         <y>20</y>
-         <width>141</width>
-         <height>17</height>
+         <x>10</x>
+         <y>170</y>
+         <width>131</width>
+         <height>27</height>
         </rect>
        </property>
        <property name="text">
-        <string>Obs In Front: False</string>
+        <string>Start Yolo</string>
        </property>
       </widget>
-      <widget class="QLabel" name="navLblRiskOfCollision">
+      <widget class="QGroupBox" name="gbObsDetection">
        <property name="geometry">
         <rect>
-         <x>80</x>
-         <y>50</y>
-         <width>151</width>
-         <height>20</height>
+         <x>0</x>
+         <y>210</y>
+         <width>221</width>
+         <height>91</height>
         </rect>
        </property>
-       <property name="text">
-        <string>Risk of Collision: False</string>
+       <property name="title">
+        <string>Obstacle detection</string>
        </property>
+       <widget class="QPushButton" name="navBtnStartObsDetection">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>20</y>
+          <width>111</width>
+          <height>27</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Enable</string>
+        </property>
+       </widget>
+       <widget class="QLabel" name="navLblObstacleInFront">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>50</y>
+          <width>141</width>
+          <height>17</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Obs In Front: False</string>
+        </property>
+       </widget>
+       <widget class="QLabel" name="navLblRiskOfCollision">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>70</y>
+          <width>151</width>
+          <height>20</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Risk of Collision: False</string>
+        </property>
+       </widget>
       </widget>
      </widget>
     </widget>

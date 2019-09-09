@@ -17,7 +17,8 @@ enum state {
         SM_START,
         SM_TRAIN,
         SM_HANDS_DOWN,
-        SM_RECOG
+        SM_RECOG,
+        SM_FIND_PERSON
 
 };
 
@@ -29,16 +30,8 @@ int main(int argc, char** argv){
         ros::init(argc, argv,"test");
         ros::NodeHandle n;
         ros::Rate loop(30);
-        int nextState=SM_START;  
-    TakeshiHRI::setNodeHandle(&n);
-    TakeshiHardware::setNodeHandle(&n);
-    TakeshiKnowledge::setNodeHandle(&n);
-    TakeshiNavigation::setNodeHandle(&n);
-    TakeshiManip::setNodeHandle(&n);
-    TakeshiTasks::setNodeHandle(&n);
-    TakeshiTools::setNodeHandle(&n);
-    TakeshiVision::setNodeHandle(&n);
-    TakeshiRepresentation::setNodeHandle(&n);
+        int nextState=SM_START;
+        TakeshiVision::setNodeHandle(&n);
          std::string lastRecoSpeech;
     std::string train_name;
     std::vector<vision_msgs::VisionFaceObject> lastRecognizedFaces;
@@ -89,132 +82,47 @@ int main(int argc, char** argv){
 
         int train_count =0;
         int i;
-        int counter =0;
         string  training_name="train_";
+        string name="oscar";
         
         while(ros::ok() && !success) {
                 switch(nextState)
                 {
                 case SM_START:
 
-                //posible move of face
-                //check get face
-                //vfo=TakeshiTasks::turnAndRecognizeFacenet("", false); //lastRecognizedFaces = TakeshiVision::getFaces("").recog_faces;
-                //TakeshiHardware::stopRobot();
-                //TakeshiManip::hdGoTo(0, 0.7, 3000);
-
-                while (!TakeshiTasks::turnAndRecognizeFacenet(""))
-                //while(lastRecognizedFaces.size() < 1)
-                {
-                        ros::spinOnce();
-                        TakeshiHRI::waitAfterSay("looking ",3000);
-                        //ros::spinOnce();
-                        ros::Duration(4.0).sleep();
-                        //vfo = TakeshiTasks::turnAndRecognizeFacenet("", false);
-                        if(counter > 5)
-                                break;
-                        counter++;
-                }
-                        success=true;
+                        nextState=SM_RECOG;
+                                               
                         break;
 
 
-                case SM_TRAIN:
-                   TakeshiVision::startSkeletonFinding();
-            ros::Duration(1.0).sleep();
-
-
-                     
-            std::cout << "FINDING Rise Hand"<<std::endl;
-                                               
-
-            if(TakeshiTasks::waitForSpecificGesture(gesture, specificGestures, 14000)) 
-                            {
-                                
-                                if(gesture.gesture.compare("right_hand_rised")==0 or gesture.gesture.compare("left_hand_rised")==0 
-                                    or gesture.gesture.compare("hand_left_extended")==0 or gesture.gesture.compare("hand_right_extended")==0)
-                                   {
-
-                                    std::cout << "FOUND"<<std::endl;
-                                    std::cout << gesture.gesture_centroid.x<<std::endl;
-                                    std::cout << gesture.gesture_centroid.y<<std::endl;
-                                    std::cout << gesture.gesture_centroid.z<<std::endl;
-                                    nextState=SM_HANDS_DOWN;
-                                   
-                                    TakeshiVision::stopSkeletonFinding();
-                                    break;
-                                   }
-
-
-                       
-                                    }
-                       
-                        
-                        ros::Duration(1.0).sleep();
-                        ros::spinOnce();
-                      
-
-
-         
-                   
-                                           
-                    break;
-
-
-                case SM_HANDS_DOWN:
-                   TakeshiVision::startSkeletonFinding();
-            ros::Duration(1.0).sleep();
-
-
-                     
-            std::cout << "FINDING Hands Down"<<std::endl;
-                                               
-
-            if(TakeshiTasks::waitForSpecificGesture(gesture, specificGestures, 14000)) 
-                            {
-                                
-                                if(gesture.gesture.compare("both_hands_down")==0)
-                                   {
-
-                                    std::cout << "FOUND"<<std::endl;
-                                    std::cout << gesture.gesture_centroid.x<<std::endl;
-                                    std::cout << gesture.gesture_centroid.y<<std::endl;
-                                    std::cout << gesture.gesture_centroid.z<<std::endl;
-                                    nextState= SM_RECOG;
-                                    TakeshiVision::stopSkeletonFinding();
-                                    break;
-                                   }
-
-
-                       
-                                    }
-                       
-                        
-                        ros::Duration(1.0).sleep();
-                        ros::spinOnce();
-                      
-
-
-                                           
-                    break;
-
-
-
+                
+           
 
 
                 case SM_RECOG:
-                         while (!TakeshiTasks::turnAndRecognizeFacenet("oscar"))
-                //while(lastRecognizedFaces.size() < 1)
-                {
-                        ros::spinOnce();
-                        TakeshiHRI::waitAfterSay("I am looking for you",3000);
-                        //ros::spinOnce();
-                        ros::Duration(4.0).sleep();
-                        //vfo = TakeshiTasks::turnAndRecognizeFacenet("", false);
-                        if(counter > 5)
-                                break;
-                        counter++;
-                }               }
+                        std::cout << "SM RECOG"<< std::endl;
+                        
+                        vfo = TakeshiVision::facenetRecognize();
+                        if(vfo.recog_faces.size()>0)
+                        {  
+
+                            for (i=0;i<vfo.recog_faces.size();i++)
+                                {
+                            std::cout << "there are "<<vfo.recog_faces.size()<<" faces in view"<<std::endl;
+                            std::cout << vfo.recog_faces[i].id << '\n';
+                            std::cout << vfo.recog_faces[i].face_centroid << '\n';
+                                }
+                        }
+                        
+                        break;
+
+
+
+
+
+
+
+                }
 
                 ros::spinOnce();
                 loop.sleep();

@@ -250,23 +250,32 @@ add_dependencies(test_task ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED
 
 ########################################
 ########  demo pickup ########
-#add_executable(demoPickUp src/demo_pick.cpp )
-#add_dependencies(demoPickUp ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-#
-#target_link_libraries(demoPickUp
-#${catkin_LIBRARIES}
-#)
+add_executable(demoPickUp src/demo_pick.cpp )
+add_dependencies(demoPickUp ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+
+target_link_libraries(demoPickUp
+${catkin_LIBRARIES}
+)
+
+########################################
+########  demo follow_me ########
+add_executable(demoFollowMe src/demo_follow.cpp )
+add_dependencies(demoFollowMe ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+
+target_link_libraries(demoFollowMe
+${catkin_LIBRARIES}
+)
 
 
 ########################################
 ########        demo full       ########
 ##Follow navigation handover and all that good stuff!!!
 
-# add_executable(finalTMR src/demo_noviembre_18.cpp )
-# add_dependencies(finalTMR ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_executable(finalTMR src/demo_noviembre_18.cpp )
+add_dependencies(finalTMR ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
-# target_link_libraries(finalTMR ${catkin_LIBRARIES}
-#   )
+target_link_libraries(finalTMR ${catkin_LIBRARIES}
+  )
 
 ##############################################
 ########     HSR-CHALLENGE Test       ########
