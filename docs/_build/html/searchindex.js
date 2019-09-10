@@ -1,1 +1,0 @@
-Search.setIndex({envversion:46,filenames:["index"],objects:{},objnames:{},objtypes:{},terms:{content:0,index:0,modul:[],page:0,search:0},titles:["Welcome to Low level Arm Controller&#8217;s documentation!"],titleterms:{arm:0,control:0,document:0,except:0,indic:0,level:0,low:0,modul:0,packag:0,rocon_uri:0,rule:0,tabl:0,uri:0,welcom:0}})
