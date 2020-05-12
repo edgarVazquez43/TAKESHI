@@ -1,4 +1,3 @@
-
 #include "ros/ros.h"
 #include "takeshi_tools/TakeshiHardware.h"
 #include "takeshi_tools/TakeshiHRI.h"
@@ -166,9 +165,13 @@ int main(int argc, char **argv) {
 
             case SM_WAIT_DOOR:
                 printState("wait for the door");
-                TakeshiHRI::waitAfterSay("I'm waiting for the door to be open",1000);
+                /*TakeshiHRI::waitAfterSay("I'm waiting for the door to be open",1000);
                 if(!TakeshiNavigation::obstacleInFront())
+                    nextState = SM_GO_TO_LIVINGROOM;*/
+
+                if(TakeshiManip::isTheHandPressed()){
                     nextState = SM_GO_TO_LIVINGROOM;
+                }
                 break;
 
             
@@ -185,7 +188,7 @@ int main(int argc, char **argv) {
             case SM_RECOGNIZING_FACE:
             printState("recognizing face");
             TakeshiHRI::waitAfterSay("Scanning the room for guests, please look at me",3000);
-            if(TakeshiTasks::turnAndRecognizeFacenet(""))
+            if(TakeshiTasks::turnAndRecognizeFacenet("",true))
                 {
                     TakeshiHRI::waitAfterSay("Ok, I see you",1500);
                     TakeshiHRI::waitAfterSay("hello, my name is takeshi",1500);
@@ -235,10 +238,21 @@ int main(int argc, char **argv) {
                         TakeshiHRI::waitAfterSay(name,1000);
                         TakeshiHRI::waitAfterSay("Im learning your face please stare at me",1000);
                         vfo = TakeshiVision::facenetRecognize(train_name);
+                        
                         vfo = TakeshiVision::facenetRecognize(train_name);
+                        
+                        vfo = TakeshiVision::facenetRecognize(train_name);
+                        
+                        vfo = TakeshiVision::facenetRecognize(train_name);
+                        ros::Duration(.5).sleep();
+                        vfo = TakeshiVision::facenetRecognize(train_name);
+                        ros::Duration(.5).sleep();
+                        vfo = TakeshiVision::facenetRecognize(train_name);
+                        
                         userConfirmation=false;
                         nextState=SM_ASK_FOR_DRINK;
                         TakeshiHRI::enableSphinxMic(false);
+                        train_name="train_";
 
                     }
                     else{
@@ -333,8 +347,7 @@ int main(int argc, char **argv) {
                     TakeshiManip::hdGoTo(0, 0, 3000);
                     if(TakeshiTasks::graspObject(obj_position[0], obj_position[1], obj_position[2], false)){
                         TakeshiHRI::say("I'm verifying if I grasped the object");
-                        TakeshiManip::hdGoTo(0.0, -0.8, 5000);
-                        TakeshiNavigation::moveDist(-0.2, 3000);
+                        TakeshiTasks::alignWithFrontTable();
                         ros::Duration(2).sleep();
                         objectsCoordinates.z_max=0.9;
                         if(!TakeshiVision::detectSpecificYoloObject(aux_drinks,detectedObjs,1000,objectsCoordinates))
@@ -365,6 +378,7 @@ int main(int argc, char **argv) {
                 //while(lastRecognizedFaces.size() < 1)
                 {
                         ros::spinOnce();
+                        TakeshiHRI::waitAfterSay(name,3000);
                         TakeshiHRI::waitAfterSay("I am looking for you",3000);
                         std::cout << "Looking ......."<< std::endl;
                 }        
@@ -375,6 +389,7 @@ int main(int argc, char **argv) {
 
             case SM_RELEASE_OBJECT:
                 printState("giving drink to a human");
+                TakeshiManip::hdGoTo(0.0,0.0,3000);
                 if(TakeshiTasks::giveObjectToHuman())
                     /*if(drinks_delivered < 3)
                         nextState=SM_FIND_PERSON_WITHOUT_DRINK;
@@ -384,9 +399,13 @@ int main(int argc, char **argv) {
 
             case SM_FINAL_STATE:
                 printState("final state");
+                std::string erase;
                 TakeshiHRI::say("I finished my demostration, thank ypou for you attention");
                 success=true;
                 TakeshiManip::navigationPose(4000);
+                erase="rm -rf ~/data_sets/facerecognition/";
+                erase.append(name);
+               // std::system(erase.c_str());
         }
 
         rate.sleep();

@@ -22,11 +22,14 @@ std::vector<cv::Scalar> colors={cv::Scalar(255,0,0),cv::Scalar(0,255,0),cv::Scal
 std::vector<std::string> categories={};
 vision_msgs::ObjectCoordinatesForDetection TakeshiVision::objectCoordinates;
 
-std::string object_categories_file;
-std::vector<std::vector<std::string> >object_categories;
-bool read_objects_categories=true;
+
 //Service for face recognition
 ros::ServiceClient TakeshiVision::cltGetFaces;
+
+//Service for yolov3 detection
+ros::ServiceClient TakeshiVision::cltDetectAllYoloObjects;
+ros::ServiceClient TakeshiVision::cltDetectAllYoloObjectsWithArmCamera;
+
 //Members for operating skeleton finder
 ros::Publisher TakeshiVision::pubSktEnableRecog;
 ros::Subscriber TakeshiVision::subGestures;
@@ -88,12 +91,6 @@ ros::ServiceClient TakeshiVision::cltDetectAllObjectsOnPlane;
 ros::Publisher TakeshiVision::pubLoadTrainDir;
 ros::Publisher TakeshiVision::pubLoadSpecificTrainingDir;
 
-ros::Publisher TakeshiVision::pubYoloImage;
-ros::Subscriber TakeshiVision::subYoloBoundingBoxes;
-darknet_ros_msgs::BoundingBoxes TakeshiVision::lastBounding_boxes;
-bool TakeshiVision::yoloBoundingBoxesRecived;
-
-darknet_ros_msgs::BoundingBoxes lastBounding_boxes;
 
 ros::ServiceClient TakeshiVision::cltRgbdRobot;
 //For openposes
@@ -103,7 +100,10 @@ ros::Publisher TakeshiVision::pubEnableOpenposes;
 ros::ServiceClient TakeshiVision::srvDetectHandles;
 //For flat obj detector:
 ros::ServiceClient TakeshiVision::cltFlattenedSeg;
-
+//Arm Image
+bool TakeshiVision::is_arm_image=false;
+sensor_msgs::Image TakeshiVision::armCameraImage;
+ros::Subscriber TakeshiVision::subArmCamera;
 
 bool TakeshiVision::setNodeHandle(ros::NodeHandle* nh)
 {
@@ -118,6 +118,10 @@ bool TakeshiVision::setNodeHandle(ros::NodeHandle* nh)
         TakeshiVision::pubFacStopRecog = nh->advertise<std_msgs::Empty>("/vision/face_recognizer/stop_recog", 1);
         TakeshiVision::pubRecFace = nh->advertise<std_msgs::Empty>("/vision/face_recognizer/run_face_recognizer", 1);
         TakeshiVision::pubRecFaceByID = nh->advertise<std_msgs::String>("/vision/face_recognizer/run_face_recognizer_id", 1);
+
+        //Members for yolo detection
+        TakeshiVision::cltDetectAllYoloObjects = nh->serviceClient<vision_msgs::Yolov3_detector>("/vision/yolov3_detector/detect_all_yolo_objects");
+        TakeshiVision::cltDetectAllYoloObjectsWithArmCamera = nh->serviceClient<vision_msgs::Yolov3_detector>("/vision/yolov3_detector/detect_all_yolo_objects_with_arm_camera");
 
         //Members for operating skeleton finder
         TakeshiVision::pubSktEnableRecog = nh->advertise<std_msgs::Bool>("/vision/skeleton_finder/enable_tracking", 1);
@@ -170,14 +174,13 @@ bool TakeshiVision::setNodeHandle(ros::NodeHandle* nh)
 
         TakeshiVision::cltRgbdRobot = nh->serviceClient<point_cloud_manager::GetRgbd>("/hardware/point_cloud_man/get_rgbd_wrt_robot");
 
-        TakeshiVision::pubYoloImage = nh->advertise<sensor_msgs::Image>("/yolo_input", 1);
-        TakeshiVision::subYoloBoundingBoxes=nh->subscribe("/darknet_ros/bounding_boxes",1,&callbackYoloBoundigsBoxes);
-        TakeshiVision::yoloBoundingBoxesRecived=false;
         //Flat detection
         TakeshiVision::cltFlattenedSeg = nh->serviceClient<vision_msgs::RecognizeFlattenedObjects>("/vision/obj_reco/flattened_object");
         TakeshiVision::srvTrainObject  = nh->serviceClient<vision_msgs::TrainObject>("/vision/obj_reco/trainObject");
 
-        nh->getParam("/vision/obj_reco/object_categories_file", object_categories_file);
+        //Arm camera
+        TakeshiVision::subArmCamera = nh->subscribe("/hardware/arm/arm_camera",1,&TakeshiVision::callbackArmCameraImage);
+
         //For handle detection
         TakeshiVision::srvDetectHandles =
                 nh->serviceClient<vision_msgs::DetectHandles>("/vision/handle_detector/detect_handles");
@@ -212,18 +215,6 @@ void trackbar_vl( int, void* ){}
 // Please, for software good practices put the callbacks functions  //
 //                       HERE                                       //
 //              callbacks  functions                                //
-void TakeshiVision::callbackYoloBoundigsBoxes(const darknet_ros_msgs::BoundingBoxes::ConstPtr& msg){
-
-        lastBounding_boxes.header = msg->header;
-        lastBounding_boxes.image_header = msg->image_header;
-        lastBounding_boxes.bounding_boxes = msg->bounding_boxes;
-
-        if(lastBounding_boxes.bounding_boxes.size() > 0) {
-                cout << "\033[1;34m     TakeshiVision.->Yolo Objects detected: " << msg->bounding_boxes.size() << "\033[0m" << endl;
-                TakeshiVision::yoloBoundingBoxesRecived=true;
-        }
-
-}
 
 void TakeshiVision::callbackGestures(const vision_msgs::GestureSkeletons::ConstPtr& msg){
         TakeshiVision::lastGestureRecog.clear();
@@ -271,65 +262,16 @@ void TakeshiVision::callbackIsObjectTrained(const std_msgs::Bool::ConstPtr& msg)
         TakeshiVision::_isObjectTrained=msg->data;
         callbackObjectTrained=true;
 }
+
+void TakeshiVision::callbackArmCameraImage(const sensor_msgs::Image msg)
+{
+        TakeshiVision::armCameraImage=msg;
+        TakeshiVision::is_arm_image=true;
+}
 //#####################  END  CALLBACKS ZONE    ######################//
 
 
-
-
-
-
-
-
-bool TakeshiVision::readObjectsCategories(std::string obj_file){
-        object_categories_file+=obj_file;
-        TakeshiVision::printTakeshiMessage("Loading objects categories from: " + object_categories_file);
-        std::ifstream file(object_categories_file.c_str());
-        if (!file.is_open()) {
-                TakeshiVision::printTakeshiError("Could not open file");
-                file.close();
-                return false;
-        }
-        std::vector<std::string> object_c(2);
-        std::string line;
-        while (std::getline(file,line)) {
-                //cout << line << endl;
-                std::istringstream iss(line);
-                if (!(iss >> object_c[0] >> object_c[1])) {
-                        TakeshiVision::printTakeshiError("Parsing Error");
-                        return false;
-                }
-                object_categories.push_back(object_c);
-        }
-        file.close();
-        return true;
-}
-
-std::string TakeshiVision::getObjectCategory(std::string object){
-        if(read_objects_categories) {
-                TakeshiVision::readObjectsCategories("objects_abril_categories.txt");
-                read_objects_categories=false;
-        }
-        for(int i=0; i< object_categories.size(); i++)
-                if(object_categories[i][0].compare(object)==0)
-                        return object_categories[i][1];
-        TakeshiVision::printTakeshiError("Unknown Category to: " + object);
-        return "unknown_category";
-}
-
-std::string TakeshiVision::getJesusObjectCategory(std::string object){
-        if(read_objects_categories) {
-                TakeshiVision::readObjectsCategories("objects_abril_categories_jesus.txt");
-                read_objects_categories=false;
-        }
-        for(int i=0; i< object_categories.size(); i++)
-                if(object_categories[i][0].compare(object)==0){
-                    TakeshiVision::printTakeshiMessage("Object: "+ object + " Category: " + object_categories[i][1]);
-                    return object_categories[i][1];
-                }
-                        
-        TakeshiVision::printTakeshiError("Unknown Category to: " + object);
-        return "unknown_category";
-}
+std::string TakeshiVision::getJesusObjectCategory(std::string object){}
 
 cv::Scalar TakeshiVision::getColorBoundingBoxes(std::string category){
         bool found=false;
@@ -402,7 +344,6 @@ bool TakeshiVision::detectYoloObject(std::string objectName,vision_msgs::VisionO
 bool TakeshiVision::detectSpecificYoloObject(std::vector<std::string> objectsName,std::vector<vision_msgs::VisionObject>& specificYoloObjects, int timeOut_ms, vision_msgs::ObjectCoordinatesForDetection objectCoordinates){
         std::vector<vision_msgs::VisionObject> recognizedYoloObjects;
         specificYoloObjects.clear();
-
         if(!TakeshiVision::detectAllYoloObjects(recognizedYoloObjects,timeOut_ms,objectCoordinates))
                 return false;
 
@@ -423,155 +364,40 @@ bool TakeshiVision::detectSpecificYoloObject(std::vector<std::string> objectsNam
 }
 
 bool TakeshiVision::detectAllYoloObjects(std::vector<vision_msgs::VisionObject>& recognizedYoloObjects, int timeOut_ms,vision_msgs::ObjectCoordinatesForDetection objectCoordinates){
-        cv::Mat imaBGR,imaPCL;
-        sensor_msgs::Image img_msg;
-        cv_bridge::CvImage img_bridge;
-        int attempts = timeOut_ms / 100;
-
-        ros::Rate loop(10);
-        vision_msgs::VisionObject yoloObject;
-        std::vector<vision_msgs::VisionObject> recognizedYoloObjectsAux;
-
-        recognizedYoloObjects.clear();
-
-        printTakeshiMessage("Objects coordinates-> X<: " + std::to_string(objectCoordinates.x_min) + "><" + std::to_string(objectCoordinates.x_max)
-                                                        + "> Y: " + std::to_string(objectCoordinates.y_min) + "><" + std::to_string(objectCoordinates.y_max)
-                                                        + "> Z: " + std::to_string(objectCoordinates.z_min) + "><" + std::to_string(objectCoordinates.z_max));
-
-
-        if(!TakeshiVision::getImagesFromTakeshi(imaBGR,imaPCL))
-                return false;
-        std_msgs::Header header;
-        header.seq = 1;
-        header.stamp = ros::Time::now();
-        img_bridge = cv_bridge::CvImage(header, sensor_msgs::image_encodings::BGR8, imaBGR);
-        img_bridge.toImageMsg(img_msg);
-
-        for (int i=0; i<5; i++) {
-                pubYoloImage.publish(img_msg);
-                ros::spinOnce();
-                loop.sleep();
+        vision_msgs::Yolov3_detector srv;
+        srv.request.timeOut_ms.data=timeOut_ms;
+        srv.request.objectCoordinates=objectCoordinates;
+        if(cltDetectAllYoloObjects.call(srv)){
+            printTakeshiMessage("Calling Yolov3_detector service detect all objects");
+            recognizedYoloObjects=srv.response.recognizedYoloObjects;
         }
-
-        yoloBoundingBoxesRecived=false;
-        pubYoloImage.publish(img_msg);
-        ros::spinOnce();
-        loop.sleep();
-
-        while(ros::ok() && !TakeshiVision::yoloBoundingBoxesRecived && --attempts > 0) {
-                ros::spinOnce();
-                loop.sleep();
-        }
-
-        if(TakeshiVision::yoloBoundingBoxesRecived) {
-                printTakeshiMessage("\n\nYolo Objects: ");
-                
-                for(int i=0; i<lastBounding_boxes.bounding_boxes.size(); i++) {
-                        int centroid_x = ((lastBounding_boxes.bounding_boxes[i].xmax - lastBounding_boxes.bounding_boxes[i].xmin)/2)+ lastBounding_boxes.bounding_boxes[i].xmin;
-                        int centroid_y = ((lastBounding_boxes.bounding_boxes[i].ymax - lastBounding_boxes.bounding_boxes[i].ymin)/2)+ lastBounding_boxes.bounding_boxes[i].ymin;
-                        //cv::Vec3f point3D=imaPCL.at<cv::Vec3f>(centroid_y,centroid_x);
-                        cv::Vec3f imagePoint,centroid3D;
-                        centroid3D.val[0]=0;
-                        centroid3D.val[1]=0;
-                        centroid3D.val[2]=0;
-                        bool centroid=false;
-                        int count=0;
-                        /*
-                        for(int i=centroid_x-5; i<=centroid_x+5 && centroid==false; i++) {
-                                for(int j=centroid_y-5; j<=centroid_y+5 && centroid==false; j++) {
-                                        centroid3D=imaPCL.at<cv::Vec3f>(j,i);
-                                        //if(centroid3D.val[0]!=0 && centroid3D.val[2] !=0) {
-                                        if(centroid3D.val[0] > 0.01 && centroid3D.val[2] > 0.02) {
-                                                centroid=true;
-                                        }
-                                }
-                        }*/
-
-                        for(int k=lastBounding_boxes.bounding_boxes[i].xmin; k<=lastBounding_boxes.bounding_boxes[i].xmax; k++) {
-                                for(int j=lastBounding_boxes.bounding_boxes[i].ymin; j<=lastBounding_boxes.bounding_boxes[i].ymax; j++) {
-                                        imagePoint=imaPCL.at<cv::Vec3f>(j,k);
-                                        //if(centroidkD.val[0]!=0 && centroid3D.val[2] !=0) {
-                                        
-                                        if(imagePoint.val[0] != 0.0 && imagePoint.val[2] != 0.0) {
-                                            centroid3D.val[0]+=imagePoint[0];
-                                            centroid3D.val[1]+=imagePoint[1];
-                                            centroid3D.val[2]+=imagePoint[2];
-                                            count++;
-                                        }
-                                }
-                        }
-                        centroid3D.val[0]/=count;
-                        centroid3D.val[1]/=count;
-                        centroid3D.val[2]/=count;
-
-                        if(count > 100) {
-                                if(TakeshiVision::isGraspeable(centroid3D[0],centroid3D[1],centroid3D[2],objectCoordinates)){
-                                    yoloObject.id = lastBounding_boxes.bounding_boxes[i].Class;
-                                    yoloObject.category = TakeshiVision::getObjectCategory(yoloObject.id);
-                                    yoloObject.confidence = lastBounding_boxes.bounding_boxes[i].probability;
-                                    yoloObject.pose.position.x = centroid3D.val[0];
-                                    yoloObject.pose.position.y = centroid3D.val[1];
-                                    yoloObject.pose.position.z = centroid3D.val[2]+0.03;
-                                    yoloObject.bounding_box.xmin=lastBounding_boxes.bounding_boxes[i].xmin;
-                                    yoloObject.bounding_box.ymin=lastBounding_boxes.bounding_boxes[i].ymin;
-                                    yoloObject.bounding_box.xmax=lastBounding_boxes.bounding_boxes[i].xmax;
-                                    yoloObject.bounding_box.ymax=lastBounding_boxes.bounding_boxes[i].ymax;
-                                    recognizedYoloObjectsAux.push_back(yoloObject);
-                                    printTakeshiMessage("Class: " + yoloObject.id + " - Confidence: " + std::to_string(yoloObject.confidence));
-                                    printTakeshiMessage("Centroid 3D  X: " + std::to_string(yoloObject.pose.position.x) + " Y: " + std::to_string(yoloObject.pose.position.y) + "Z: " + std::to_string(yoloObject.pose.position.z));
-                                }
-                                else{
-                                    printTakeshiMessage("Class: " + lastBounding_boxes.bounding_boxes[i].Class + " - Confidence: " + std::to_string(lastBounding_boxes.bounding_boxes[i].probability));
-                                    printTakeshiError("Does not satisfy the objectCoordinates");
-                                }
-                        }
-
-                        else{
-                                printTakeshiMessage("Class: " + lastBounding_boxes.bounding_boxes[i].Class + " - Confidence: " + std::to_string(lastBounding_boxes.bounding_boxes[i].probability));
-                                printTakeshiError("Can not get the object 3D centroid");
-                        }
-                }
-
-                if(recognizedYoloObjectsAux.size() < 1)
-                        return false;
-
-                float euclideanDistance, minEuclidenDistance=100;
-                int index;
-                for(int i=0; i<recognizedYoloObjectsAux.size(); i++) {
-                        euclideanDistance=sqrt(pow(0 - recognizedYoloObjectsAux[i].pose.position.x, 2) + pow(0 - recognizedYoloObjectsAux[i].pose.position.y, 2));
-                        if(euclideanDistance <= minEuclidenDistance) {
-                                minEuclidenDistance=euclideanDistance;
-                                index=i;
-                        }
-                }
-                recognizedYoloObjects.clear();
-                recognizedYoloObjects.push_back(recognizedYoloObjectsAux[index]);
-                for(int i=0; i<recognizedYoloObjectsAux.size(); i++)
-                        if(i != index)
-                                recognizedYoloObjects.push_back(recognizedYoloObjectsAux[i]);
-
-                TakeshiVision::yoloBoundingBoxesRecived=false;
-                return true;
-        }
-        else{
-                TakeshiVision::yoloBoundingBoxesRecived=false;
-                printTakeshiError("Can not detec yolo objects");
-                return false;
-        }
-}
-
-bool TakeshiVision::isGraspeable(float object_x,float object_y,float object_z, vision_msgs::ObjectCoordinatesForDetection bagsCoordinates){
-        if( object_x < bagsCoordinates.x_max &&
-            object_x > bagsCoordinates.x_min &&
-            object_y < bagsCoordinates.y_max &&
-            object_y > bagsCoordinates.y_min &&
-            object_z < bagsCoordinates.z_max &&
-            object_z > bagsCoordinates.z_min
-            )
-                return true;
         else
-                return false;
+            printTakeshiError("Failed in call service Yolov3 Detector");
+
+        if(recognizedYoloObjects.size() < 1){
+            printTakeshiError("Can not detect yolo objects");
+            return false;
+        }
+        return true;
 }
+
+bool TakeshiVision::detectAllYoloObjectsWithArmCamera(std::vector<vision_msgs::VisionObject>& recognizedYoloObjects, int timeOut_ms){
+        vision_msgs::Yolov3_detector srv;
+        srv.request.timeOut_ms.data=timeOut_ms;
+        if(cltDetectAllYoloObjectsWithArmCamera.call(srv)){
+            printTakeshiMessage("Calling Yolov3_detector service with arm camera detect all objects");
+            recognizedYoloObjects=srv.response.recognizedYoloObjects;
+        }
+        else
+            printTakeshiError("Failed in call service Yolov3 Detector");
+
+        if(recognizedYoloObjects.size() < 1){
+            printTakeshiError("Can not detect yolo objects");
+            return false;
+        }
+        return true;
+}
+
 
 bool TakeshiVision::getImagesFromTakeshi( cv::Mat& imaBGR, cv::Mat& imaPCL)
 {
@@ -583,6 +409,23 @@ bool TakeshiVision::getImagesFromTakeshi( cv::Mat& imaBGR, cv::Mat& imaPCL)
         }
         TakeshiTools::PointCloud2Msg_ToCvMat(srv.response.point_cloud, imaBGR, imaPCL);
         return true;
+}
+
+bool TakeshiVision::object_is_graspeable(cv::Vec3f centroid_3d, vision_msgs::ObjectCoordinatesForDetection object_coordinates){
+        return TakeshiVision::object_is_graspeable(centroid_3d.val[0],centroid_3d.val[1],centroid_3d.val[2], object_coordinates);
+}
+
+bool TakeshiVision::object_is_graspeable(float x, float y, float z, vision_msgs::ObjectCoordinatesForDetection object_coordinates){
+        if( x < object_coordinates.x_max &&
+            x > object_coordinates.x_min &&
+            y < object_coordinates.y_max &&
+            y > object_coordinates.y_min &&
+            z < object_coordinates.z_max &&
+            z > object_coordinates.z_min
+            )
+                return true;
+        else
+                return false;
 }
 
 bool TakeshiVision::detectObjectByColor(string color, vision_msgs::VisionObject& object,bool bag){
@@ -706,6 +549,64 @@ bool TakeshiVision::detectObjectByColor(string color, vision_msgs::VisionObject&
         cv::waitKey(100);
         return true;
 }
+
+
+bool TakeshiVision::detectCircles(vision_msgs::VisionObject& object){
+        cv::Mat imaBGR,imaPCL,imaGray,imaBlur;
+        cv::Vec3f imageCentroid;
+
+        printTakeshiMessage("Detect circle");
+
+        if(!TakeshiVision::getImagesFromTakeshi(imaBGR,imaPCL)) {
+                TakeshiVision::printTakeshiError("Can not get images from Takeshi");
+                return false;
+        }
+        cv::cvtColor(imaBGR,imaGray, cv::COLOR_BGR2GRAY);
+        GaussianBlur(imaGray,imaBlur,cv::Size(11,11), 0);
+        Canny(imaBlur,imaBlur,100,100*3,3);
+        vector<vector<cv::Point> > contours;
+        vector<cv::Vec4i> hierarchy;
+        findContours(imaBlur, contours, hierarchy, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_SIMPLE, cv::Point(0, 0) );
+
+        cv::Mat drawing = cv::Mat::zeros( imaBlur.size(), CV_8UC1 );
+        for( int i = 0; i< contours.size(); i++ ){
+            if(contourArea(contours[i])>700){
+               
+               drawContours( drawing, contours, i, 255, 2, 4, hierarchy, 0, cv::Point() );
+            }}
+        
+        vector<cv::Vec3f> circles;
+        
+        HoughCircles(drawing, circles, CV_HOUGH_GRADIENT, 1.2, drawing.rows/8, 50, 30, 10, 40 );
+
+        for( size_t i = 0; i < circles.size(); i++ ){
+            cv::Point center(cvRound(circles[i][0]), cvRound(circles[i][1]));
+            int radius = cvRound(circles[i][2]);
+            circle( imaBGR, center, 3, cv::Scalar(0,255,0), -1, 8, 0 );
+            circle( imaBGR, center, radius, cv::Scalar(0,0,255), 3, 8, 0 );
+            object.x=center.x;
+            object.y=center.y;
+            cv::namedWindow( "Hough Circle", CV_WINDOW_AUTOSIZE );
+            cv::imshow( "Hough Circle", imaBGR);
+            cv::waitKey(100);
+            std::cout << center.x+(radius*2) << std::endl;
+            imageCentroid=imaPCL.at<cv::Vec3f>(center.y,center.x+(radius*2));
+            std::cout << imageCentroid.val[0] << " " << imageCentroid.val[1] << " " << imageCentroid.val[2] << std::endl;
+            object.pose.position.x=imageCentroid.val[0];
+            object.pose.position.y=imageCentroid.val[1];
+            object.pose.position.z=imageCentroid.val[2];
+            return true;
+        } 
+
+        cv::namedWindow( "Hough Circle", CV_WINDOW_AUTOSIZE );
+        cv::imshow( "Hough Circle", imaBGR);
+        cv::waitKey(100);
+        return false;
+}
+
+
+
+
 
 /////////////////////////////////////////////////////////////////
 //#############################################################//
@@ -911,8 +812,17 @@ sensor_msgs::Image TakeshiVision::getLastPanoImage(){
         return TakeshiVision::lastImage;
 }
 
-
-
+//Methods for the arm image
+sensor_msgs::Image TakeshiVision::getArmImage(){
+        printTakeshiMessage("Get arm image");
+        ros::Rate loop(10);
+        while(ros::ok() && !TakeshiVision::is_arm_image){
+            ros::spinOnce();
+            loop.sleep();
+        }
+        TakeshiVision::is_arm_image=false;
+        return TakeshiVision::armCameraImage;
+}
 
 //Methods for the qr reader
 void TakeshiVision::startQRReader(){

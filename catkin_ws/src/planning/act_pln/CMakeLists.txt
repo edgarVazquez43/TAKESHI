@@ -287,6 +287,16 @@ target_link_libraries(hsr_challenge
 ${catkin_LIBRARIES}
 )
 
+##############################################
+########     HSR-CHALLENGE 2020       ########
+add_executable(hsr_challenge_2020 src/hsr_challenge_2020.cpp )
+add_dependencies(hsr_challenge_2020 ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+
+
+target_link_libraries(hsr_challenge_2020
+${catkin_LIBRARIES}
+)
+
 ########################################
 ########  Receptionist Test ########
 add_executable(receptionist src/receptionist.cpp )
@@ -472,8 +482,10 @@ target_link_libraries(vr_hsr_test
   )
 
 
+
+
 #######################################
-###    VR HSR    ###
+###    final_robocup_sydney    ###
 add_executable(final_robocup_sydney
   src/final_robocup.cpp
 )
@@ -486,3 +498,18 @@ target_link_libraries(final_robocup_sydney
   ${catkin_LIBRARIES}
   )
 
+
+#######################################
+###    Tidy UP 2020 [WRS TEST]    ###
+add_executable(tidy_up_2020
+ src/tidy_up_2020.cpp
+)
+
+add_dependencies(tidy_up_2020
+ ${${PROJECT_NAME}_EXPORTED_TARGETS}
+ ${catkin_EXPORTED_TARGETS}
+ )
+
+target_link_libraries(tidy_up_2020
+ ${catkin_LIBRARIES}
+)

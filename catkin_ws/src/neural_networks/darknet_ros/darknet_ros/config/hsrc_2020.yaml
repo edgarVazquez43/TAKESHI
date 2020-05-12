@@ -1,0 +1,24 @@
+yolo_model:
+
+  config_file:
+    name: hsrc_2020.cfg
+  weight_file:
+    name: hsrc_2020.weights
+  threshold:
+    value: 0.5
+  detection_classes:
+    names:
+          -  bill
+          -  pinkSpoon
+          -  rope
+          -  deformedBlueSpoon
+          -  deformedBlueFork
+          -  purpleFork
+          -  purpleSpoon
+          -  pinkFork
+          -  deformedOrangeSpoon
+          -  purpleKnife
+          -  tweezers
+          -  redSpoon
+          -  orangeFork
+          -  saltShaker

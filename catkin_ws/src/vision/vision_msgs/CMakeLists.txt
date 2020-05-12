@@ -60,6 +60,7 @@ add_service_files(
   HandCameraGrasp.srv
   SRV_DetectPlasticTrayZones.srv
   OpenPoseRecognize.srv
+  Yolov3_detector.srv
 )
 
 generate_messages(

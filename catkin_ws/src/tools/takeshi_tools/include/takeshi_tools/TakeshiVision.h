@@ -2,6 +2,7 @@
 #include "ros/ros.h"
 #include "vision_msgs/VisionFaceObjects.h"
 #include "vision_msgs/FaceRecognition.h"
+#include "vision_msgs/Yolov3_detector.h"
 #include "std_msgs/Empty.h"
 #include "std_msgs/Bool.h"
 #include "sensor_msgs/Image.h"
@@ -47,6 +48,9 @@ static bool _isObjectTrained;
 //Members for operating face recognizer
 //Service for face recognition
 static ros::ServiceClient cltGetFaces;
+//yolov3 detection
+static ros::ServiceClient cltDetectAllYoloObjects;
+static ros::ServiceClient cltDetectAllYoloObjectsWithArmCamera;
 //Members for operating pano maker
 static ros::Publisher pubTakePanoMaker;
 static ros::Publisher pubClearPanoMaker;
@@ -96,12 +100,13 @@ static ros::ServiceClient srvTrainObject;
 static ros::Publisher pubLoadTrainDir;
 static ros::Publisher pubLoadSpecificTrainingDir;
 
+//Arm camera
+static bool is_arm_image;
+static sensor_msgs::Image armCameraImage;
+static ros::Subscriber subArmCamera;
+
 //For what else? YOLO on darknet!!!
-static ros::Publisher pubYoloImage;
 static ros::ServiceClient cltRgbdRobot;
-static ros::Subscriber subYoloBoundingBoxes;
-static darknet_ros_msgs::BoundingBoxes lastBounding_boxes;
-static bool yoloBoundingBoxesRecived;
 //For openposes
 static ros::Publisher pubEnableOpenposes;
 //For facenet
@@ -125,18 +130,21 @@ static bool setNodeHandle(ros::NodeHandle* nh);
 static void printTakeshiMessage(string message);
 static void printTakeshiError(string message);
 
+//Yolo Methods
 static bool detectAllYoloObjects(std::vector<vision_msgs::VisionObject>& recognizedYoloObjects, int timeOut_ms,vision_msgs::ObjectCoordinatesForDetection objectCoordinates=TakeshiVision::objectCoordinates);
+static bool detectAllYoloObjectsWithArmCamera(std::vector<vision_msgs::VisionObject>& recognizedYoloObjects, int timeOut_ms);
 static bool detectYoloObject(std::string objectName,vision_msgs::VisionObject& recognizedYoloObject, int timeOut_ms, vision_msgs::ObjectCoordinatesForDetection objectCoordinates=TakeshiVision::objectCoordinates);
 static bool detectSpecificYoloObject(std::vector<std::string> objectsName,std::vector<vision_msgs::VisionObject>& specificYoloObjects,int timeOut_ms,vision_msgs::ObjectCoordinatesForDetection objectCoordinates=TakeshiVision::objectCoordinates);
-static bool readObjectsCategories(std::string);
 static cv::Scalar getColorBoundingBoxes(std::string category);
 static bool detectSpecificYoloObjectsCategories(std::vector<std::string> objectsName);
 static bool detectAllYoloObjectsCategories();
 static bool detectYoloObjectsCategories(std::vector<std::string> objectsName,bool allObjects);
-static bool isGraspeable(float object_x, float object_y, float object_z,vision_msgs::ObjectCoordinatesForDetection bagsCoordinates);
-
-static std::string getObjectCategory(std::string object);
+static bool object_is_graspeable(cv::Vec3f centroid_3d, vision_msgs::ObjectCoordinatesForDetection object_coordinates);
+static bool object_is_graspeable(float x, float y, float z, vision_msgs::ObjectCoordinatesForDetection object_coordinates);
 static std::string getJesusObjectCategory(std::string object);
+//arm image
+static bool detectCircles(vision_msgs::VisionObject& object);
+
 
 //Methods for pano maker
 static void takePano();
@@ -183,7 +191,8 @@ static bool findVacantPlane(std::vector<float>& vacantPlane, std::vector<int>& i
 static bool findVacantPlaneAtHeight(std::vector<float>& vacantPlane,
                                     std::vector<int>& inliersOnPlane,
                                     double minHeight, double maxHeight);
-
+//Method for arm camera
+static sensor_msgs::Image getArmImage();
 //Methods for calculating inverse kinematics
 //static bool inverseKinematicsGeometric(std::vector<float>& cartesian, std::vector<float>& articular, float& torso, geometry_msgs::Pose2D& base_correction);      // Takeshi
 
@@ -238,8 +247,8 @@ static void callbackFaces(const vision_msgs::VisionFaceObjects::ConstPtr& msg);
 static void callbackIsObjectTrained(const std_msgs::Bool::ConstPtr& msg);
 //callbacks for QR reader
 static void callbackRead_QR(const std_msgs::String::ConstPtr &msg);
-//YOLO stuff
-static void callbackYoloBoundigsBoxes(const darknet_ros_msgs::BoundingBoxes::ConstPtr& msg);
+//callbacks for arm image
+static void callbackArmCameraImage(const sensor_msgs::Image msg);
 
 bool detectFlattenedObjects(vision_msgs::VisionFlattenedObjectList& recoObjList,
                             bool saveFiles);

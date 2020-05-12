@@ -15,6 +15,13 @@ std::vector<float> TakeshiHRI::_lastSprConfidences;
 ros::Subscriber TakeshiHRI::subSprRecognized;
 ros::Subscriber TakeshiHRI::subSprHypothesis;
 
+//Variables for qr reader  (Edd-2)
+ros::Subscriber TakeshiHRI::subQRReader;
+boost::posix_time::ptime TakeshiHRI::timeLastQRReceived = boost::posix_time::second_clock::local_time();
+std::string TakeshiHRI::lastQRReceived;
+bool TakeshiHRI::spgenbusy = false;
+
+
 ros::Publisher  TakeshiHRI::pubSphinxGrammar;
 ros::ServiceClient TakeshiHRI::cltSprGrammar;
 sound_play::SoundClient * TakeshiHRI::sc;
@@ -65,6 +72,10 @@ bool TakeshiHRI::setNodeHandle(ros::NodeHandle* nh)
     subJoyButton = nh->subscribe("/hardware/joy",1,&TakeshiHRI::callbackButton);
     pubSpgSay            = nh->advertise<tmc_msgs::Voice>("/talk_request", 1);
     pubTalkRequestGoal = nh->advertise<tmc_msgs::TalkRequestActionGoal>("/talk_request_action/goal",1);
+    //callback for QR reader
+    subQRReader = nh->subscribe("/hri/qr/recognized", 1, &TakeshiHRI::callbackQRRecognized);
+
+    
     //callback for talkrequestaction
     subTalkRequestAction = nh->subscribe("/talk_request_action/result", 1, &TakeshiHRI::callbackTalkRequestAction);
 
@@ -229,6 +240,25 @@ bool TakeshiHRI::waitForSpeechHypothesis(std::vector<std::string>& sentences, st
       return false;
     }
 }
+
+
+//Methods for qr reader                                                                        
+void TakeshiHRI::callbackQRRecognized(const std_msgs::String::ConstPtr& msg){
+    std::cout << "TakeshiHRI.->Qr reader received" << std::endl;
+    boost::posix_time::ptime timeCurrQRReceived = boost::posix_time::second_clock::local_time(
+);
+    if(lastQRReceived.compare(msg->data) != 0 || (timeCurrQRReceived - timeLastQRReceived).total_milliseconds() > 5000){
+        timeLastQRReceived = boost::posix_time::second_clock::local_time();
+        lastQRReceived = msg->data;
+        std_msgs::String str;         
+        hri_msgs::RecognizedSpeech spr;
+        str.data = msg->data; 
+        spr.hypothesis.push_back(msg->data);
+        spr.confidences.push_back(0.9);
+        pubFakeSprRecognized.publish(str); 
+        pubFakeSprHypothesis.publish(spr); 
+    }
+}  
 
 void TakeshiHRI::playSound()
 {

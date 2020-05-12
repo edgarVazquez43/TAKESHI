@@ -94,9 +94,9 @@ void JustinaTools::PointCloud2Msg_ToCvMat(sensor_msgs::PointCloud2& pc_msg, cv::
   	bgr_dest.data[h*bgr_dest.step + w*3] = (unsigned char)p.b;
   	bgr_dest.data[h*bgr_dest.step + w*3 + 1] = (unsigned char)p.g;
   	bgr_dest.data[h*bgr_dest.step + w*3 + 2] = (unsigned char)p.r;
-  	pc_dest.at<cv::Vec3f>(h,w)[0] = isnan(p.x) ? 0.0 : p.x;
-  	pc_dest.at<cv::Vec3f>(h,w)[1] = isnan(p.y) ? 0.0 : p.y;
-  	pc_dest.at<cv::Vec3f>(h,w)[2] = isnan(p.z) ? 0.0 : p.z;
+  	pc_dest.at<cv::Vec3f>(h,w)[0] = std::isnan(p.x) ? 0.0 : p.x;
+  	pc_dest.at<cv::Vec3f>(h,w)[1] = std::isnan(p.y) ? 0.0 : p.y;
+  	pc_dest.at<cv::Vec3f>(h,w)[2] = std::isnan(p.z) ? 0.0 : p.z;
       }
  
 
@@ -162,9 +162,9 @@ void JustinaTools::PointCloud2Msg_ToCvMat(const sensor_msgs::PointCloud2::ConstP
   	bgr_dest.data[h*bgr_dest.step + w*3] = (unsigned char)p.b;
   	bgr_dest.data[h*bgr_dest.step + w*3 + 1] = (unsigned char)p.g;
   	bgr_dest.data[h*bgr_dest.step + w*3 + 2] = (unsigned char)p.r;
-  	pc_dest.at<cv::Vec3f>(h,w)[0] = isnan(p.x) ? 0.0 : p.x;
-  	pc_dest.at<cv::Vec3f>(h,w)[1] = isnan(p.y) ? 0.0 : p.y;
-  	pc_dest.at<cv::Vec3f>(h,w)[2] = isnan(p.z) ? 0.0 : p.z;
+  	pc_dest.at<cv::Vec3f>(h,w)[0] = std::isnan(p.x) ? 0.0 : p.x;
+  	pc_dest.at<cv::Vec3f>(h,w)[1] = std::isnan(p.y) ? 0.0 : p.y;
+  	pc_dest.at<cv::Vec3f>(h,w)[2] = std::isnan(p.z) ? 0.0 : p.z;
       }
 
   

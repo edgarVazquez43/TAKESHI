@@ -493,10 +493,13 @@ int main(int argc, char** argv)
                 std::cout<<"error for end the move: "<<error<<std::endl;
                 std::cout<<"speed for end the move: "<<cruise_speed<<std::endl;
                 std::cout<<"---------------------------------------"<<std::endl;
-                if(cruise_speed>0.1)
+                /*if(cruise_speed>0.1)
                     cruise_speed -= 0.01;
                 if(error < 0.05)
-                    state = SM_GOAL_PATH_FINISH;
+                    state = SM_GOAL_PATH_FINISH;*/
+                cruise_speed=(0.01 - 0.36) / (0.05 - 0.54)*(error - 0.54) + 0.36;
+                if(error < 0.05 || cruise_speed<=0)
+                    state=SM_GOAL_PATH_FINISH;
                 twist = calculate_speeds(robot_x, robot_y, robot_t, goal_x, goal_y, cruise_speed, false);
                 pub_cmd_vel.publish(twist);
             }

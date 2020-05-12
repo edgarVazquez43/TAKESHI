@@ -144,7 +144,7 @@ int main(int argc, char **argv) {
             case SM_INIT:
                 printState("SM START");
                 TakeshiHRI::waitAfterSay("waitting for the door to be open",2000);
-                nextState=SM_WAIT_DOOR;
+                nextState=SM_GET_CLOSE_DOOR;
                 break;
 
             case SM_WAIT_DOOR:
@@ -155,7 +155,7 @@ int main(int argc, char **argv) {
             case SM_GOING_TO_START_POINT:
                 printState("going to starting point");
                     TakeshiHRI::say("I'm going to the start point");
-                    TakeshiNavigation::moveDist(1.5,7000);
+                    //TakeshiNavigation::moveDist(1.5,7000);
                     if(!TakeshiNavigation::getClose("start_receptionist",8000))
                         if(!TakeshiNavigation::getClose("start_receptionist",7000))
                             TakeshiNavigation::getClose("start_receptionist",7000);
@@ -164,9 +164,9 @@ int main(int argc, char **argv) {
 
             case SM_GET_CLOSE_DOOR:
                 printState("get close to the door");
-                if(!TakeshiNavigation::getClose("door_receptionist",5000))
-                        if(!TakeshiNavigation::getClose("door_receptionist",4000))
-                            TakeshiNavigation::getClose("door_receptionist",4000);
+                if(!TakeshiNavigation::getClose("door_receptionist",20000))
+                        if(!TakeshiNavigation::getClose("door_receptionist",10000))
+                            TakeshiNavigation::getClose("door_receptionist",10000);
                 nextState=SM_RECOGNIZING_FACE;
                 break;
 

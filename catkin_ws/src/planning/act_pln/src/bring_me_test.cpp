@@ -193,7 +193,7 @@ int main(int argc, char** argv){
 
                 case SM_CHECK_QR:
                         if(readQRObjects(pathQRObjs,objectsToBring))
-                        {
+                        {
                                 if (objectsToBring.size()<1) {
                                         std::cout << "Nothing saved read QRs" << '\n';
                                         nextState = SM_LISTEN_CMDS;

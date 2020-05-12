@@ -181,7 +181,7 @@ int changeViewPerspective ( cv::Mat bgrImg, cv::Mat xyzCloud, pointOfViewParamet
 			{
 				cv::Mat point_r = pointRotation (getXYZPoint (xyzCloud, x, y), povParams.angle);
 
-				if ((!isnan(point_r.at<double>(2)))&&
+				if ((!std::isnan(point_r.at<double>(2)))&&
 					(point_r.at<double>(2) < povParams.areaLimits.maxZ) &&
 					(fabs(point_r.at<double>(0)) < povParams.areaLimits.maxX/2))
 				{
@@ -214,7 +214,7 @@ int changeViewPerspective ( cv::Mat bgrImg, cv::Mat xyzCloud, pointOfViewParamet
 					povParams.pixelArray[j*srcW + i].z = point_r.at<double>(2);
 				}
 
-				if (isnan(povParams.pixelArray[y*srcW + x].x))
+				if (std::isnan(povParams.pixelArray[y*srcW + x].x))
 				{
 					povParams.pixelArray[y*srcW + x].x = 0;
 					povParams.pixelArray[y*srcW + x].y = 0;
@@ -230,7 +230,7 @@ int changeViewPerspective ( cv::Mat bgrImg, cv::Mat xyzCloud, pointOfViewParamet
 			{
 				cv::Mat point_r = pointRotation (getXYZPoint (xyzCloud, x, y), povParams.angle);
 
-				if (!isnan(point_r.at<double>(2)) &&
+				if (!std::isnan(point_r.at<double>(2)) &&
 					(point_r.at<double>(2) < povParams.areaLimits.maxZ) &&
 					(fabs(point_r.at<double>(0)) < povParams.areaLimits.maxX/2) &&
 					(point_r.at<double>(1) > povParams.areaLimits.minY) &&
@@ -265,7 +265,7 @@ int changeViewPerspective ( cv::Mat bgrImg, cv::Mat xyzCloud, pointOfViewParamet
 					povParams.pixelArray[j*srcW + i].z = point_r.at<double>(2);
 				}
 
-				if (isnan(povParams.pixelArray[y*srcW + x].x))
+				if (std::isnan(povParams.pixelArray[y*srcW + x].x))
 				{
 					povParams.pixelArray[y*srcW + x].x = 0;
 					povParams.pixelArray[y*srcW + x].y = 0;

@@ -1,0 +1,9 @@
+#### ALIAS FOR HSR  #############
+alias hsrb_s='source /home/takeshi/HSR_PUMAS/catkin_ws/devel/setup.bash'
+alias hsrb_cmake='cd /home/takeshi/HSR_PUMAS/catkin_ws && catkin_make -j4 -l4 && cd -'
+alias hsrb_l='roslaunch takeshi_start takeshi.launch'
+
+alias hsrb_sim='export ROS_MASTER_URI=http://pumasDell:11311 export PS1="$red\u@$green\h$yellow:[<pumasDell>]$red\$(__git_ps1)$blue\\W$green->$reset "'
+alias hsrb_mode='export ROS_MASTER_URI=http://hsrb.local:11311 export PS1="$red\u@$green\h$yellow:[<hsrb>]$red\$(__git_ps1)$blue\\W$green->$reset "'
+alias local_master='export ROS_MASTER_URI=http://localhost:11311 export PS1="$red\u@$green\h$yellow:$red\$(__git_ps1)$blue\\W$green->$reset "'
+

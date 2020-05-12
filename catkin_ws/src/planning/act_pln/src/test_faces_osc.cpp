@@ -105,7 +105,7 @@ int main(int argc, char** argv){
 
                 case SM_FIND_PERSON:
                std::cout << "SM FIN PERSON"<< std::endl;
-                while (!TakeshiTasks::turnAndRecognizeFacenet("john",false) )
+                while (!TakeshiTasks::turnAndRecognizeFacenet("",false) )
                 //while(lastRecognizedFaces.size() < 1)
                 {
                         ros::spinOnce();
@@ -114,7 +114,7 @@ int main(int argc, char** argv){
                 }        
                 std::cout << "I FOUND YA"<< std::endl;
                 nextState=  SM_END;
-                success= true;
+                
                 
 
                 break;     

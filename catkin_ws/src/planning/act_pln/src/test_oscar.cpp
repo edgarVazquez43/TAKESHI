@@ -90,6 +90,17 @@ int main(int argc, char** argv){
                 {
                 case SM_START:
 
+
+                          cout<<"TRAINING"<< std::endl;  
+                          vfo = TakeshiVision::facenetRecognize(train_name + name);
+                          ros::Duration(.52).sleep();
+                          vfo = TakeshiVision::facenetRecognize(train_name + name);
+                          ros::Duration(.52).sleep();
+                          vfo = TakeshiVision::facenetRecognize(train_name + name);
+                          ros::Duration(.52).sleep();
+
+                        training_name="train_";
+
                         nextState=SM_RECOG;
                                                
                         break;

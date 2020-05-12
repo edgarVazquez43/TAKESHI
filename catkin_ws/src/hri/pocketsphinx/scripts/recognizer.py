@@ -27,13 +27,13 @@ import commands
 class recognizer(object):
 
     def callbackSetKws(self, data):
-        print "SET Keyphrase file for SPEACH"
+        print ("SET Keyphrase file for SPEACH")
         self.decoder.set_kws(data.id, data.file_path)
 
     def callbackSetJsgf(self, data):
         """data.id is name of grammar can be whatever but preferably use same name as in jsgf file
         data.file_path is the path relative to the PocketSphinx package"""
-        print "SET Grammar file for SPEACH"
+        print ("SET Grammar file for SPEACH")
 
         # Switch to JSGF grammar
         self.decoder.end_utt()
@@ -43,13 +43,13 @@ class recognizer(object):
         self.decoder.start_utt()
 
     def callbackSetSearch(self, data):
-        print "SET the SEARCH TYPE"
+        print ("SET the SEARCH TYPE")
         self.decoder.end_utt()
         self.decoder.set_search(data.data)
         self.decoder.start_utt()
 
     def callbackSetSearchAndTime(self, data):
-        print "Set SEARCH TYPE and TIME of recognition"
+        print ("Set SEARCH TYPE and TIME of recognition")
         self.decoder.end_utt()
         self.decoder.set_search(data.search_id)
         self.reco_time = rospy.Duration.from_sec(data.recognitionTime)
@@ -57,10 +57,10 @@ class recognizer(object):
 
     def callbackSetMic(self, data):
         if data.data:
-            print "Enable MIC"
+            print ("Enable MIC")
             self.enable_mic = True
         else:
-            print "Disable MIC"
+            print ("Disable MIC")
             self.enable_mic = False
 
     def __init__(self):
@@ -201,7 +201,7 @@ class recognizer(object):
                     "Error, make sure your wav file is composed of keywords!!")
                 rospy.logwarn("Otherwise, your speech is uninterpretable :C ")
             else:
-                print hypothesis.hypstr
+                print (hypothesis.hypstr)
 
         else:
             # Pocketsphinx requires 16kHz, mono, 16-bit little-Endian audio.
@@ -238,7 +238,7 @@ class recognizer(object):
                     end = rospy.get_rostime()  # time.time()
                     elapsed = end - start
                     if (not(in_speech) or elapsed > self.reco_time) and utt_started:
-                        print 'Time elapsed: ' + str(elapsed)
+                        print ('Time elapsed: ' + str(elapsed))
                         self.decoder.end_utt()
                         self.publish_result()
                         self.decoder.start_utt()
@@ -251,12 +251,12 @@ class recognizer(object):
         """
         if self.decoder.hyp() != None:
             hypo = self.decoder.hyp()
-            print 'Decoder: ' + hypo.hypstr
+            print ('Decoder: ' + hypo.hypstr)
             logmath = self.decoder.get_logmath()
             #print 'Decoder: ' + str(self.decoder.hyp().best_score)
             hypotesis = [hypo.hypstr.lower()]
             confidence = [logmath.exp(hypo.best_score)]
-            print confidence
+            print (confidence)
             #print 'Best hypothesis segments: ', [(seg.word, seg.prob) for seg in self.decoder.seg()]
 
             if confidence[0] > self.reco_thr:

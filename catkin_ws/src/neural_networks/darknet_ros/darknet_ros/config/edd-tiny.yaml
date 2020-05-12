@@ -1,0 +1,20 @@
+yolo_model:
+
+  config_file:
+    name: objectsEdd.cfg
+  weight_file:
+    name: edd-tiny.weights
+  threshold:
+    value: 0.5
+  detection_classes:
+    names:
+        - apple
+        - cereal
+        - chocolate
+        - coffee
+        - coke
+        - corn
+        - cream
+        - energy_drink
+        - juice
+        - pringles

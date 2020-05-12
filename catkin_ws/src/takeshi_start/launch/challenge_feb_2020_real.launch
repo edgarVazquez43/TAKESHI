@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<launch>
+
+
+	<node name="trash_spawner" pkg="tf" type="static_transform_publisher" output="screen" args=" -6.81 -3.99 -.8  0 0 0 /map /my_frame_hole 10"/>
+	<node name="circle_detector" pkg="circle_detector" type="circle_detector.py" output="screen"/>
+
+</launch>

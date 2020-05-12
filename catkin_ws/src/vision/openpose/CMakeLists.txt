@@ -31,6 +31,7 @@ set(OPENPOSE_DIR "$ENV{OPENPOSE_HOME}")
 
 if(OPENPOSE_DIR)               # <--- Use 'BOOST_DIR', not 'DEFINED ${BOOST_DIR}'
 find_package(GFlags)
+find_package(TinyXML REQUIRED)
 find_package(Glog)
 find_package(OpenPose REQUIRED)
 find_package(OpenCV)
@@ -64,10 +65,15 @@ message(STATUS "OPENPOSE_HOME at ${OPENPOSE_DIR}")
 		#  CATKIN_DEPENDS roscpp rospy std_msgs
 		#  DEPENDS system_lib
 		# DEPENDS Eigen3
+		INCLUDE_DIRS
+      		include
+    	DEPENDS
+      		TinyXML
 		)
 
 	include_directories(
 		include
+		${TinyXML_INCLUDE_DIRS}
 		${catkin_INCLUDE_DIRS}
 		${CUDA_INCLUDE_DIRS}
 		${Eigen_INCLUDE_DIRS}
@@ -89,7 +95,7 @@ message(STATUS "OPENPOSE_HOME at ${OPENPOSE_DIR}")
 		)
 
 	add_executable(open_pose_node src/open_pose_node.cpp)
-	target_link_libraries(open_pose_node ${catkin_LIBRARIES} OpenPose)
+	target_link_libraries(open_pose_node ${TinyXML_LIBRARIES} ${catkin_LIBRARIES} OpenPose)
 else()
 	message(WARNING "Undefined OPENPOSE_HOME env var, this package will not be compiled.")
 endif()

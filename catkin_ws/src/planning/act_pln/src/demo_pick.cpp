@@ -76,9 +76,15 @@ int main(int argc, char **argv) {
         trashObjects.push_back("chocolate_cookies");
         trashObjects.push_back("gansito_envelop");
         trashObjects.push_back("pineapple_cookies");
-        trashObjects.push_back("strawberry_cookies");
-        trashObjects.push_back("rope");
+        //trashObjects.push_back("strawberry_cookies");
+        //trashObjects.push_back("rope");
         trashObjects.push_back("bill");
+
+        trashObjects.push_back("purple_mug");
+        trashObjects.push_back("red_mug");
+        trashObjects.push_back("green_mug");
+        trashObjects.push_back("blue_mug");
+        
 
         vision_msgs::ObjectCoordinatesForDetection objectsCoordinates;  
         objectsCoordinates=TakeshiVision::objectCoordinates;
@@ -90,9 +96,10 @@ int main(int argc, char **argv) {
 
                 case SM_INIT_STATE:
                         printState("SM_INIT_STATE");
+                        TakeshiHRI::enableSphinxMic(false);
                         if(TakeshiManip::isTheHandPressed()){
                             TakeshiManip::hdGoTo(0,0.7,3000);
-                            TakeshiHRI::say("Hello, my name is Takeshi, i'm going to start the test, pick up demo, tell me what you want me to do");
+                            TakeshiHRI::waitAfterSay("Hello, my name is Takeshi, i'm going to start the test, pick up demo, tell me what you want me to do");
                             TakeshiHRI::enableSphinxMic(true);
                             nextState=SM_START;
                         }  

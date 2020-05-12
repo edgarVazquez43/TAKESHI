@@ -31,9 +31,13 @@ class TakeshiHRI{
   static ros::ServiceClient cltSprGrammar;
   static ros::Publisher pubSphinxGrammar;
   static ros::Publisher pubEnSphinxMic;
-
   static sound_play::SoundClient * sc;
-
+  //Variables for qr reader                                                                 
+  static ros::Subscriber subQRReader;
+  static boost::posix_time::ptime timeLastQRReceived;
+  static std::string lastQRReceived;
+  static ros::Publisher pubSpGenBusy;
+  
   static ros::Subscriber subJoyButton;
 
   static bool _legsFound;
@@ -45,7 +49,7 @@ class TakeshiHRI{
   // static ros::ServiceClient cltSpgSay;
 
  public:
-
+  static bool spgenbusy;
   static bool setNodeHandle(ros::NodeHandle* nh);
   static void enableDoorIsOpen(ros::NodeHandle* nh, bool enable);
   static bool waitAfterSay(std::string strToSay, int timeout);
@@ -82,4 +86,8 @@ class TakeshiHRI{
   static void callbackButton(const sensor_msgs::Joy::ConstPtr& msg);
   static void callbackDoorIsOpen(const sensor_msgs::LaserScan::ConstPtr& msg);
   static void callbackTalkRequestAction(const tmc_msgs::TalkRequestActionResult& msg);
+  //Methods for QR reader
+  static void callbackQRRecognized(const std_msgs::String::ConstPtr& msg);
+  static void callbackBusy(const std_msgs::String::ConstPtr& msg);
+  
 };

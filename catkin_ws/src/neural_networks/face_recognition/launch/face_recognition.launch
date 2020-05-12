@@ -1,0 +1,22 @@
+<launch>
+	<group ns="vision">
+		<!-- Good for testing will push the web camera into a ros topic and return embedding as well as a image with bounding boxes!!! -->
+		<node name="face_recog_lib_node" pkg="face_recognition" type="face_recognition_node.py" output="screen">
+			<param name="train_dir" value="/home/jesus/data_sets/test_set/"/>
+			<!-- Causes the node to continously recognize people from a message good for debugging! -->
+			<param name="stream" value="True"/>
+			<param name="debug" value="True"/>
+			<remap from="/usb_cam/image_raw" to="/vision/usb_cam/image_raw" />
+		</node>
+
+		<node name="usb_cam" pkg="usb_cam" type="usb_cam_node" output="screen">
+			<param name="video_device" value="/dev/video0"/>
+			<param name="image_width" value="640"/>
+			<param name="image_height" value="480"/>
+			<param name="pixel_format" value="yuyv"/>
+			<param name="camera_frame_id" value="usb_cam"/>
+			<param name="io_method" value="mmap"/>
+		</node>
+
+</group>
+</launch>

@@ -1,0 +1,48 @@
+yolo_model:
+
+  config_file:
+    name: robocup_sidney.cfg
+  weight_file:
+    name: robocup_sidney.weights
+  threshold:
+    value: 0.5
+  detection_classes:
+    names:
+        - apple
+        - beer
+        - biscuit
+        - carrot
+        - cereal
+        - cheetos
+        - cheetos_back
+        - chocolate_milk
+        - cloth
+        - coke
+        - dishwasher_back
+        - dishwasher_tab
+        - doritos
+        - frosty_fruits
+        - frosty_fruits_back
+        - juice
+        - kiwi
+        - lemon
+        - lemonade
+        - noodles
+        - onion
+        - orange
+        - pear
+        - purple_trashbag
+        - shapes_chicken
+        - shapes_chicken_back
+        - shapes_pizza
+        - shapes_pizza_back
+        - snakes
+        - sponge
+        - sponge_back
+        - tea_bag
+        - trash_bag_white
+        - twisties
+        - twisties_back
+        - vegemite
+        - water
+        - yellow_trashbag

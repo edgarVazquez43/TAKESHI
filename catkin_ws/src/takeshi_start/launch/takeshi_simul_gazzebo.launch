@@ -8,17 +8,18 @@
   <!-- <param name="robot_description" command="cat $(find hsrb_description)/robots/hsrb.urdf" /> -->
   
   <node name="rviz" pkg="rviz" type="rviz" args="-d $(find knowledge)/hri/apartment_display.rviz"/>
+  <remap from="/initialpose" to="/navigation/localization/initialpose"/>
 
   <group ns="hardware">
     <node name="joy"  pkg="joy"  type="joy_node"  output="screen"/>
     <node name="head" pkg="head" type="head_node" output="screen"/>
     <node name="arm"  pkg="arm"  type="arm_node"  output="screen"/>
     <node name="xtion"  pkg="xtion"  type="xtion_node"  output="screen"/>
-    <node name="laser_manager" pkg="laser_manager" type="laser_manager_node" output="screen">
+    <!--node name="laser_manager" pkg="laser_manager" type="laser_manager_node" output="screen">
       <param name="simul" value="$(arg simul)"/>
-      <!-- param name="bag" value="$(find laser_manager)/bags/example.bag"/ -->
+      <!-\- param name="bag" value="$(find laser_manager)/bags/example.bag"/ -\->
       <param name="dynamic_map" value="$(arg dynamic_map)"/>
-    </node>
+    </node-->
   </group>
 
   <group ns="hri">
@@ -65,6 +66,8 @@
       <!-- <node name="obstacle_detector" pkg="obs_detect" type="obs_detect_node" respawn="true" output="screen" args="//max_x 0.8 //z_threshold 0.06"/> -->
     <!-- </group>  -->
     <node name="mvn_pln" pkg="mvn_pln" type="mvn_pln_node" output="screen" args="--max_attempts 25"/>
+    <node name="killer_node" pkg="killer_node" type="killer_node.py" output="screen"/>
+    <node name="fake_global_pose" pkg="killer_node" type="fake_global_pose.py" output="screen"/>
   </group>
 
   <group ns="vision">

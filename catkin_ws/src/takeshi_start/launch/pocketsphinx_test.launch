@@ -6,7 +6,7 @@
     <arg name="_lm" value="_lm:=/usr/local/share/pocketsphinx/model/en-us/en-us"/>
     <arg name="_dict" value="_dict:=$(find pocketsphinx)/knowledge_base/masterDic.dic"/>
     <arg name="_kws" value="_kws:=$(find pocketsphinx)/knowledge_base/pre_sydney/restaurant/restaurant.kwlist"/>
-    <arg name="_jsgf" value="_jsgf:=$(find pocketsphinx)/grammars/hsr_challenge_august.jsgf"/>
+    <arg name="_jsgf" value="_jsgf:=$(find pocketsphinx)/grammars/names.jsgf"/>
     <arg name="_stream" value="_stream:=true"/>
     <arg name="_wavpath" value="_wavpath:=none"/>
     <arg name="_output" value="_output:=/sphinx_result"/>

@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<launch>
+  <node pkg="facenet" type="facenet_node.py" name="facenet_node" output="screen">
+    <param name="model" value="/home/jesus/models/facenet/20180408-102900/"/>
+    <param name="database" value="/home/jesus/datasets/test_set/"/>
+    <param name="min_dist" value="1.2"/>
+    <param name="batch_size" value="16"/>
+    <param name="image_size" value="160"/>
+    <remap from="/image_raw/compressed" to="/usb_cam/image_raw/compressed"/>
+  </node>
+
+  <node name="usb_cam" pkg="usb_cam" type="usb_cam_node" output="screen">
+    <param name="video_device" value="/dev/video0"/>
+    <param name="image_width" value="640"/>
+    <param name="image_height" value="480"/>
+    <param name="pixel_format" value="yuyv"/>
+    <param name="camera_frame_id" value="usb_cam"/>
+    <param name="io_method" value="mmap"/>
+  </node>
+
+</launch>

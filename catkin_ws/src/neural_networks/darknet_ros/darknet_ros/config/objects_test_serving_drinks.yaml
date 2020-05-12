@@ -1,0 +1,23 @@
+yolo_model:
+
+  config_file:
+    name: objects_abril.cfg
+  weight_file:
+    name: objects_abril.weights
+  threshold:
+    value: 0.5
+  detection_classes:
+    names:
+        - blue_mug
+        - beer
+        - juice
+        - coke
+        - bill
+        - blue_Lego
+        - red_Lego
+        - yellow_Lego
+        - apple_juice
+        - cajeta_cokkies
+        - pineapple_cookies
+        - soap
+        - strawberry_cookies

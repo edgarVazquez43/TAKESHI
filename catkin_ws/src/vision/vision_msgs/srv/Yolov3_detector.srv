@@ -1,0 +1,4 @@
+std_msgs/Int32 timeOut_ms
+vision_msgs/ObjectCoordinatesForDetection objectCoordinates
+---
+vision_msgs/VisionObject[] recognizedYoloObjects

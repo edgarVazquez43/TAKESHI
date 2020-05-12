@@ -52,10 +52,10 @@
   <group ns="navigation">
     <group ns="localization">
       <node name="map_server" pkg="map_server" type="map_server" output="screen"
-	    args="$(find knowledge)/navigation/occupancy_grids/biorobotica2020-1.yaml"/>
-      <node name="fake_localization" pkg="fake_localization" type="fake_localization"/>
+	    args="$(find knowledge)/navigation/occupancy_grids/AIBot.yaml"/>
+      <!--node name="fake_localization" pkg="fake_localization" type="fake_localization"/-->
 
-      <!--
+
       <node name="loc_amcl" pkg="amcl" type="amcl" output="screen" args="scan:=/hardware/scan">
         <param name="odom_alpha1" value="0.1"/>
         <param name="odom_alpha2" value="0.1"/>
@@ -69,7 +69,7 @@
         <param name="laser_min_range" value="0.3"/>
         <param name="odom_model_type" value="omni-corrected"/>
       </node>
-    -->
+  
 
       
     </group>
@@ -131,7 +131,7 @@
   
   <group ns="knowledge">
     <node name="ltm" pkg="knowledge" type="ltm_node" output="screen"
-      args="-f $(find knowledge)/navigation/robocup_sydney.txt
+      args="-f $(find knowledge)/navigation/AIBot_locs.txt
 		-d $(find knowledge)/navigation/known_delimitation_canada.txt
 		-o $(find knowledge)/navigation/robocup_sydney.txt"/>
     <node name="pred_ques" pkg="knowledge" type="pred_ques_node" output="screen" args="-f $(find knowledge)/speech_recognition/Questions.xml"/>

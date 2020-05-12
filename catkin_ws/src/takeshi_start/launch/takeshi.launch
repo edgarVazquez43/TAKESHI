@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <launch>
   <remap from="/hardware/mobile_base/cmd_vel" to="/hsrb/command_velocity"/>
+  <!--remap from="/navigation/localization/amcl_pose" to="/global_pose"/-->
+  <remap from="/navigation/localization/static_map" to="/get_distance_map"/>
+
   <param name="robot_description_semantic" textfile="$(find knowledge)/manipulation/hsrb.srdf"/>
   <node name="rviz" pkg="rviz" type="rviz" args="-d $(find knowledge)/hri/config.rviz">
     <remap from="/initialpose" to="/navigation/localization/initialpose"/>
@@ -11,6 +14,7 @@
     <node name="head" pkg="head" type="head_node" output="screen"/>
     <node name="arm" pkg="arm" type="arm_node" output="screen"/>
     <node name="xtion" pkg="xtion" type="xtion_node" output="screen"/>
+    <node name="arm_camera" pkg="arm_camera" type="arm_camera_node" output="screen"/>
   </group>
 
   <group ns="hri">
@@ -37,7 +41,8 @@
     <arg name="_output" value="_output:=/sphinx_result"/>
 
     <node name="pocketsphinx_recognizer" pkg="pocketsphinx" type="recognizer.py" output="screen" args="$(arg _lm) $(arg _dict) $(arg _kws) $(arg _jsgf) $(arg _stream) $(arg _wavpath) $(arg _output)">
-      <param name="recognize_threshold" value="0.40" type="double"/>
+      <param name="recognize_threshold" value="0.15" type="double"/>
+      <param name="recognition_time" value="5.0" type="double"/>
     </node>
 
   </group>
@@ -46,24 +51,24 @@
 
   <group ns="navigation">
     <group ns="localization">
-      <node name="map_server" pkg="map_server" type="map_server" output="screen" args="$(find knowledge)/navigation/occupancy_grids/biorobotica2019-DemoFebrero.yaml"/>
-      <node name="loc_amcl" pkg="amcl" type="amcl" output="screen" args="scan:=/hsrb/base_scan">
-        <param name="odom_alpha1" value="0.001"/>
+      <!--node name="map_server" pkg="map_server" type="map_server" output="screen" args="$(find knowledge)/navigation/occupancy_grids/AIBot.yaml"/-->
+      <node name="loc_amcl" pkg="amcl" type="amcl" output="screen" args="scan:=/hsrb/base_scan static_map:=/get_distance_map">
+        <!--param name="odom_alpha1" value="0.001"/>
         <param name="odom_alpha2" value="0.001"/>
         <param name="odom_alpha3" value="0.001"/>
         <param name="odom_alpha4" value="0.001"/>
-        <param name="odom_alpha5" value="0.001"/>
+        <param name="odom_alpha5" value="0.001"/-->
 
-	<!-- <param name="odom_alpha1" value="0.1"/> -->
-        <!-- <param name="odom_alpha2" value="0.1"/> -->
-        <!-- <param name="odom_alpha3" value="0.1"/> -->
-        <!-- <param name="odom_alpha4" value="0.1"/> -->
-        <!-- <param name="odom_alpha5" value="0.1"/> -->
+	      <param name="odom_alpha1" value="0.1"/>
+        <param name="odom_alpha2" value="0.1"/>
+        <param name="odom_alpha3" value="0.1"/>
+        <param name="odom_alpha4" value="0.1"/>
+        <param name="odom_alpha5" value="0.1"/>
 
 	<!-- <param name="initial_pose_x" value="0.17"/> <param name="initial_pose_y" value="0.12"/> <param name="initial_pose_a" value="0.03"/> -->
-        <param name="initial_pose_x" value="-1.14551"/>
-        <param name="initial_pose_y" value="1.88108"/>
-        <param name="initial_pose_a" value="0.0"/>
+        <param name="initial_pose_x" value="1.32"/>
+        <param name="initial_pose_y" value="2.22"/>
+        <param name="initial_pose_a" value="4.09"/>
 
         <param name="update_min_a" value="0.1"/>
         <param name="laser_min_range" value="0.3"/>
@@ -72,7 +77,7 @@
     </group>
 
     <group ns="path_planning">
-      <node name="simple_move" pkg="simple_move" type="simple_move_node" output="screen" args="--move_head --pot_fields"/>
+      <node name="simple_move" pkg="simple_move" type="simple_move_node" output="screen" args="--move_head "/>
       <node name="path_calculator" pkg="path_calculator" type="path_calculator_node" output="screen"/>
     </group>
 
@@ -84,12 +89,16 @@
     </group>
     <node name="mvn_pln" pkg="mvn_pln" type="mvn_pln_node" output="screen" args="--max_attempts 25"/>
     <node name="killer_node" pkg="killer_node" type="killer_node.py" output="screen"/>
+    <node name="fake_global_pose" pkg="killer_node" type="fake_global_pose.py" output="screen"/>
 
   </group>
 
   <group ns="vision">
     <node name="face_recog" pkg="face_recog" type="face_recog_node" output="screen"/> 
 
+    <node name="yolo_v3" pkg="yolo_v3" type="yolo_node" output="screen">
+       <param name="object_categories_file" value="$(find knowledge)/object_categories/"/>
+    </node>
 
     <node name="facenet_reco" pkg="face_recognition" type="face_recognition_node.py"> 
       <param name="train_dir" value="/home/takeshi/data_sets/facerecognition/"/> 
@@ -100,7 +109,7 @@
     <!-- <node name="skeleton_finder" pkg="skeleton_finder" type="skeleton_finder_node" output="screen"/> -->
 
     <node name="openpose_node" pkg="openpose" type="open_pose_node" output="screen">
-      <param name="debug_mode" value="false"/>
+      <param name="debug_mode" value="true"/>
       <param name="file_links_config" value="$(find openpose)/OpenPoseConfig.xml"/>
       <param name="model_folder" value="$(env OPENPOSE_HOME)/models/"/>
       <param name="net_resolution" value="640x480"/>
@@ -109,7 +118,7 @@
     </node>
 
     <node name="skel_follower" pkg="skeleton_follower" type="skeleton_follower_node" args="" output="screen">
-            <param name="debug_mode" value="true"/>
+      <param name="debug_mode" value="true"/>
       <remap from="/hsrb/command_velocity" to="/hsrb/command_velocity" />
       <param name="k_y" value="0.3" type="double"/>
       <param name="setpoint_y" value="0.50" type="double"/>
@@ -174,7 +183,7 @@
       pkg="knowledge"
       type="ltm_node"
       output="screen"
-      args="-f $(find knowledge)/navigation/biorobotica2019-demoFebrero.txt
+      args="-f $(find knowledge)/navigation/AIBot_locs.txt
 		-d $(find knowledge)/navigation/known_delimitation_canada.txt
 		-o $(find knowledge)/navigation/robocup_sydney.txt"/>
     <node name="pred_ques" pkg="knowledge" type="pred_ques_node" output="screen" args="-f $(find knowledge)/speech_recognition/Questions.xml"/>

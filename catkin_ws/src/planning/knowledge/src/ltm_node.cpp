@@ -433,7 +433,7 @@ void callbackEnableKnownLocations(const std_msgs::Bool::ConstPtr& enable){
 
         server->applyChanges();
 
-        enableEditKnowLoc = enable;
+        enableEditKnowLoc = enable->data;
 
 }
 

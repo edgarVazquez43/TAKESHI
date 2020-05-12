@@ -44,8 +44,8 @@ void RosNode::imageCallback(const sensor_msgs::PointCloud2::ConstPtr& msg){
 	cv_bridge::CvImage * img = new cv_bridge::CvImage();
 	try{
 		cv::Mat bgrImg;
-    	cv::Mat xyzCloud;
-    	JustinaTools::PointCloud2Msg_ToCvMat(msg, bgrImg, xyzCloud);
+		cv::Mat xyzCloud;
+		JustinaTools::PointCloud2Msg_ToCvMat(msg, bgrImg, xyzCloud);
 		img->header = msg->header;
 		img->encoding = sensor_msgs::image_encodings::BGR8;
 		img->image = bgrImg;

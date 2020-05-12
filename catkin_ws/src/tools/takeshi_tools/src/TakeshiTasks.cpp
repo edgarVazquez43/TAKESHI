@@ -463,7 +463,7 @@ bool TakeshiTasks::graspBagInFloor(string color,vision_msgs::ObjectCoordinatesFo
         ros::Duration(1).sleep();
 
         if(TakeshiVision::detectObjectByColor(color,object,true)) {
-                if(!TakeshiVision::isGraspeable(object.pose.position.x,object.pose.position.y,object.pose.position.z,bagsCoordinates)){
+                if(!TakeshiVision::object_is_graspeable(object.pose.position.x,object.pose.position.y,object.pose.position.z,bagsCoordinates)){
                     printTakeshiTaskError("The bag in not graspeable");
                     return false;    
                 }
@@ -959,8 +959,8 @@ bool TakeshiTasks::findPerson(std::string person, int gender, POSE pose, bool re
 
 bool TakeshiTasks::findPersonFacenet(std::string name, float anghd, bool get_close){
     vision_msgs::VisionFaceObjects vfo;
-    float cx, cy, cz,cxr,cyr,ctheta; 
-   
+    float cx, cy, cz,cxr,cyr,ctheta,dist_klocn; 
+    dist_klocn=1.2;
 
     for (size_t i = 0; i < 3; i++){
         vfo = TakeshiVision::facenetRecognize(name);   
@@ -983,7 +983,7 @@ bool TakeshiTasks::findPersonFacenet(std::string name, float anghd, bool get_clo
             Eigen::Vector2d coordface(cx,cy);
 
             Eigen::Vector2d coordfacecorr(cx,cy);
-            coordfacecorr = coordface - .8* coordface.normalized();
+            coordfacecorr = coordface - dist_klocn * coordface.normalized();
             cx= coordfacecorr(0);
             cy= coordfacecorr(1);
 
@@ -1962,7 +1962,7 @@ bool TakeshiTasks::graspObject(float x, float y, float z, bool verify, bool& fai
         graspObjectCoordinates.y_min=-0.5;
         graspObjectCoordinates.y_max=0.5;
 
-        if(!TakeshiVision::isGraspeable(x,y,z,graspObjectCoordinates)){
+        if(!TakeshiVision::object_is_graspeable(x,y,z,graspObjectCoordinates)){
                 TakeshiHRI::say("I can not detect the object in front of me.");
                 printTakeshiTaskError("I can not detect the object in front of me.");
                 fail=true;
@@ -2805,7 +2805,7 @@ bool TakeshiTasks::graspObjectOnFloorFromAbove(vision_msgs::VisionObject detecte
                 return false;
         }
         else{
-                TakeshiHRI::say("i take the object");
+                TakeshiHRI::say("i took the object");
                 return true;
         }
 }
@@ -2823,6 +2823,12 @@ bool TakeshiTasks::giveObject(float x, float y, float z)
         std::cout << "\033[1;34m     TakeshiTasks.->Give Object: Correct X displacement.\033[0m" << std::endl;
         y_correction = y - 0.10; // 0.10 is the distance from base_arm to robot_base in axis Y
         std::cout << "\033[1;34m     TakeshiTasks.->Give Object:  Y correction:  " << y_correction << "\033[0m" << std::endl;
+        if(fabs(y) > 0.7 && x > 1.3){
+            TakeshiHRI::waitAfterSay("I am sorry, approach to me.",4000);
+            ros::Duration(2.0).sleep();
+            return false;
+        }
+
         TakeshiNavigation::moveLateral(y_correction, 4000);
 
         ////////////////////////////////////////////
@@ -2855,6 +2861,7 @@ bool TakeshiTasks::giveObject(float x, float y, float z)
 
         TakeshiManip::torsoGoTo(torso + 0.05, 3000);
         TakeshiManip::armGoToArticular(articular, 4000);
+        
 /*
         ////////////////////////////////////////////
         //       SECOND STEP OF MOVEMENT ARM        //
@@ -3284,7 +3291,7 @@ bool TakeshiTasks::graspObjectLateral(std::string idObject, bool verify)
                 return false;
         }
         else{
-                takeshi_say << "I take the object " << idObject;
+                takeshi_say << " I took the object " << idObject;
                 TakeshiHRI::say( takeshi_say.str());
                 return true;
         }
@@ -4342,7 +4349,7 @@ bool TakeshiTasks::graspObjectOnTheFridge(std::string idObject, bool verify){
                 return false;
         }
         else{
-                takeshi_say << "I take the object " << idObject;
+                takeshi_say << "I took the object " << idObject;
                 TakeshiHRI::say( takeshi_say.str());
                 return true;
         }
